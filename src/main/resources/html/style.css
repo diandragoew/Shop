@@ -1,0 +1,26 @@
+body{
+margin: 0px;
+}
+.headerSection{
+   background-color:blue;
+    margin-top: 0px;
+    margin-bottom: 0px;
+        padding: 10px;
+
+}
+.headerSection h1{
+   margin-top: 0px;
+    margin-bottom: 0px;
+}
+.selling {
+  display: inline;
+ background-color: green;
+}
+.selling selling_picture{
+ background-color: green;
+
+}
+.buying {
+  display: inline;
+
+}
