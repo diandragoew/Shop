@@ -1,0 +1,42 @@
+body{
+margin: 0px;
+}
+
+.headerSection{
+   background-color:blue;
+    margin-top: 0px;
+    margin-bottom: 0px;
+     padding: 10px;
+
+}
+.headerSection h1{
+   margin-top: 0px;
+    margin-bottom: 0px;
+}
+.selling {
+  display: inline;
+}
+
+.buying {
+  display: inline;
+
+}
+.tablePublicUserProfil,.tablePublicUserProfil th, .tablePublicUserProfil td {
+  border: 1px solid black;
+}
+.listPhotos li{
+	display: inline-block;
+}
+.tablePublicUserProfil,.tablePublicUserProfil th, .tablePublicUserProfil td {
+  border: 1px solid black;
+}
+#tablePublicUserProfil_message input{
+  display: block;
+}
+#tablePublicUserProfil_message .tablePublicUserProfil_message--send{
+  background: green;
+}
+#tablePublicUserProfil_message .tablePublicUserProfil_message--send{
+     height:100px;
+     width:180px;
+ }

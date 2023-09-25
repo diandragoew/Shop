@@ -11,15 +11,25 @@ margin: 0px;
 .headerSection h1{
    margin-top: 0px;
     margin-bottom: 0px;
+    display: inline-block;
 }
 .selling {
   display: inline;
 }
-.selling selling_picture{
- background-color: green;
 
-}
 .buying {
   display: inline;
 
+}
+
+.headerSection .headerSection__myProfile{
+	    display: inline-block;
+	    text-align: right;
+	    padding-left: 1500px;
+
+}
+.headerSection .headerSection__myProfile p{
+	    display: inline-block;
+color: black;
+  font-size: 30px;
 }
