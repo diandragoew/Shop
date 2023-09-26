@@ -21,9 +21,25 @@ margin: 0px;
   display: inline;
 
 }
-.tablePageSelling,.tablePageSelling th, .tablePageSelling td {
+ .table__ads,.table__messages,.table__ads th,.table__ads table td , .table__messages table td, .table__messages th {
   border: 1px solid black;
 }
 .listPhotos li{
 	display: inline-block;
 }
+
+.table__ads .table__ads--description{
+  width: 30%;
+}
+
+.table__ads,.table__messages{
+  display: inline-block;
+}
+.table__ads img{
+  width: 300;
+  height: 300;
+}
+.table__ads{
+  margin-right: 20px;
+}
+
