@@ -16,10 +16,12 @@ margin: 0px;
 .selling {
   display: inline;
 }
-
-.buying {
-  display: inline;
-
+.tablePageSelling{
+  margin-bottom: 30px;
+   width:1000px;
+   height:400px;
+/*   width:100%;
+*/
 }
 .tablePageSelling,.tablePageSelling th, .tablePageSelling td {
   border: 1px solid black;
@@ -27,3 +29,27 @@ margin: 0px;
 .listPhotos li{
 	display: inline-block;
 }
+table img{
+  width:300px;
+   height:300px;
+}
+ol img{
+   width:300px;
+   height:300px;
+}
+#tablePageSelling_message input{
+  display: block;
+}
+#tablePageSelling_message .tablePageSelling_message--send{
+  background: green;
+}
+#tablePageSelling_message .tablePageSelling_message--send{
+     height:100px;
+     width:180px;
+ }
+
+.morePhotos{
+  margin: 0px;
+}
+
+
