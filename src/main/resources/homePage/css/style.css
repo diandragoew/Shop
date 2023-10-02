@@ -21,11 +21,32 @@ margin: 0px;
 .headerSection .headerSection__myProfile{
 	    display: inline-block;
 	    text-align: right;
-	    padding-left: 1500px;
+      padding-left: 20px;
 
 }
 .headerSection .headerSection__myProfile p{
 	    display: inline-block;
 color: black;
   font-size: 30px;
+}
+.headerSection .headerSection__createAd{
+      display: inline-block;
+      text-align: right;
+}
+.headerSection .headerSection__createAd p{
+      display: inline-block;
+color: black;
+  font-size: 30px;
+}
+.headerSection__table,.headerSection__table th, .headerSection__table td {
+  border: 5px solid black;
+}
+.headerSection__table{
+        display: inline-block;
+      margin-left: 1400px;
+      background: green;
+      
+}
+.headerSection__table p{
+      background: pink;
 }
