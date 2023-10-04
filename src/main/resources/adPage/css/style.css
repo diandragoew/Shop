@@ -7,11 +7,15 @@ margin: 0px;
     margin-top: 0px;
     margin-bottom: 0px;
      padding: 10px;
-
 }
+.headerSection a{
+              text-decoration: none;
+}
+
 .headerSection h1{
    margin-top: 0px;
     margin-bottom: 0px;
+
 }
 .selling {
   display: inline;

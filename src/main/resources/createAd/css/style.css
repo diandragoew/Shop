@@ -9,37 +9,38 @@ margin: 0px;
      padding: 10px;
 
 }
+.headerSection a{
+              text-decoration: none;
+}
 .headerSection h1{
    margin-top: 0px;
     margin-bottom: 0px;
 }
-.selling {
-  display: inline;
+.createAd{
+  background: yellow;
+}
+ .createAd__table{
+        border-spacing: 2px 15px;
 }
 
-.buying {
-  display: inline;
+
+ .createAd__table td {
+  border: 3px solid black;
+    margin-bottom: 3px;
+    background-color: orange;
 
 }
- .table__ads,.table__messages,.table__ads th,.table__ads table td , .table__messages table td, .table__messages th {
-  border: 1px solid black;
-}
+
+
 .listPhotos li{
 	display: inline-block;
 }
-
-.table__ads .table__ads--description{
-  width: 30%;
+.form-btn{
+  margin-left: 40px; 
+}
+.emptyCell{
+    border: none;
 }
 
-.table__ads,.table__messages{
-  display: inline-block;
-}
-.table__ads img{
-  width: 300;
-  height: 300;
-}
-.table__ads{
-  margin-right: 20px;
-}
+
 

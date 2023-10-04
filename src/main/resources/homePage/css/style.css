@@ -6,8 +6,11 @@ margin: 0px;
     margin-top: 0px;
     margin-bottom: 0px;
         padding: 10px;
-
 }
+.headerSection a{
+              text-decoration: none;
+}
+
 .headerSection h1{
    margin-top: 0px;
     margin-bottom: 0px;
@@ -43,10 +46,55 @@ color: black;
 }
 .headerSection__table{
         display: inline-block;
-      margin-left: 1400px;
+      margin-left: 1100px;
       background: green;
       
 }
 .headerSection__table p{
       background: pink;
+}
+
+.loginForm{
+  position: absolute;
+    top: 50%;
+    left: 50%;
+padding: 20px;
+background-color:yellow; 
+}
+.loginForm input{
+  padding: 5px;
+  margin:2px;
+background-color: orange;
+}
+.loginForm__credentials{
+  display: block;
+}
+.loginForm__enter{
+display: inline-block;
+position: relative;
+/*left: 10px; */
+    left: 40%;
+
+}
+.createProfilForm{
+    position: absolute;
+    top: 60%;
+    left: 75%;
+padding: 20px;
+background-color:yellow; 
+}
+.createProfilForm input{
+  padding: 5px;
+  margin:2px;
+background-color: orange;
+}
+.createProfilForm__credentials{
+  display: block;
+}
+.createProfilForm__create{
+display: inline-block;
+position: relative;
+/*left: 10px; */
+    left: 40%;
+
 }
