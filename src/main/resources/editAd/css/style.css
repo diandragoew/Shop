@@ -1,0 +1,207 @@
+body{
+margin: 0px;
+}
+
+.headerSection{
+   background-color:blue;
+    margin-top: 0px;
+    margin-bottom: 0px;
+     padding: 10px;
+}
+.headerSection a{
+              text-decoration: none;
+}
+
+.headerSection h1{
+   margin-top: 0px;
+    margin-bottom: 0px;
+
+}
+.selling {
+  display: inline;
+}
+.tableAdPage{
+  display: inline-block;
+   width:1200px;
+   height:400px;
+/*   width:100%;
+*/
+}
+.tableAdPage,.tableAdPage th, .tableAdPage td {
+  border: 2px solid black;
+}
+.listPhotos li{
+	display: inline-block;
+}
+table img{
+  width:300px;
+   height:300px;
+}
+ol img{
+   width:300px;
+   height:300px;
+}
+#tableAdPage_message input{
+  display: block;
+}
+#tableAdPage_message .tableAdPage_message--send{
+  background: green;
+}
+#tableAdPage_message .tableAdPage_message--send{
+     height:100px;
+     width:180px;
+ }
+
+.morePhotos{
+  margin-top: 20px;
+}
+
+.ProcessAd{
+  background:yellow ;
+}
+.tableProcessAd{
+        border-spacing: 0px 15px;
+}
+.ProcessAd .tableProcessAd td{
+  background:orange ;
+    margin-bottom: 10px;
+
+}
+
+
+.tableProcessAd a{
+  display: block;
+  padding-top: 10px;
+  padding-bottom: 10px;
+
+}
+
+body{
+margin: 0px;
+}
+
+.headerSection{
+   background-color:blue;
+    margin-top: 0px;
+    margin-bottom: 0px;
+     padding: 10px;
+}
+.headerSection a{
+              text-decoration: none;
+}
+
+.headerSection h1{
+   margin-top: 0px;
+    margin-bottom: 0px;
+
+}
+.selling {
+  display: inline;
+}
+.tableAdPage{
+  display: inline-block;
+  background-color: #0cf7e8;
+   width:1200px;
+   height:400px;
+/*   width:100%;
+*/
+}
+.tableAdPage,.tableAdPage th, .tableAdPage td {
+  border: 2px solid black;
+}
+.listPhotos li{
+  display: inline-block;
+}
+table img{
+  width:300px;
+   height:300px;
+}
+ol img{
+   width:300px;
+   height:300px;
+}
+#tableAdPage_message input{
+  display: block;
+}
+#tableAdPage_message .tableAdPage_message--send{
+  background: green;
+}
+#tableAdPage_message .tableAdPage_message--send{
+     height:100px;
+     width:180px;
+ }
+
+.morePhotos{
+  margin-top: 20px;
+}
+
+.ProcessAd{
+  background:#0cf7e8 ;
+}
+.tableProcessAd{
+        border-spacing: 0px 15px;
+}
+.ProcessAd .tableProcessAd td{
+  background:orange ;
+    margin-bottom: 10px;
+
+}
+
+
+.tableProcessAd a{
+  display: block;
+  padding-top: 10px;
+  padding-bottom: 10px;
+
+}
+body{
+margin: 0px;
+}
+
+.headerSection{
+   background-color:blue;
+    margin-top: 0px;
+    margin-bottom: 0px;
+     padding: 10px;
+
+}
+.headerSection a{
+              text-decoration: none;
+}
+.headerSection h1{
+   margin-top: 0px;
+    margin-bottom: 0px;
+}
+.editAd{
+  background: yellow;
+}
+ .editAd__table{
+        border-spacing: 2px 15px;
+}
+
+
+ .editAd__table td {
+  border: 3px solid black;
+    margin-bottom: 3px;
+    background-color: orange;
+
+}
+
+
+.listPhotos li{
+  display: inline-block;
+}
+.form-btn{
+  margin-left: 40px; 
+}
+.emptyCell{
+    border: none;
+}
+
+
+
+
+
+
+
+

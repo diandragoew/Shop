@@ -22,13 +22,13 @@ margin: 0px;
 
 
 .headerSection .headerSection__myProfile,.headerSection .headerSection__login{
-	    display: inline-block;
-	    text-align: right;
+      display: inline-block;
+      text-align: right;
       padding-left: 20px;
 
 }
 .headerSection .headerSection__myProfile p,.headerSection .headerSection__login p{
-	    display: inline-block;
+      display: inline-block;
 color: black;
   font-size: 30px;
 }
