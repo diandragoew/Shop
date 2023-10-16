@@ -1,4 +1,4 @@
-package model;
+package shop.model;
 
 import java.util.Set;
 
