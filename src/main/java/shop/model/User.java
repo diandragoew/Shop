@@ -1,5 +1,6 @@
 package shop.model;
 import lombok.*;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 
