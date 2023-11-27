@@ -5,7 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -16,11 +16,12 @@ import java.time.LocalDateTime;
 @Table(name = "messages")
 @AllArgsConstructor
 @EqualsAndHashCode
+@Access(AccessType.FIELD)
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    private Long id;
     @Column(name = "text")
     private String text;
     @Column(name = "date")

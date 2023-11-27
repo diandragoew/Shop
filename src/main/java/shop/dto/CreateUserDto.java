@@ -3,8 +3,6 @@ package shop.dto;
 import lombok.*;
 import shop.model.Ad;
 
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
 import java.util.Set;
 @Getter
 @Setter

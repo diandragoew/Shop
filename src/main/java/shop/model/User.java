@@ -2,10 +2,9 @@ package shop.model;
 import lombok.*;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import java.util.Set;
-@Entity
 @Getter
 @Setter
 @ToString
@@ -13,6 +12,8 @@ import java.util.Set;
 @Table(name = "users")
 @AllArgsConstructor
 @EqualsAndHashCode
+@Entity
+@Access(AccessType.FIELD)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

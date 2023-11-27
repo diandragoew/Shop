@@ -5,7 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
@@ -16,11 +16,12 @@ import java.util.List;
 @Table(name = "ads")
 @AllArgsConstructor
 @EqualsAndHashCode
+@Access(AccessType.FIELD)
 public class Ad {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    private Long id;
     @Column(name = "title")
     private String title;
     @Column(name = "description")

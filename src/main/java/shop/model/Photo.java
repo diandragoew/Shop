@@ -5,7 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 @Entity
 @Getter
 @Setter
@@ -14,11 +14,12 @@ import javax.persistence.*;
 @Table(name = "photos")
 @AllArgsConstructor
 @EqualsAndHashCode
+@Access(AccessType.FIELD)
 public class Photo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    private Long id;
     @Column(name = "photo_path")
     private String photoPath;
 

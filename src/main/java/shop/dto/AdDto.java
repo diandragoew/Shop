@@ -2,8 +2,7 @@ package shop.dto;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;

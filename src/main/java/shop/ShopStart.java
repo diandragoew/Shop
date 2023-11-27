@@ -10,6 +10,9 @@ import shop.dao.DatabaseConfig;
 import javax.sql.DataSource;
 
 @SpringBootApplication
+@ComponentScan(basePackages = "shop")
+@EntityScan(basePackages = "shop.model")
+@EnableJpaRepositories(basePackages = "shop.dao")
 public class ShopStart {
     public static void main(String[] args) {
         SpringApplication.run(ShopStart.class, args);
