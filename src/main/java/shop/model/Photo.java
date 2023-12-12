@@ -11,7 +11,7 @@ import jakarta.persistence.*;
 @Setter
 @ToString
 @NoArgsConstructor
-@Table(name = "photos")
+@Table(name = "photos", schema = "shop")
 @AllArgsConstructor
 @EqualsAndHashCode
 @Access(AccessType.FIELD)

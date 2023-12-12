@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @NoArgsConstructor
-@Table(name = "messages")
+@Table(name = "messages", schema = "shop")
 @AllArgsConstructor
 @EqualsAndHashCode
 @Access(AccessType.FIELD)

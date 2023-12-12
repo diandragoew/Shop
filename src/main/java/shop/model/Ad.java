@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 @ToString
 @NoArgsConstructor
-@Table(name = "ads")
+@Table(name = "ads", schema = "shop")
 @AllArgsConstructor
 @EqualsAndHashCode
 @Access(AccessType.FIELD)

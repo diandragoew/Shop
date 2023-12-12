@@ -9,7 +9,7 @@ import java.util.Set;
 @Setter
 @ToString
 @NoArgsConstructor
-@Table(name = "users")
+@Table(name = "users", schema = "shop")
 @AllArgsConstructor
 @EqualsAndHashCode
 @Entity
