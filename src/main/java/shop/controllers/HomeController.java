@@ -22,7 +22,7 @@ public class HomeController {
     @ResponseBody
     public Resource getHtmlPage() {
 //      Load the HTML file from the specified path
-        Resource htmlFile = resourceLoader.getResource("file:C:/Users/ddragoev/IdeaProjects/shop/src/main/webapp/homePage/html/home.html");
+        Resource htmlFile = resourceLoader.getResource("/homePage/html/home.html");
         return htmlFile;
     }
 }
