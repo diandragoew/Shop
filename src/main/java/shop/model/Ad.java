@@ -6,6 +6,8 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -33,8 +35,12 @@ public class Ad {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private User creator;
-    @OneToMany(mappedBy = "ad", fetch = FetchType.EAGER)
-    private List<Photo> photos;
+    @OneToMany(mappedBy = "ad", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Photo> photos= new ArrayList<>();
     @OneToMany(mappedBy = "ad", fetch = FetchType.EAGER)
     private List<Message> messages;
+
+    public void addPhoto(Photo photo)    {
+        photos.add(photo);
+    }
 }

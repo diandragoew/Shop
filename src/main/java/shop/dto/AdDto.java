@@ -15,7 +15,7 @@ import java.util.List;
 public class AdDto {
 
 
-  private   String titleAd="ivan";
+  private   String titleAd="";
   private   String descriptionAd;
   private   String userName;
   private   String phone;
