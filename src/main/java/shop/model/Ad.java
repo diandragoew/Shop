@@ -13,11 +13,10 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @Table(name = "ads", schema = "shop")
 @AllArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"photos", "messages"})
 @Access(AccessType.FIELD)
 public class Ad {
     @Id

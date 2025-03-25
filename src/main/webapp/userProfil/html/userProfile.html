@@ -6,62 +6,62 @@
     <link rel="stylesheet" type="text/css" href="/userProfil/css/style.css">
 </head>
 <body>
-    <header class="headerSection">
-       <h1><a href="/homePage/html/home.html">Сергия BG</a></h1>
-    </header>
+<header class="headerSection">
+    <h1><a href="/homePage/html/home.html">Сергия BG</a></h1>
+</header>
 
-    <div class="userProfil">
-        <table class="table__ads">
-            <tr>
-                <th>обяви</th>
-            </tr>
-            <tr>
-                <td>
-                    <table>
-                        <tr>
+<div class="userProfil">
+    <table class="table__ads">
+        <tr>
+            <th>обяви</th>
+        </tr>
+        <tr>
+            <td>
+                <table>
+                    <tr>
 
-                            <th>действие</th><!-- продавам или купувам -->
-                            <th>заглавие на обявата</th> 
-                            <th>описание на обявата</th>
-                            <th>основна снимка</th>
-                        </tr>
-                        <tr>
-                            <td  class="table__ads--description">Lorem ipsum dolor sit amet, conss</td>
-                            <td class="table__ads--description">deserunt mollit anim id est laborum.
-                            </td>
-                            <td class="table__ads--description">Lorem ipsum dolor sit 
-                            </td>
-                            <td>
-                                <a href="/adPage/html/adPage.html">
-                                    <img src="/userProfil/img/1.jpeg" alt="обява" width="300" height="300">
-                                </a>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
+                        <th>действие</th><!-- продавам или купувам -->
+                        <th>заглавие на обявата</th>
+                        <th>описание на обявата</th>
+                        <th>основна снимка</th>
+                    </tr>
+                    <tr>
+                        <td class="table__ads--description">Lorem ipsum dolor sit amet, conss</td>
+                        <td class="table__ads--description">deserunt mollit anim id est laborum.
+                        </td>
+                        <td class="table__ads--description">Lorem ipsum dolor sit
+                        </td>
+                        <td>
+                            <a href="/adPage/html/adPage.html">
+                                <img src="/userProfil/img/1.jpeg" alt="обява" width="300" height="300">
+                            </a>
+                        </td>
+                    </tr>
+                </table>
+            </td>
 
-            </table>
+    </table>
 
 
-            <table class="table__messages">
-                <tr>
-                    <th>съобщения </th>
-                </tr>
+    <table class="table__messages">
+        <tr>
+            <th>съобщения</th>
+        </tr>
 
-                <tr>
-                    <td>
-                        <table>
-                          <tr>
-                            <th>заглавие на обявата </th><!-- продавам или купувам -->
+        <tr>
+            <td>
+                <table>
+                    <tr>
+                        <th>заглавие на обявата</th><!-- продавам или купувам -->
 
-                            <th>sender</th><!-- продавам или купувам -->
-                            <th>messages</th> 
-                        </tr>
-                        <tr>
-                            <td>
-                                <a href="/adPage/html/adPage.html"><p>опел за продажба</p></a>
-                            </td>
-                                                        <td>
+                        <th>sender</th><!-- продавам или купувам -->
+                        <th>messages</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="/adPage/html/adPage.html"><p>опел за продажба</p></a>
+                        </td>
+                        <td>
 
                             <a href="/publicUserProfil/html/publicUserProfil.html"><p>iivanov</p>
                             </a>
@@ -80,14 +80,21 @@
 
         </tr>
     </table>
-</td>
-</tr>
-</table>
+    </td>
+    </tr>
+    </table>
 
 </div>
 <footer id="footerSection">
 
 </footer>
-
+<script src="/js/api.js"></script>
+<script>
+    getUrl("/profile", function(data){
+        var user = JSON.parse(data);
+       var userName= user.userName;
+       console.log(userName);
+    });
+</script>
 </body>
 </html>

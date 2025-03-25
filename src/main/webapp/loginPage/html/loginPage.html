@@ -33,15 +33,38 @@
 		<a class="selling__picture--link" title="pageSelling" href="/pageSelling/html/pageSelling.html"> <img class="selling_picture" src="/loginPage/img/1.png" alt="selling picture" width="500" height="500">
 		</a>
 	</div>
-	<form class="loginForm">
-		<input class="loginForm__credentials" type="name" name="name" placeholder="name">
-		<input class="loginForm__credentials" type="password" name="pass" placeholder="password">
+	<form class="loginForm" method="POST" action="/login" id="loginForm">
+		<input class="loginForm__credentials" type="text" id="name" name="userName" placeholder="name">
+		<input class="loginForm__credentials" type="password" id="pass" name="password" placeholder="password">
 		<input class="loginForm__enter" type="submit" value="влез">
 	</form>
 
 	<footer id="footerSection">
 
 	</footer>
+
+
+	<script>
+		document.getElementById("loginForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const loginData = {
+                userName: document.getElementById("name").value,
+                password: document.getElementById("pass").value
+            };
+
+            console.log("Sending login request:", loginData);
+
+            fetch("http://localhost:8080/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(loginData)
+            })
+            .then(response => response.json())
+            .then(data => console.log("Login successful:", data))
+            .catch(error => console.error("Error:", error));
+        });
+	</script>
 
 </body>
 </html>

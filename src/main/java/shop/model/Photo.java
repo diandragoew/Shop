@@ -9,7 +9,6 @@ import jakarta.persistence.*;
 @Entity
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @Table(name = "photos", schema = "shop")
 @AllArgsConstructor

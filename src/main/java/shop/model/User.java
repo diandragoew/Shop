@@ -7,11 +7,10 @@ import jakarta.persistence.*;
 import java.util.Set;
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @Table(name = "users", schema = "shop")
 @AllArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = "ads")
 @Entity
 @Access(AccessType.FIELD)
 public class User {
