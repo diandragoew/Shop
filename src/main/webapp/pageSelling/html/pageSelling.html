@@ -8,49 +8,77 @@
 </head>
 
 <body>
-<header class="headerSection">
-    <h1><a href="/homePage/html/home.html">Сергия BG</a></h1>
-</header>
-<h2>
-    обяви
-</h2>
-<table class="tablePageSelling">
-    <tr>
-        <th>заглавие</th>
-        <th>снимка</th>
-        <th>потребител</th>
-        <th>телефон</th>
-        <th>съобщение</th>
-    </tr>
+    <header class="headerSection">
+        <h1><a href="/homePage/html/home.html">Сергия BG</a></h1>
+    </header>
+    <h2>
+        обяви
+    </h2>
+    <table class="tablePageSelling">
+        <tr>
+            <th>заглавие</th>
+            <th>снимка</th>
+            <th>потребител</th>
+            <th>телефон</th>
+            <th>съобщение</th>
+        </tr>
 
-</table>
+    </table>
 
-<footer id="footerSection">
+    <footer id="footerSection">
 
-</footer>
+    </footer>
 
 
-<script src="/js/api.js"></script>
-<script>
-    getUrl("/ads", function (data) {
-        var ads = JSON.parse(data);
-        console.log(ads);
-          var table = document.getElementsByClassName("tablePageSelling")[0];
+    <script src="/js/api.js"></script>
+    <script>
+        getUrl("/ads", function (data) {
+            var ads = JSON.parse(data);
+            console.log(ads);
+            var table = document.getElementsByClassName("tablePageSelling")[0];
 
-        for (var i = 0; i < ads.length; i++) {
-          var newRow = table.insertRow(i+1);
-          newRow.insertCell(0).innerHTML = ads[i].titleAd;
-          var photoPath = ads[i].photos.length > 0 ? ads[i].photos[0] : null;
+            for (var i = 0; i < ads.length; i++) {
+                var newRow = table.insertRow(i + 1);
 
-          var photo = "<img src='" + photoPath + "' alt='obqva' width='300' height='300'></a>"
-          newRow.insertCell(1).innerHTML = photo;
-          newRow.insertCell(2).innerHTML = "<a href='/publicUserProfil/html/publicUserProfil.html'><p>"+ads[i].userName+"</p></a>";
-          newRow.insertCell(3).innerHTML = ads[i].phone;
-          newRow.insertCell(4).innerHTML = "<form method='POST' action='/submit-form' id='tablePageSelling_message'><textarea class='tablePageSelling_message--text' type='text' rows='4' cols='20'></textarea><input class='tablePageSelling_message--send' type='submit'></form>";
-        }
-    });
+                newRow.insertCell(0).innerHTML = ads[i].titleAd;
+                var photoPath = ads[i].photos.length > 0 ? ads[i].photos[0] : null;
 
-</script>
+                var photo = "<img src='" + photoPath + "' alt='obqva' width='300' height='300'></a>"
+                newRow.insertCell(1).innerHTML = photo;
+                newRow.insertCell(2).innerHTML = "<a href='/publicUserProfil/html/publicUserProfil.html'><p>" + ads[i].userName + "</p></a>";
+                newRow.insertCell(3).innerHTML = ads[i].phone;
+                newRow.insertCell(4).innerHTML = `
+                <form method="POST" action="/createMessage" id='tablePageSelling_message' >
+                    <textarea class="tablePageSelling_message--text" name="text" rows="4" cols="20"></textarea>
+                    <input type="hidden" name="adId" value="${ads[i].id}">
+                    <input class="tablePageSelling_message--send" type="submit">
+                </form>
+                `;
+            }
+        });
+
+
+document.addEventListener("submit", function(event) {
+    if (event.target && event.target.matches("form[id='tablePageSelling_message']")) {
+        event.preventDefault(); // Prevents the page from reloading
+
+        let formData = new FormData(event.target);
+
+        fetch("/createMessage", {
+            method: "POST",
+            body: formData
+        })
+        .then(response => {
+            if (response.ok) {
+                alert("Message sent successfully!");
+            } else {
+                alert("Error sending message.");
+            }
+        })
+        .catch(error => console.error("Error:", error));
+    }
+});
+    </script>
 </body>
 
 </html>

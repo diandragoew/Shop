@@ -23,7 +23,7 @@ public class Message {
     private Long id;
     @Column(name = "text")
     private String text;
-    @Column(name = "date")
+    @Column(name = "date", nullable = false,  updatable = false)
     private LocalDateTime date;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)

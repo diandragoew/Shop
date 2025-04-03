@@ -34,13 +34,5 @@ public class Photo {
     @JsonIgnore
     private Ad ad;
 
-    @Override
-    public String toString() {
-        return "Photo{" +
-                "id=" + id +
-                ", photoPath='" + photoPath + '\'' +
-                ", ad=" + ad.getId() +
-                ", deployer=" + deployer.getId() +
-                '}';
-    }
+
 }

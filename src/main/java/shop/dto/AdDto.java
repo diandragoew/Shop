@@ -8,13 +8,12 @@ import java.util.Collections;
 import java.util.List;
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
 public class AdDto {
 
-
+  private   Long id;
   private   String titleAd="";
   private   String descriptionAd;
   private   String userName;

@@ -83,7 +83,7 @@ public class AdController {
 
             // Save the photo to a file
             String workingDir = System.getProperty("user.dir");
-            String imageDir = workingDir + "/src/main/webapp/adPage/img";
+            String imageDir = workingDir + "\\src\\main\\webapp\\adPage\\img";
             String newFileName = getNewFileName(imageDir, fileExtension);
             File adPhotoFile = new File(newFileName);
             try {
@@ -91,8 +91,8 @@ public class AdController {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-
-            adPhoto.setPhotoPath(adPhotoFile.getAbsolutePath());
+            String name = adPhotoFile.getName();
+            adPhoto.setPhotoPath("\\adPage\\img"+File.separator+name);
 //            adPhoto.setPhotoPath(adPhotoFile.getPath());
 
             adPhoto.setAd(ad);
@@ -110,10 +110,11 @@ public class AdController {
     @GetMapping("/ads")
     public List<AdDto> listAllAds() {
         List<Ad> ads = adRepository.findAll();
-        List<AdDto> adDtos= new ArrayList<>();
+        List<AdDto> adDtos = new ArrayList<>();
         AdDto adDto = new AdDto();
         for (Ad ad : ads) {
             adDto = new AdDto();
+            adDto.setId(ad.getId());
             adDto.setTitleAd(ad.getTitle());
             adDto.setDescriptionAd(ad.getDescription());
             adDto.setUserName(ad.getCreator().getUserName());
@@ -149,7 +150,7 @@ public class AdController {
                 }
             }
         }
-        return directory + "/" + String.valueOf(maxFileNumber + 1) + fileExtension;
+        return directory + "\\" + String.valueOf(maxFileNumber + 1) + fileExtension;
     }
 
     @PostMapping("/upload")

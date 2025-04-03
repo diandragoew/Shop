@@ -24,9 +24,10 @@ margin: 0px;
   display: inline;
 
 }
- .table__ads,.table__messages,.table__ads th,.table__ads table td , .table__messages table td, .table__messages th {
-  border: 1px solid black;
+.table__ads,.table__messages,.table__ads th,.table__ads td,.table__messages th,.table__messages td,.table__messages table {
+    border: 1px solid black;
 }
+
 .listPhotos li{
 	display: inline-block;
 }
