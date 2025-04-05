@@ -39,11 +39,50 @@ margin: 0px;
 .table__ads,.table__messages{
   display: inline-block;
 }
-.table__ads img{
-  width: 300;
-  height: 300;
-}
 .table__ads{
   margin-right: 20px;
 }
+.ads {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Two equal columns */
+  grid-template-rows: auto auto auto; /* Header row auto, content row fixed */
+  background-color: dodgerblue;
+  padding: 10px;
+  text-align: center;
+}
 
+.ads > h2 {
+  grid-column: 1 / span 2; /* Spans both columns */
+  margin: 0;
+  text-align: center;
+  color: white;
+}
+
+
+}
+
+.sells, .buys {
+  background-color: #f1f1f1;
+  border: 1px solid black;
+  padding: 20px;
+  font-size: 30px;
+  text-align: center;
+}
+.sells{
+  background-color: #0fef43;
+}
+
+.adsAndMessages {
+  background-color: #3fa056;
+;
+
+  display: flex;
+  gap: 20px; /* Space between tables */
+  justify-content: center; /* Centers the tables */
+  flex-wrap: wrap; /* Allows wrapping if the screen is too small */
+}
+
+.table__ads, .table__messages {
+  display: block; /* Reset any previous inline-block settings */
+  width: 45%; /* Adjust width to fit side by side */
+}

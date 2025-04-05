@@ -14,66 +14,74 @@
 
     <div class="userProfil">
 
-        <h2>обяви</h2>
+        <div class="ads">
+          <h2>обяви</h2>
+            <div class="sells">
+                <h3>продавам</h3>
 
-        <table class="table__ads">
-            <tr>
+            </div>
 
-                <th>заглавие на обявата</th>
-                <th>описание на обявата</th>
-                <th>основна снимка</th>
-            </tr>
-        </table>
+            <div class="buys">
+                <h3>купувам</h3>
+            </div>
+
+            <div class="adsAndMessages">
+
+            <table class="table__ads">
+                <tr>
+
+                    <th>заглавие на обявата</th>
+                    <th>описание на обявата</th>
+                    <th>основна снимка</th>
+                </tr>
+            </table>
+
+            <table class="table__messages">
+                <tr>
+                    <th>съобщения</th>
+                </tr>
+
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <!--                                <th>заглавие на обявата</th>&lt;!&ndash; продавам или купувам &ndash;&gt;-->
+
+                                <th>sender</th><!-- продавам или купувам -->
+                                <th>messages</th>
+                            </tr>
+                            <tr>
+
+                                <td>
+
+                                    <a href="/publicUserProfil/html/publicUserProfil.html">
+                                        <p>iivanov</p>
+                                    </a>
+                                </td>
+                                <td>
+                                    <ol>
+                                        <li>
+                                            <p>здравей</p>
+                                        </li>
+                                        <li>
+                                            <p>искам да я купя</p>
+                                        </li>
+                                        <li>
+                                            <p>...</p>
+                                        </li>
+
+                                    </ol>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+
+                </tr>
+            </table>
+            </div>
 
 
-
-        <table class="table__messages">
-            <tr>
-                <th>съобщения</th>
-            </tr>
-
-            <tr>
-                <td>
-                    <table>
-                        <tr>
-                            <th>заглавие на обявата</th><!-- продавам или купувам -->
-
-                            <th>sender</th><!-- продавам или купувам -->
-                            <th>messages</th>
-                        </tr>
-                        <tr>
-                            <td>
-                                <a href="/adPage/html/adPage.html">
-                                    <p>опел за продажба</p>
-                                </a>
-                            </td>
-                            <td>
-
-                                <a href="/publicUserProfil/html/publicUserProfil.html">
-                                    <p>iivanov</p>
-                                </a>
-                            </td>
-                            <td>
-                                <ol>
-                                    <li>
-                                        <p>здравей</p>
-                                    </li>
-                                    <li>
-                                        <p>искам да я купя</p>
-                                    </li>
-                                    <li>
-                                        <p>...</p>
-                                    </li>
-
-                                </ol>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-
-            </tr>
-        </table>
-
+        </div>
 
     </div>
     <footer id="footerSection">
@@ -97,7 +105,7 @@
                 newRow.insertCell(1).innerHTML = ads[i].description;
 
                 var photoPath = ads[i].photos.length > 0 ? ads[i].photos[0].photoPath : null;
-                var photo = "<img src='" + photoPath + "' alt='obqva' width='300' height='300'>"
+                var photo = "<img src='" + photoPath + "' alt='obqva' width='190' height='190'>"
                 newRow.insertCell(2).innerHTML = photo;
             }
         });
