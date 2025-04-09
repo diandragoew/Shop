@@ -117,7 +117,8 @@ public class AdController {
             adDto.setId(ad.getId());
             adDto.setTitleAd(ad.getTitle());
             adDto.setDescriptionAd(ad.getDescription());
-            adDto.setUserName(ad.getCreator().getUserName());
+            adDto.setCreatorName(ad.getCreator().getUserName());
+            adDto.setCreatorId(ad.getCreator().getId());
             adDto.setPhone(ad.getPhone());
             adDto.setPhotos(ad.getPhotos().stream().map(Photo::getPhotoPath).collect(Collectors.toList()));
             adDtos.add(adDto);

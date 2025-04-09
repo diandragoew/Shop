@@ -16,7 +16,8 @@ public class AdDto {
   private   Long id;
   private   String titleAd="";
   private   String descriptionAd;
-  private   String userName;
+  private   String creatorName;
+  private   Long creatorId;
   private   String phone;
   private   List<String> photos;
 
@@ -28,9 +29,6 @@ public class AdDto {
         return descriptionAd;
     }
 
-    public String getUserName() {
-        return userName;
-    }
 
     public String getPhone() {
         return phone;

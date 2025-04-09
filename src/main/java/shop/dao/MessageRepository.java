@@ -11,6 +11,6 @@ import shop.model.Message;
 public interface MessageRepository extends JpaRepository<Message, Long> {
     @Modifying
     @Transactional
-    @Query(value = "INSERT INTO shop.messages (user_id, ad_id, text, date) VALUES (:userId, :adId, :text, NOW())", nativeQuery = true)
-    void saveMessage(Long userId, Long adId, String text);
+    @Query(value = "INSERT INTO shop.messages (sender_id, recipient_id, ad_id, text, date) VALUES (:senderId,:recipientId, :adId, :text, NOW())", nativeQuery = true)
+    void saveMessage(Long senderId,Long recipientId, Long adId, String text);
 }

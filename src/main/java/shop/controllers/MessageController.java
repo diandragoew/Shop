@@ -29,19 +29,20 @@ public class MessageController {
     private AdRepository adRepository;
     @PostMapping("/createMessage")
     public void createMessage(@RequestParam("adId") Long adId,
+                              @RequestParam("creatorId") Long recipientId,
                               @RequestParam("text") String text,
                               HttpServletRequest request, HttpServletResponse response ) {
 
         HttpSession session = request.getSession();
-        Long userId = (Long) session.getAttribute("userId");
+        Long senderId = (Long) session.getAttribute("userId");
 
-        if(userId == null) {
+        if(senderId == null) {
             response.setStatus(401);
             return;
         }
 
 
-        messageRepository.saveMessage(userId, adId, text);
+        messageRepository.saveMessage(senderId,recipientId, adId, text);
 
         response.setStatus(200);
 

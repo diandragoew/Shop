@@ -24,7 +24,7 @@ margin: 0px;
   display: inline;
 
 }
-.table__ads,.table__messages,.table__ads th,.table__ads td,.table__messages th,.table__messages td,.table__messages table {
+.table__sells,.table__messages__sells,.table__sells th,.table__sells td,.table__messages__sells th,.table__messages__sells td,.table__messages__sells table {
     border: 1px solid black;
 }
 
@@ -32,14 +32,14 @@ margin: 0px;
 	display: inline-block;
 }
 
-.table__ads .table__ads--description{
+.table__sells {
   width: 30%;
 }
 
-.table__ads,.table__messages{
+.table__sells,.table__messages__sells{
   display: inline-block;
 }
-.table__ads{
+.table__sells{
   margin-right: 20px;
 }
 .ads {
@@ -72,7 +72,7 @@ margin: 0px;
   background-color: #0fef43;
 }
 
-.adsAndMessages {
+.adsSellsAndMessages {
   background-color: #3fa056;
 ;
 
@@ -82,7 +82,7 @@ margin: 0px;
   flex-wrap: wrap; /* Allows wrapping if the screen is too small */
 }
 
-.table__ads, .table__messages {
+.table__sells, .table__messages__sells {
   display: block; /* Reset any previous inline-block settings */
   width: 45%; /* Adjust width to fit side by side */
 }
