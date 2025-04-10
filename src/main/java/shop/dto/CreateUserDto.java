@@ -6,7 +6,6 @@ import shop.model.Ad;
 import java.util.Set;
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode

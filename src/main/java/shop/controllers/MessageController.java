@@ -3,6 +3,7 @@ package shop.controllers;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,6 +15,7 @@ import shop.dao.UserRepository;
 import shop.model.Ad;
 import shop.model.Message;
 import shop.model.User;
+import shop.service.CommunicationService;
 
 import java.util.Optional;
 
@@ -23,26 +25,26 @@ public class MessageController {
     private MessageRepository messageRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private CommunicationService communicationService;
 
-    @Autowired
-    private AdRepository adRepository;
     @PostMapping("/createMessage")
     public void createMessage(@RequestParam("adId") Long adId,
                               @RequestParam("creatorId") Long recipientId,
                               @RequestParam("text") String text,
-                              HttpServletRequest request, HttpServletResponse response ) {
+                              HttpServletRequest request, HttpServletResponse response) {
 
         HttpSession session = request.getSession();
         Long senderId = (Long) session.getAttribute("userId");
 
-        if(senderId == null) {
+        if (senderId == null) {
             response.setStatus(401);
             return;
         }
 
 
-        messageRepository.saveMessage(senderId,recipientId, adId, text);
+        Long communicationId = communicationService.takeCommunicationId(senderId, adId);
+
+        messageRepository.saveMessage(senderId, recipientId, adId, text, communicationId);
 
         response.setStatus(200);
 
