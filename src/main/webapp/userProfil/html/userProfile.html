@@ -39,42 +39,21 @@
 
             <table class="table__messages__sells">
                 <tr>
-                    <th>съобщения</th>
+                    <th colspan="3" style="text-align: center;">съобщения</th>
+                </tr>
+
+                <tr>
+                    <th>date</th>
+                    <th>sender</th>
+                    <th>messages</th>
                 </tr>
 
                 <tr>
                     <td>
-                        <table>
-                            <tr>
-                                <th>date</th>
-                                <th>sender</th>
-                                <th>messages</th>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <p>04.05.2020</p>
-                                </td>
-                                <td>
-
-                                    <a href="/publicUserProfil/html/publicUserProfil.html">
-                                        <p>iivanov</p>
-                                    </a>
-                                </td>
-                                <td>
-                                    <p>здравей, искам да я купя</p>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <p>още съобщения...</p>
-                                </td>
-                            </tr>
-
-                        </table>
+                        <p>още съобщения...</p>
                     </td>
-
                 </tr>
+
             </table>
         </div>
 
@@ -89,41 +68,43 @@
 <script>
     getUrl("/profile", function (data) {
         var user = JSON.parse(data);
+        var id = user.id;
         var userName = user.userName;
         console.log(userName);
-        var ads = user.ads;
-        console.log(ads);
+        
+        var sellAdDtos = user.sellAdDtos;
+        console.log(sellAdDtos);
 
         var tableSells = document.getElementsByClassName("table__sells")[0];
 
         var tableSellsMessages = document.getElementsByClassName("table__messages__sells")[0];
 
 
-        for (var i = 0; i < ads.length; i++) {
+        for (var i = 0; i < sellAdDtos.length; i++) {
 
             var newRowTableSells = tableSells.insertRow(i + 1);
 
-            newRowTableSells.insertCell(0).innerHTML = ads[i].title;
-            newRowTableSells.insertCell(1).innerHTML = ads[i].description;
+            newRowTableSells.insertCell(0).innerHTML = sellAdDtos[i].title;
+            newRowTableSells.insertCell(1).innerHTML = sellAdDtos[i].description;
 
-            var photoPath = ads[i].photos.length > 0 ? ads[i].photos[0].photoPath : null;
+            var photoPath = sellAdDtos[i].photos.length > 0 ? sellAdDtos[i].photos[0].photoPath : null;
             var photo = "<img src='" + photoPath + "' alt='obqva' width='190' height='190'>"
             newRowTableSells.insertCell(2).innerHTML = photo;
 
-            var messages = ads[i].messages;
+            var messages = sellAdDtos[i].messageDtos;
          for (var j = 0; j < messages.length; j++) {
             var message = messages[j];
 
-            var newRowTableSellsMessages = tableSellsMessages.insertRow(j + 1);
+            var newRowTableSellsMessages = tableSellsMessages.insertRow(j + 2);
 
             var date = message.date;
             newRowTableSellsMessages.insertCell(0).innerHTML = date;
 
-            var sender = message.sender.userName;
-            newRowTableSellsMessages.insertCell(1).innerHTML = sender;
+            var senderName = message.senderName;
+            newRowTableSellsMessages.insertCell(1).innerHTML = senderName;
 
-            var message = message.text;
-            newRowTableSellsMessages.insertCell(2).innerHTML = message;
+            var text = message.text;
+            newRowTableSellsMessages.insertCell(2).innerHTML = text;
          }
 
         }
