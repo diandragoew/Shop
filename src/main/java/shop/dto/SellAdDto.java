@@ -8,6 +8,8 @@ import shop.model.Message;
 import shop.model.Photo;
 
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 @Getter
 @Setter
@@ -18,6 +20,6 @@ public class SellAdDto {
     String description;
     List<Photo> photos;
 
-    private List<MessageDto> messageDtos;
+    private Set<MessageDto> messageDtos;
 
 }

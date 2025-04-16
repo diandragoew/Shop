@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -19,5 +20,18 @@ public class ProfileDto {
 
    public void addSellAdDto (SellAdDto sellAdDto) {
       sellAdDtos.add(sellAdDto);
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      ProfileDto that = (ProfileDto) o;
+      return Objects.equals(id, that.id) && Objects.equals(userName, that.userName);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hash(id, userName);
    }
 }

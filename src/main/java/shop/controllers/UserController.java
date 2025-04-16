@@ -11,18 +11,18 @@ import shop.dao.UserDao;
 import shop.dao.UserRepository;
 import shop.dto.*;
 import shop.model.Ad;
+import shop.model.Communication;
 import shop.model.Message;
 import shop.model.User;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 @RestController
 public class UserController {
-
+    //communication -> MessageDtos
+    Map<Long, Set<MessageDto>> communicationsAndMessageDtos = new TreeMap<>();
     @Autowired
     UserDao userDao;
     @Autowired
@@ -67,25 +67,37 @@ public class UserController {
         profileDto.setId(user.getId());
         profileDto.setUserName(user.getUserName());
 
+        communicationsAndMessageDtos = new TreeMap<>();
         for (Ad ad : ads) {
             SellAdDto sellAdDto = new SellAdDto();
             sellAdDto.setTitle(ad.getTitle());
             sellAdDto.setDescription(ad.getDescription());
             sellAdDto.setPhotos(ad.getPhotos());
 
-            List<MessageDto> messagesDtos = new ArrayList<>();
+            TreeSet<MessageDto> messagesDtos = new TreeSet<>();
             List<Message> messages = ad.getMessages();
             for (int i = 0; i < messages.size(); i++) {
                 MessageDto messageDto = new MessageDto();
                 messageDto.setDate(messages.get(i).getDate());
                 messageDto.setSenderName(messages.get(i).getSender().getUserName());
                 messageDto.setText(messages.get(i).getText());
+                messageDto.setCommunicationId(messages.get(i).getCommunication().getId());
                 messagesDtos.add(messageDto);
             }
             sellAdDto.setMessageDtos(messagesDtos);
+            if (messagesDtos.size() > 0) {
+               Long communicationId = messagesDtos.first().getCommunicationId();
+               communicationsAndMessageDtos.put(communicationId, messagesDtos); //communicationsAndMessageDtos
+            }
             profileDto.addSellAdDto(sellAdDto);
         }
 
         return profileDto;
     }
+
+    @PostMapping("/takeMessages")
+   public Set<MessageDto>getAllMessagesForCommunication(@RequestParam("communicationId") Long communicationId){
+        return communicationsAndMessageDtos.get(communicationId);
+    }
+
 }
