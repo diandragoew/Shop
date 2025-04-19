@@ -18,6 +18,7 @@ public class AdDto {
   private   String descriptionAd;
   private   String creatorName;
   private   Long creatorId;
+  private   Long loggedUserId;
   private   String phone;
   private   List<String> photos;
 

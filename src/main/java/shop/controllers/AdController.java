@@ -1,9 +1,9 @@
 package shop.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.json.GsonJsonParser;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.web.bind.annotation.*;
@@ -54,8 +54,15 @@ public class AdController {
     public Resource createAd(@RequestParam("title") String title,
                              @RequestParam("description") String description,
                              @RequestParam("phone") String phone,
-                             @RequestParam("photos") MultipartFile[] photos) {
+                             @RequestParam("photos") MultipartFile[] photos,
+                             HttpServletRequest request, HttpServletResponse response) {
 
+        HttpSession session = request.getSession();
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            response.setStatus(401);
+            return null;
+        }
 
         Ad ad = new Ad();
 
@@ -63,7 +70,7 @@ public class AdController {
         ad.setDescription(description);
         ad.setPhone(phone);
         User user = new User();
-        Optional<User> userOptional = userRepository.findById(1L);
+        Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isPresent()) {
             user = userOptional.get();
             // You can now access the user object without getting a LazyInitializationException
@@ -108,7 +115,10 @@ public class AdController {
     }
 
     @GetMapping("/ads")
-    public List<AdDto> listAllAds() {
+    public List<AdDto> listAllAds(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Long loggedUserId = (Long) session.getAttribute("userId");
+
         List<Ad> ads = adRepository.findAll();
         List<AdDto> adDtos = new ArrayList<>();
         AdDto adDto = new AdDto();
@@ -119,6 +129,7 @@ public class AdController {
             adDto.setDescriptionAd(ad.getDescription());
             adDto.setCreatorName(ad.getCreator().getUserName());
             adDto.setCreatorId(ad.getCreator().getId());
+            adDto.setLoggedUserId(loggedUserId);
             adDto.setPhone(ad.getPhone());
             adDto.setPhotos(ad.getPhotos().stream().map(Photo::getPhotoPath).collect(Collectors.toList()));
             adDtos.add(adDto);

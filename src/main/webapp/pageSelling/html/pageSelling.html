@@ -47,14 +47,20 @@
                 newRow.insertCell(1).innerHTML = photo;
                 newRow.insertCell(2).innerHTML = "<a href='/publicUserProfil/html/publicUserProfil.html'><p>" + ads[i].creatorName + "</p></a>";
                 newRow.insertCell(3).innerHTML = ads[i].phone;
+                var creatorId = ads[i].creatorId;
+                var loggedUserId = ads[i].loggedUserId;
+
+                if(creatorId !== loggedUserId){
                 newRow.insertCell(4).innerHTML = `
                 <form method="POST" action="/createMessage" id='tablePageSelling_message' >
                     <textarea class="tablePageSelling_message--text" name="text" rows="4" cols="20"></textarea>
                     <input type="hidden" name="adId" value="${ads[i].id}">
-                    <input type="hidden" name="creatorId" value="${ads[i].creatorId}">
+                    <input type="hidden" name="creatorId" value="${creatorId}">
                     <input class="tablePageSelling_message--send" type="submit">
                 </form>
                 `;
+                }
+
             }
         });
 

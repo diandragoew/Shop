@@ -5,6 +5,8 @@
     <title>sergiya.bg</title>
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="/userProfil/css/style.css">
+
+
 </head>
 
 <body>
@@ -26,35 +28,34 @@
             </div>
 
 
-            <div class="adsSellsAndMessages">
+            <div class="adsSellsAndMessages" id="adsContainer">
+                <template id="adTemplate">
+                    <div class="adBlock">
+                        <table class="table__sells">
+                            <tr>
+                                <th>заглавие на обявата</th>
+                                <th>описание на обявата</th>
+                                <th>основна снимка</th>
+                            </tr>
+                        </table>
 
-                <table class="table__sells">
-                    <tr>
-
-                        <th>заглавие на обявата</th>
-                        <th>описание на обявата</th>
-                        <th>основна снимка</th>
-                    </tr>
-                </table>
-
-                <table class="table__messages__sells">
-                    <tr>
-                        <th colspan="3" style="text-align: center;">съобщения</th>
-                    </tr>
-
-                    <tr>
-                        <th>date</th>
-                        <th>sender</th>
-                        <th>messages</th>
-                    </tr>
-
-                    <tr>
-                        <td colspan="3" style="text-align: left;">
-                            <button>още съобщения...</button>
-                        </td>
-                    </tr>
-
-                </table>
+                        <table class="table__messages__sells">
+                            <tr>
+                                <th colspan="3" style="text-align: center;">съобщения</th>
+                            </tr>
+                            <tr>
+                                <th>date</th>
+                                <th>sender</th>
+                                <th>messages</th>
+                            </tr>
+                            <tr>
+                                <td colspan="3" style="text-align: left; ba">
+                                    <button id="moreMessages">още съобщения...</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </template>
             </div>
 
 
@@ -75,14 +76,18 @@
             var sellAdDtos = user.sellAdDtos;
             console.log(sellAdDtos);
 
-            var tableSells = document.getElementsByClassName("table__sells")[0];
-
-            var tableSellsMessages = document.getElementsByClassName("table__messages__sells")[0];
-
+            const template = document.getElementById("adTemplate");
+            const maxSymbols = 10; // Define the maximum number of symbols to display
 
             for (var i = 0; i < sellAdDtos.length; i++) {
 
-                var newRowTableSells = tableSells.insertRow(i + 1);
+                const newClone = template.content.cloneNode(true);
+                document.getElementById("adsContainer").appendChild(newClone);
+
+                const tableSells = document.getElementsByClassName("table__sells")[i];
+                const tableSellsMessages = document.getElementsByClassName("table__messages__sells")[i];
+
+                var newRowTableSells = tableSells.insertRow(1);
 
                 newRowTableSells.insertCell(0).innerHTML = sellAdDtos[i].title;
                 newRowTableSells.insertCell(1).innerHTML = sellAdDtos[i].description;
@@ -105,10 +110,13 @@
                     newRowTableSellsMessages.insertCell(1).innerHTML = senderName;
 
                     var text = message.text;
+                    text = text.length > maxSymbols ? text.substring(0, maxSymbols) + "..." : text;
                     newRowTableSellsMessages.insertCell(2).innerHTML = text;
 
                     var more = document.createElement("BUTTON");
                     more.innerText = "view more";
+                    // Add the class
+                    more.classList.add("viewMoreThisCommunication");
                     newRowTableSellsMessages.insertCell(3).appendChild(more);
 
                     newRowTableSellsMessages = tableSellsMessages.insertRow(j + (++hardcodedRowsOfTableSellsMessages));
@@ -127,6 +135,8 @@
 
             }
         });
+
+
     </script>
 </body>
 
