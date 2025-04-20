@@ -50,7 +50,7 @@
                 var creatorId = ads[i].creatorId;
                 var loggedUserId = ads[i].loggedUserId;
 
-                if(creatorId !== loggedUserId){
+                if(loggedUserId !== null && creatorId !== loggedUserId){
                 newRow.insertCell(4).innerHTML = `
                 <form method="POST" action="/createMessage" id='tablePageSelling_message' >
                     <textarea class="tablePageSelling_message--text" name="text" rows="4" cols="20"></textarea>

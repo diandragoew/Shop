@@ -48,9 +48,9 @@
                                 <th>sender</th>
                                 <th>messages</th>
                             </tr>
-                            <tr>
-                                <td colspan="3" style="text-align: left; ba">
-                                    <button id="moreMessages">още съобщения...</button>
+                            <tr class="more-messages-row">
+                                <td colspan="3" style="text-align: left;">
+                                    <button class="moreMessages">още съобщения...</button>
                                 </td>
                             </tr>
                         </table>
@@ -67,6 +67,11 @@
     </footer>
     <script src="/js/api.js"></script>
     <script>
+        var globalMessagesByAd = [];  // Declare a global array to store messages by ad index or id
+
+        var globalShownMessagesByAd = {}; // Track how many messages are shown per ad
+
+
         getUrl("/profile", function (data) {
             var user = JSON.parse(data);
             var id = user.id;
@@ -77,9 +82,11 @@
             console.log(sellAdDtos);
 
             const template = document.getElementById("adTemplate");
-            const maxSymbols = 10; // Define the maximum number of symbols to display
 
             for (var i = 0; i < sellAdDtos.length; i++) {
+                let adId = sellAdDtos[i].id;
+                globalMessagesByAd[sellAdDtos[i].id] = sellAdDtos[i].messageDtos;
+
 
                 const newClone = template.content.cloneNode(true);
                 document.getElementById("adsContainer").appendChild(newClone);
@@ -97,31 +104,50 @@
                 newRowTableSells.insertCell(2).innerHTML = photo;
 
                 var messages = sellAdDtos[i].messageDtos;
-                var hardcodedRowsOfTableSellsMessages = 2;
-                for (var j = 0; j < messages.length; j++) {
-                    var message = messages[j];
+                displayMessagesByAd(tableSellsMessages, adId, 2); // show first 2
 
-                    var newRowTableSellsMessages = tableSellsMessages.insertRow(j + hardcodedRowsOfTableSellsMessages);
+                const moreBtn = tableSellsMessages.querySelector(".moreMessages");
+                moreBtn.addEventListener("click", function () {
+                    displayMessagesByAd(tableSellsMessages, adId, 2); // load 2 more
+                });
+            }
+        });
 
-                    var date = message.date;
-                    newRowTableSellsMessages.insertCell(0).innerHTML = date;
+        function displayMessagesByAd(tableSellsMessages, adId, count) {
+            var hardcodedRowsOfTableSellsMessages = 2;
+            const maxSymbols = 10; // Define the maximum number of symbols to display
 
-                    var senderName = message.senderName;
-                    newRowTableSellsMessages.insertCell(1).innerHTML = senderName;
+            const messages = globalMessagesByAd[adId];
+            if (!globalShownMessagesByAd[adId]) globalShownMessagesByAd[adId] = 0;
 
-                    var text = message.text;
-                    text = text.length > maxSymbols ? text.substring(0, maxSymbols) + "..." : text;
-                    newRowTableSellsMessages.insertCell(2).innerHTML = text;
+            const start = globalShownMessagesByAd[adId];
+            const end = Math.min(start + count, messages.length);
 
-                    var more = document.createElement("BUTTON");
-                    more.innerText = "view more";
-                    // Add the class
-                    more.classList.add("viewMoreThisCommunication");
-                    newRowTableSellsMessages.insertCell(3).appendChild(more);
 
-                    newRowTableSellsMessages = tableSellsMessages.insertRow(j + (++hardcodedRowsOfTableSellsMessages));
+            for (var j = start; j < end; j++) {
+                var message = messages[j];
 
-                    newRowTableSellsMessages.innerHTML = `
+                var newRowTableSellsMessages = tableSellsMessages.insertRow(-1);
+
+                var date = message.date;
+                newRowTableSellsMessages.insertCell(0).innerHTML = date;
+
+                var senderName = message.senderName;
+                newRowTableSellsMessages.insertCell(1).innerHTML = senderName;
+
+                var text = message.text;
+                text = text.length > maxSymbols ? text.substring(0, maxSymbols) + "..." : text;
+                newRowTableSellsMessages.insertCell(2).innerHTML = text;
+
+                var more = document.createElement("BUTTON");
+                more.innerText = "view more";
+                // Add the class
+                more.classList.add("viewMoreThisCommunication");
+                newRowTableSellsMessages.insertCell(3).appendChild(more);
+
+                newRowTableSellsMessages = tableSellsMessages.insertRow(-1);
+
+                newRowTableSellsMessages.innerHTML = `
                     <tr>
                     <td colspan="3">
                     <form method="POST" action="/createMessage" id="tablePageSelling_message">
@@ -131,11 +157,21 @@
                     </td>
                     </tr>
                     `;
-                }
-
             }
-        });
+            globalShownMessagesByAd[adId] = end;
 
+            // Move the "още съобщения..." row to the end
+            const moreMessagesRow = tableSellsMessages.querySelector(".more-messages-row");
+            if (globalShownMessagesByAd[adId] < messages.length) {
+                tableSellsMessages.appendChild(moreMessagesRow);
+            }
+
+            //remove the button "още съобщения", if there aren't more messages
+            if (globalShownMessagesByAd[adId] >= messages.length) {
+                const moreBtn = tableSellsMessages.querySelector(".more-messages-row");
+                if (moreBtn) moreBtn.style.display = "none";
+            }
+        };
 
     </script>
 </body>

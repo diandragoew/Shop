@@ -70,6 +70,8 @@ public class UserController {
         communicationsAndMessageDtos = new TreeMap<>();
         for (Ad ad : ads) {
             SellAdDto sellAdDto = new SellAdDto();
+
+            sellAdDto.setId(ad.getId());
             sellAdDto.setTitle(ad.getTitle());
             sellAdDto.setDescription(ad.getDescription());
             sellAdDto.setPhotos(ad.getPhotos());

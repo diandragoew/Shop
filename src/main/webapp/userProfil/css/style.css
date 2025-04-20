@@ -168,7 +168,7 @@ body {
   /* You might want to adjust width if it's too wide */
 }
 
-#moreMessages {
+.moreMessages {
   background-color: purple;
 }
 
