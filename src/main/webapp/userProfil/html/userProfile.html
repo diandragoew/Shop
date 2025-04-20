@@ -84,8 +84,10 @@
             const template = document.getElementById("adTemplate");
 
             for (var i = 0; i < sellAdDtos.length; i++) {
+                let messages = sellAdDtos[i].messageDtos;
+                globalMessagesByAd[sellAdDtos[i].id] = messages;
+
                 let adId = sellAdDtos[i].id;
-                globalMessagesByAd[sellAdDtos[i].id] = sellAdDtos[i].messageDtos;
 
 
                 const newClone = template.content.cloneNode(true);
@@ -103,7 +105,6 @@
                 var photo = "<img src='" + photoPath + "' alt='obqva' width='190' height='190'>"
                 newRowTableSells.insertCell(2).innerHTML = photo;
 
-                var messages = sellAdDtos[i].messageDtos;
                 displayMessagesByAd(tableSellsMessages, adId, 2); // show first 2
 
                 const moreBtn = tableSellsMessages.querySelector(".moreMessages");
@@ -114,64 +115,63 @@
         });
 
         function displayMessagesByAd(tableSellsMessages, adId, count) {
-            var hardcodedRowsOfTableSellsMessages = 2;
-            const maxSymbols = 10; // Define the maximum number of symbols to display
+            const maxSymbols = 10;
 
             const messages = globalMessagesByAd[adId];
+            if (!messages || messages.length === 0) return;
+
+            // Keep only the last message per communicationId (since they're in order)
+            const latestMessagesMap = new Map();
+            messages.forEach(msg => latestMessagesMap.set(msg.communicationId, msg));
+
+            const uniqueLatestMessages = Array.from(latestMessagesMap.values());
+
             if (!globalShownMessagesByAd[adId]) globalShownMessagesByAd[adId] = 0;
-
             const start = globalShownMessagesByAd[adId];
-            const end = Math.min(start + count, messages.length);
+            const end = Math.min(start + count, uniqueLatestMessages.length);
 
+            for (let j = start; j < end; j++) {
+                const message = uniqueLatestMessages[j];
 
-            for (var j = start; j < end; j++) {
-                var message = messages[j];
+                const newRowTableSellsMessages = tableSellsMessages.insertRow(-1);
 
-                var newRowTableSellsMessages = tableSellsMessages.insertRow(-1);
+                newRowTableSellsMessages.insertCell(0).innerHTML = message.date;
+                newRowTableSellsMessages.insertCell(1).innerHTML = message.senderName;
 
-                var date = message.date;
-                newRowTableSellsMessages.insertCell(0).innerHTML = date;
-
-                var senderName = message.senderName;
-                newRowTableSellsMessages.insertCell(1).innerHTML = senderName;
-
-                var text = message.text;
+                let text = message.text;
                 text = text.length > maxSymbols ? text.substring(0, maxSymbols) + "..." : text;
                 newRowTableSellsMessages.insertCell(2).innerHTML = text;
 
-                var more = document.createElement("BUTTON");
+                const more = document.createElement("BUTTON");
                 more.innerText = "view more";
-                // Add the class
                 more.classList.add("viewMoreThisCommunication");
+                more.dataset.communicationId = message.communicationId;
+                more.dataset.adId = adId; // hidden attribute as requested
                 newRowTableSellsMessages.insertCell(3).appendChild(more);
 
-                newRowTableSellsMessages = tableSellsMessages.insertRow(-1);
-
-                newRowTableSellsMessages.innerHTML = `
-                    <tr>
-                    <td colspan="3">
-                    <form method="POST" action="/createMessage" id="tablePageSelling_message">
-                        <textarea class="tablePageSelling_message--text" placeholder = "напиши съобщение" name="text"></textarea>
+                const formRow = tableSellsMessages.insertRow(-1);
+                formRow.innerHTML = `
+            <tr>
+                <td colspan="3">
+                    <form method="POST" action="/createMessage">
+                        <textarea class="tablePageSelling_message--text" placeholder="напиши съобщение" name="text"></textarea>
                         <input class="tablePageSelling_message--send" type="submit">
                     </form>
-                    </td>
-                    </tr>
-                    `;
+                </td>
+            </tr>
+        `;
             }
+
             globalShownMessagesByAd[adId] = end;
 
-            // Move the "още съобщения..." row to the end
             const moreMessagesRow = tableSellsMessages.querySelector(".more-messages-row");
-            if (globalShownMessagesByAd[adId] < messages.length) {
+            if (end < uniqueLatestMessages.length) {
                 tableSellsMessages.appendChild(moreMessagesRow);
+            } else if (moreMessagesRow) {
+                moreMessagesRow.style.display = "none";
             }
+        }
 
-            //remove the button "още съобщения", if there aren't more messages
-            if (globalShownMessagesByAd[adId] >= messages.length) {
-                const moreBtn = tableSellsMessages.querySelector(".more-messages-row");
-                if (moreBtn) moreBtn.style.display = "none";
-            }
-        };
 
     </script>
 </body>
