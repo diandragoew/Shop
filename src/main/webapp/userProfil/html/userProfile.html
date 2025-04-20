@@ -149,6 +149,10 @@
                 more.dataset.adId = adId; // hidden attribute as requested
                 newRowTableSellsMessages.insertCell(3).appendChild(more);
 
+                more.addEventListener("click", function () {
+                    displayAllMessagesPerCommunicationId(this);
+                });
+
                 const formRow = tableSellsMessages.insertRow(-1);
                 const cell = formRow.insertCell(0);
                 cell.colSpan = 3;
@@ -169,6 +173,54 @@
             } else if (moreMessagesRow) {
                 moreMessagesRow.style.display = "none";
             }
+        };
+        function displayAllMessagesPerCommunicationId(viewMore) {
+            const communicationId = viewMore.dataset.communicationId;
+
+            // NEW: find the adId from dataset
+            const adId = viewMore.dataset.adId;
+            const allMessages = globalMessagesByAd[adId];
+
+            if (!allMessages) return;
+
+            // NEW: filter messages matching the communicationId
+            const filteredMessages = allMessages.filter(msg => msg.communicationId == communicationId);
+
+
+
+            // Clone and prepare the message display
+            const template = document.getElementById("adTemplate");
+            const tableMessagesTemplate = template.content.querySelector(".table__messages__sells");
+            const newClone = tableMessagesTemplate.cloneNode(true);
+            newClone.className = "allMessages";
+            newClone.style.position = "absolute";
+            newClone.style.left = "100px";
+
+            // Remove the "more messages" row
+            const moreMessagesRow = newClone.querySelector(".more-messages-row");
+            if (moreMessagesRow) {
+                moreMessagesRow.remove();
+            }
+
+            // Optionally, fill the cloned table with the full messages
+            const messagesTableBody = newClone;
+            filteredMessages.forEach(msg => {
+                const row = messagesTableBody.insertRow(-1);
+                row.insertCell(0).innerText = msg.date;
+                row.insertCell(1).innerText = msg.senderName;
+                row.insertCell(2).innerText = msg.text;
+            });
+            const formRow = messagesTableBody.insertRow(-1);
+            const cell = formRow.insertCell(0);
+            cell.colSpan = 3;
+            cell.className = "tablePageSelling_message--textarea";
+            cell.innerHTML = `
+    <form method="POST" action="/createMessage" class="messageForm">
+        <textarea class="tablePageSelling_message--text" placeholder="напиши съобщение" name="text"></textarea>
+        <input class="tablePageSelling_message--send" type="submit" value="Изпращане">
+    </form>
+`;
+            viewMore.parentElement.appendChild(newClone);
         }
 
 
