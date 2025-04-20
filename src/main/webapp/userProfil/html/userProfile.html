@@ -150,16 +150,15 @@
                 newRowTableSellsMessages.insertCell(3).appendChild(more);
 
                 const formRow = tableSellsMessages.insertRow(-1);
-                formRow.innerHTML = `
-            <tr>
-                <td colspan="3">
-                    <form method="POST" action="/createMessage">
-                        <textarea class="tablePageSelling_message--text" placeholder="напиши съобщение" name="text"></textarea>
-                        <input class="tablePageSelling_message--send" type="submit">
-                    </form>
-                </td>
-            </tr>
-        `;
+                const cell = formRow.insertCell(0);
+                cell.colSpan = 3;
+                cell.className = "tablePageSelling_message--textarea";
+                cell.innerHTML = `
+    <form method="POST" action="/createMessage" class="messageForm">
+        <textarea class="tablePageSelling_message--text" placeholder="напиши съобщение" name="text"></textarea>
+        <input class="tablePageSelling_message--send" type="submit" value="Изпращане">
+    </form>
+`;
             }
 
             globalShownMessagesByAd[adId] = end;

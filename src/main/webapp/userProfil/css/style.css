@@ -74,14 +74,9 @@ body {
   color: white;
 }
 
-
-}
-
-.sells,
-.buys {
+.sells, .buys {
   background-color: #f1f1f1;
   border: 1px solid black;
-  padding: 20px;
   font-size: 30px;
   text-align: center;
 }
@@ -98,14 +93,8 @@ body {
   /* Space between tables */
   flex-wrap: wrap;
   /* Allows wrapping if the screen is too small */
-}
-
-.adsSellsAndMessages {
   background-color: #3fa056;
-  display: flex;
-  gap: 20px;
-  /* Space between tables */
-  flex-wrap: wrap;
+
   /* Allows wrapping if the screen is too small */
   /* Remove width: 100%; */
   /* Remove overflow: auto; unless you specifically need scrolling */
@@ -144,15 +133,16 @@ body {
   outline: 2px solid blue;
 
 }
-
-
-#tablePageSelling_message {
+.messageForm {
   display: flex;
-  /* Enable flexbox for the form */
   flex-direction: column;
-  /* Stack the text area and button vertically */
   align-items: center;
-  /* Center items horizontally */
+  width: 100%;
+}
+
+
+.tablePageSelling_message--textarea {
+  text-align: center;
 }
 
 .tablePageSelling_message--text {
