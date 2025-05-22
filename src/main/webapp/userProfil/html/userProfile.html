@@ -193,9 +193,6 @@
             const tableMessagesTemplate = template.content.querySelector(".table__messages__sells");
             const newClone = tableMessagesTemplate.cloneNode(true);
             newClone.className = "allMessages";
-            newClone.style.position = "absolute";
-            newClone.style.left = "100px";
-
             // Remove the "more messages" row
             const moreMessagesRow = newClone.querySelector(".more-messages-row");
             if (moreMessagesRow) {
@@ -220,7 +217,22 @@
         <input class="tablePageSelling_message--send" type="submit" value="Изпращане">
     </form>
 `;
+            viewMore.parentElement.style.position = "relative";
+            viewMore.style.background = "yellow";
+
             viewMore.parentElement.appendChild(newClone);
+
+                // Detect outside click
+    setTimeout(() => {  // timeout ensures it doesn't immediately trigger on same click
+        function outsideClickHandler(event) {
+            if (!newClone.contains(event.target) && event.target !== viewMore) {
+                newClone.remove();
+                viewMore.style.background = "pink"; // Restore color
+                document.removeEventListener("click", outsideClickHandler);
+            }
+        }
+        document.addEventListener("click", outsideClickHandler);
+    }, 0);
         }
 
 

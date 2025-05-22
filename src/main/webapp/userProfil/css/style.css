@@ -165,3 +165,10 @@ body {
 .viewMoreThisCommunication {
   background: pink;
 }
+
+.allMessages{
+  background: yellow;
+  position: absolute;
+  top: 0;
+  left: 100%; /* Position to the right of parent */
+}
