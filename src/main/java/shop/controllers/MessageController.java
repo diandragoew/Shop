@@ -29,7 +29,6 @@ public class MessageController {
 
     @PostMapping("/createMessage")
     public void createMessage(@RequestParam("adId") Long adId,
-                              @RequestParam("creatorId") Long recipientId,
                               @RequestParam("text") String text,
                               HttpServletRequest request, HttpServletResponse response) {
 
@@ -44,9 +43,28 @@ public class MessageController {
 
         Long communicationId = communicationService.takeCommunicationId(senderId, adId);
 
-        messageRepository.saveMessage(senderId, recipientId, adId, text, communicationId);
+        messageRepository.saveMessage(senderId, text, communicationId);
 
         response.setStatus(200);
 
     }
+
+    @PostMapping("/addMessage")
+    public void addMessage(@RequestParam("text") String text,
+                           @RequestParam("communicationId") Long communicationId,
+                           HttpServletRequest request, HttpServletResponse response) {
+
+        HttpSession session = request.getSession();
+        Long senderId = (Long) session.getAttribute("userId");
+
+        if (senderId == null) {
+            response.setStatus(401);
+            return;
+        }
+
+        messageRepository.saveMessage(senderId,  text, communicationId);
+        response.setStatus(200);
+
+    }
+
 }

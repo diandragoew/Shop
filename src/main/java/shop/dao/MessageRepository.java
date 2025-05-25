@@ -9,16 +9,11 @@ import shop.model.Message;
 
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
-    @Query(value = "SELECT * \n" +
-            "FROM shop.messages \n" +
-            "WHERE (sender_id = :userId OR recipient_id = :userId) AND ad_id = :adId\n" +
-            "LIMIT 1;\n", nativeQuery = true)
-    public Message takeMessage(Long userId, Long adId);
 
     @Modifying
     @Transactional
-    @Query(value = "INSERT INTO shop.messages (sender_id, recipient_id, ad_id, text,communication_id, date) VALUES (:senderId,:recipientId, :adId, :text,:communicationId, NOW())", nativeQuery = true)
-    void saveMessage(Long senderId,Long recipientId, Long adId, String text,Long communicationId);
+    @Query(value = "INSERT INTO shop.messages (sender_id,  text,communication_id, date) VALUES (:senderId,  :text,:communicationId, NOW())", nativeQuery = true)
+    void saveMessage(Long senderId,  String text,Long communicationId);
 
 
 

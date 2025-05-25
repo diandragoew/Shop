@@ -1,9 +1,13 @@
 package shop.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -14,6 +18,21 @@ public class Communication implements Comparable<Communication> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "ad_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
+    private Ad ad;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "creator_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
+    private User creator;
+
+    @OneToMany(mappedBy = "communication", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Message> messages;
 
     @Override
     public int compareTo(Communication o) {

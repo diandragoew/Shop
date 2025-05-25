@@ -30,14 +30,14 @@ public class Ad {
     @Column(name = "phone")
     private String phone;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "creator_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private User creator;
     @OneToMany(mappedBy = "ad", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Photo> photos= new ArrayList<>();
     @OneToMany(mappedBy = "ad", fetch = FetchType.EAGER)
-    private List<Message> messages;
+    private List<Communication> communications;
 
     public void addPhoto(Photo photo)    {
         photos.add(photo);

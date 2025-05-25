@@ -23,7 +23,7 @@ public class Photo {
     private String photoPath;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "user_id", nullable = false, foreignKey =  @ForeignKey(name = "FK_photos_users" ))
+    @JoinColumn(name = "deployer_id", nullable = false, foreignKey =  @ForeignKey(name = "FK_photos_users" ))
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private User deployer;

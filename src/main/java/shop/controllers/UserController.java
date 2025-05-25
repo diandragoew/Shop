@@ -76,21 +76,24 @@ public class UserController {
             sellAdDto.setDescription(ad.getDescription());
             sellAdDto.setPhotos(ad.getPhotos());
 
-            TreeSet<MessageDto> messagesDtos = new TreeSet<>();
-            List<Message> messages = ad.getMessages();
-            for (int i = 0; i < messages.size(); i++) {
-                MessageDto messageDto = new MessageDto();
-                messageDto.setDate(messages.get(i).getDate());
-                messageDto.setSenderName(messages.get(i).getSender().getUserName());
-                messageDto.setText(messages.get(i).getText());
-                messageDto.setCommunicationId(messages.get(i).getCommunication().getId());
-                messagesDtos.add(messageDto);
+            TreeSet<MessageDto> messagesDtos = new TreeSet<>((o1, o2) -> o1.getDate().compareTo(o2.getDate()));
+            List<Communication> communications = ad.getCommunications();
+
+            for (int i = 0; i < communications.size(); i++) {
+                Communication communication = communications.get(i);
+                List<Message> messages = communication.getMessages();
+                for (int j = 0; j <messages.size() ; j++) {
+                    MessageDto messageDto = new MessageDto();
+                    Message message = messages.get(j);
+                    messageDto.setDate(message.getDate());
+                    messageDto.setSenderName(message.getSender().getUserName());
+                    messageDto.setText(message.getText());
+                    messageDto.setCommunicationId(message.getCommunication().getId());
+                    messagesDtos.add(messageDto);
+                }
+                communicationsAndMessageDtos.put(communication.getId(), messagesDtos);
             }
             sellAdDto.setMessageDtos(messagesDtos);
-            if (messagesDtos.size() > 0) {
-               Long communicationId = messagesDtos.first().getCommunicationId();
-               communicationsAndMessageDtos.put(communicationId, messagesDtos); //communicationsAndMessageDtos
-            }
             profileDto.addSellAdDto(sellAdDto);
         }
 
