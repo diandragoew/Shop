@@ -71,7 +71,7 @@ public class UserController {
         for (Ad ad : ads) {
             SellAdDto sellAdDto = new SellAdDto();
 
-            sellAdDto.setId(ad.getId());
+            sellAdDto.setAdId(ad.getId());
             sellAdDto.setTitle(ad.getTitle());
             sellAdDto.setDescription(ad.getDescription());
             sellAdDto.setPhotos(ad.getPhotos());

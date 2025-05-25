@@ -17,7 +17,7 @@ import java.util.TreeSet;
 @AllArgsConstructor
 public class SellAdDto {
 
-    Long id;
+    Long adId;
     String title;
     String description;
     List<Photo> photos;
