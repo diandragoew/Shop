@@ -7,13 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 //import shop.dao.UserRepository;
+import shop.dao.CommunicationRepository;
 import shop.dao.UserDao;
 import shop.dao.UserRepository;
 import shop.dto.*;
-import shop.model.Ad;
-import shop.model.Communication;
-import shop.model.Message;
-import shop.model.User;
+import shop.model.*;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -21,12 +19,14 @@ import java.util.*;
 
 @RestController
 public class UserController {
-    //communication -> MessageDtos
-    Map<Long, Set<MessageDto>> communicationsAndMessageDtos = new TreeMap<>();
+
     @Autowired
-    UserDao userDao;
+    private UserDao userDao;
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private CommunicationRepository communicationRepository;
     @GetMapping("/users/sign-up")
     public void createUser() throws SQLException {
         System.out.println("createUser++++++++++++++++++++++");
@@ -50,9 +50,8 @@ public class UserController {
         session.setMaxInactiveInterval(3000);
     }
 
-    @Transactional
     @GetMapping("/profile")
-    public ProfileDto getUserProfile(HttpServletRequest request, HttpServletResponse response) {
+    public final ProfileDto getUserProfile(HttpServletRequest request, HttpServletResponse response) {
 
         HttpSession session = request.getSession();
         Long userId = (Long) session.getAttribute("userId");
@@ -61,13 +60,22 @@ public class UserController {
             return null;
         }
         User user = userRepository.findById(userId).get();
-        Set<Ad> ads = user.getAds();
         ProfileDto profileDto = new ProfileDto();
 
         profileDto.setId(user.getId());
         profileDto.setUserName(user.getUserName());
 
-        communicationsAndMessageDtos = new TreeMap<>();
+        Set<Ad> ads = user.getAds();
+        setSellAdDtos(ads, profileDto);
+
+        setBuyAdDtos(user, profileDto);
+
+        return profileDto;
+    }
+
+
+
+    private static void setSellAdDtos(Set<Ad> ads, ProfileDto profileDto) {
         for (Ad ad : ads) {
             SellAdDto sellAdDto = new SellAdDto();
 
@@ -91,18 +99,35 @@ public class UserController {
                     messageDto.setCommunicationId(message.getCommunication().getId());
                     messagesDtos.add(messageDto);
                 }
-                communicationsAndMessageDtos.put(communication.getId(), messagesDtos);
             }
             sellAdDto.setMessageDtos(messagesDtos);
             profileDto.addSellAdDto(sellAdDto);
         }
-
-        return profileDto;
     }
+    private void setBuyAdDtos(User user, ProfileDto profileDto) {
+        Set<Communication> communications = communicationRepository.findByCreator(user);
+        for (Communication communication : communications) {
+            Ad ad = communication.getAd();
+            BuyAdDto buyAdDto = new BuyAdDto();
+            TreeSet<MessageDto> messagesDtos = new TreeSet<>((o1, o2) -> o1.getDate().compareTo(o2.getDate()));
+            buyAdDto.setAdId(ad.getId());
+            buyAdDto.setTitle(ad.getTitle());
+            buyAdDto.setDescription(ad.getDescription());
+            List<Photo> photos = ad.getPhotos();
+            buyAdDto.setPhotos(photos);
 
-    @PostMapping("/takeMessages")
-   public Set<MessageDto>getAllMessagesForCommunication(@RequestParam("communicationId") Long communicationId){
-        return communicationsAndMessageDtos.get(communicationId);
+            List<Message> messages = communication.getMessages();
+            for (Message message : messages) {
+                MessageDto messageDto = new MessageDto();
+                messageDto.setDate(message.getDate());
+                messageDto.setSenderName(message.getSender().getUserName());
+                messageDto.setText(message.getText());
+                messageDto.setCommunicationId(message.getCommunication().getId());
+                messagesDtos.add(messageDto);
+            }
+            buyAdDto.setMessageDtos(messagesDtos);
+            profileDto.addBuyAdDto(buyAdDto);
+        }
     }
 
 }

@@ -32,13 +32,13 @@ public class AdController {
     }
 
     @Autowired
-    AdRepository adRepository;
+    private AdRepository adRepository;
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    PhotoRepository photoRepository;
+    private PhotoRepository photoRepository;
 
     @GetMapping("/ads/{id}")
     public AdDto getAd(@PathVariable long id) {

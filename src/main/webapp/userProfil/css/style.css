@@ -37,6 +37,16 @@ body {
 .table__messages__sells table {
   border: 1px solid black;
 }
+.table__buys,
+.table__messages__buys,
+.table__buys th,
+.table__buys td,
+.table__messages__buys th,
+.table__messages__buys td,
+.table__messages__buys table {
+  border: 1px solid black;
+}
+
 
 .listPhotos li {
   display: inline-block;
@@ -45,14 +55,25 @@ body {
 .table__sells {
   width: 30%;
 }
+.table__buys {
+  width: 30%;
+}
 
 .table__sells,
 .table__messages__sells {
   display: inline-block;
 }
 
+.table__buys,
+.table__messages__buys {
+  display: inline-block;
+}
+
 .table__sells {
   margin-right: 20px;
+}
+.table__buys {
+  margin-left: 20px;
 }
 
 .ads {
@@ -85,6 +106,10 @@ body {
   background-color: #0fef43;
 }
 
+.buys {
+  background-color: #9e542d;
+}
+
 .adsSellsAndMessages {
   background-color: #3fa056;
 
@@ -93,7 +118,24 @@ body {
   /* Space between tables */
   flex-wrap: wrap;
   /* Allows wrapping if the screen is too small */
-  background-color: #3fa056;
+
+  /* Allows wrapping if the screen is too small */
+  /* Remove width: 100%; */
+  /* Remove overflow: auto; unless you specifically need scrolling */
+  padding: 10px;
+  /* Set the width to be determined by its content */
+  width: fit-content;
+  /* Or use max-content for more aggressive fitting */
+}
+
+.adsBuysAndMessages {
+  background-color: #d65917;
+
+  display: flex;
+  gap: 20px;
+  /* Space between tables */
+  flex-wrap: wrap;
+  /* Allows wrapping if the screen is too small */
 
   /* Allows wrapping if the screen is too small */
   /* Remove width: 100%; */
@@ -110,6 +152,12 @@ body {
   /* Make the image scale down to fit its container */
 
 }
+.table__buys td:nth-child(3) img {
+  /* Target the image in the "основна снимка" column */
+  max-width: 100%;
+  /* Make the image scale down to fit its container */
+
+}
 
 .table__sells,
 .table__messages__sells {
@@ -117,6 +165,11 @@ body {
   /* Adjust width to fit side by side */
 }
 
+.table__buys,
+.table__messages__buys {
+  width: 48%;
+  /* Adjust width to fit side by side */
+}
 
 .adBlock {
   width: 100%;
@@ -129,9 +182,15 @@ body {
   outline: 2px solid red;
 }
 
+.table__buys {
+  outline: 2px solid red;
+}
+
 .table__messages__sells {
   outline: 2px solid blue;
-
+}
+.table__messages__buys {
+  outline: 2px solid blue;
 }
 .messageForm {
   display: flex;
@@ -144,6 +203,9 @@ body {
 .tablePageSelling_message--textarea {
   text-align: center;
 }
+.tablePageBuying_message--textarea {
+  text-align: center;
+}
 
 .tablePageSelling_message--text {
   /* Existing styles for the text area */
@@ -152,11 +214,14 @@ body {
   margin-bottom: 5px;
   /* Add some space between the text area and the button */
 }
-
-.tablePageSelling_message--send {
-  /* Existing styles for the submit button */
-  /* You might want to adjust width if it's too wide */
+.tablePageBuying_message--text {
+  /* Existing styles for the text area */
+  box-sizing: border-box;
+  /* Include padding and border in the element's total width and height */
+  margin-bottom: 5px;
+  /* Add some space between the text area and the button */
 }
+
 
 .moreMessages {
   background-color: purple;
@@ -166,9 +231,17 @@ body {
   background: pink;
 }
 
-.allMessages{
+.allMessagesSells{
+  background: yellow;
+  position: absolute;
+  top: 0; /* Or your adjusted top value */
+  left: 100%;
+  z-index: 1; /* A high value more than the default value which is 0 to ensure it's above the other relative or absolute element */
+}
+
+.allMessagesBuys{
   background: yellow;
   position: absolute;
   top: 0;
-  left: 100%; /* Position to the right of parent */
+  right: 100%; /* Position to the right of parent */
 }

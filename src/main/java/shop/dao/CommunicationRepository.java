@@ -8,9 +8,11 @@ import shop.model.Communication;
 import shop.model.Message;
 import shop.model.User;
 
+import java.util.Set;
+
 @Repository
 public interface CommunicationRepository extends JpaRepository<Communication, Long> {
 
     Communication findByCreatorAndAd(User creator, Ad ad);
-
+    Set<Communication> findByCreator(User creator);
 }

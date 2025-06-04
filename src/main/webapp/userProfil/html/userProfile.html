@@ -29,7 +29,7 @@
 
 
             <div class="adsSellsAndMessages" id="adsSellsContainer">
-                <template id="adSellsTemplate">
+                <template id="adsSellsTemplate">
                     <div class="adBlock">
                         <table class="table__sells">
                             <tr>
@@ -59,24 +59,18 @@
             </div>
 
             <div class="adsBuysAndMessages" id="adsBuysContainer">
-                <template id="adBuysTemplate">
+                <template id="adsBuysTemplate">
                     <div class="adBlock">
-                        <table class="table__sells">
-                            <tr>
-                                <th>заглавие на обявата</th>
-                                <th>описание на обявата</th>
-                                <th>основна снимка</th>
-                            </tr>
-                        </table>
 
-                        <table class="table__messages__sells">
-                            <tr>
+                        <table class="table__messages__buys">
+                            <tr class="table__messages__buys__header">
                                 <th colspan="3" style="text-align: center;">съобщения</th>
                             </tr>
-                            <tr>
-                                <th>date</th>
-                                <th>sender</th>
+                            <tr class="table__messages__buys__columns">
                                 <th>messages</th>
+                                <th>sender</th>
+                                <th>date</th>
+
                             </tr>
                             <tr class="more-messages-row">
                                 <td colspan="3" style="text-align: left;">
@@ -84,6 +78,15 @@
                                 </td>
                             </tr>
                         </table>
+
+                        <table class="table__buys">
+                            <tr>
+                                <th>заглавие на обявата</th>
+                                <th>описание на обявата</th>
+                                <th>основна снимка</th>
+                            </tr>
+                        </table>
+
                     </div>
                 </template>
             </div>
@@ -97,9 +100,12 @@
     </footer>
     <script src="/js/api.js"></script>
     <script>
-        var globalMessagesByAd = [];  // Declare a global array to store messages by ad index or id
+        var globalMessagesByAdSells = [];  // Declare a global array to store messages for sells by ad index or id
+        var globalMessagesByAdBuys = [];  // Declare a global array to store messages for buys by ad index or id
 
-        var globalShownMessagesByAd = {}; // Track how many messages are shown per ad
+
+        var globalShownMessagesByAdSells = {}; // Track how many messages are shown for sells per ad
+        var globalShownMessagesByAdBuys = {}; // Track how many messages are shown for buys per ad
 
 
         getUrl("/profile", function (data) {
@@ -110,12 +116,21 @@
 
             var sellAdDtos = user.sellAdDtos;
             console.log(sellAdDtos);
+            var buyAdDtos = user.buyAdDtos;
+            console.log(buyAdDtos);
 
-            const template = document.getElementById("adSellsTemplate");
+            fillWithDataAdsSellsAndMessages(sellAdDtos);
+            fillWithDataAdsBuysAndMessages(buyAdDtos);
+
+
+        });
+
+        function fillWithDataAdsSellsAndMessages(sellAdDtos) {
+            const template = document.getElementById("adsSellsTemplate");
 
             for (var i = 0; i < sellAdDtos.length; i++) {
                 let messages = sellAdDtos[i].messageDtos;
-                globalMessagesByAd[sellAdDtos[i].adId] = messages;
+                globalMessagesByAdSells[sellAdDtos[i].adId] = messages;
 
                 let adId = sellAdDtos[i].adId;
 
@@ -135,19 +150,53 @@
                 var photo = "<img src='" + photoPath + "' alt='obqva' width='190' height='190'>"
                 newRowTableSells.insertCell(2).innerHTML = photo;
 
-                displayMessagesByAd(tableSellsMessages, adId, 2); // show first 2
+                displayMessagesByAdSells(tableSellsMessages, adId, 2); // show first 2
 
                 const moreBtn = tableSellsMessages.querySelector(".moreMessages");
                 moreBtn.addEventListener("click", function () {
-                    displayMessagesByAd(tableSellsMessages, adId, 2); // load 2 more
+                    displayMessagesByAdSells(tableSellsMessages, adId, 2); // load 2 more
                 });
             }
-        });
+        }
 
-        function displayMessagesByAd(tableSellsMessages, adId, count) {
+        function fillWithDataAdsBuysAndMessages(buyAdDtos) {
+            const template = document.getElementById("adsBuysTemplate");
+
+            for (var i = 0; i < buyAdDtos.length; i++) {
+                let messages = buyAdDtos[i].messageDtos;
+                globalMessagesByAdBuys[buyAdDtos[i].adId] = messages;
+
+                let adId = buyAdDtos[i].adId;
+
+
+                const newClone = template.content.cloneNode(true);
+                document.getElementById("adsBuysContainer").appendChild(newClone);
+
+                const tableBuys = document.getElementsByClassName("table__buys")[i];
+                const tableBuysMessages = document.getElementsByClassName("table__messages__buys")[i];
+
+                var newRowTableBuys = tableBuys.insertRow(1);
+
+                newRowTableBuys.insertCell(0).innerHTML = buyAdDtos[i].title;
+                newRowTableBuys.insertCell(1).innerHTML = buyAdDtos[i].description;
+
+                var photoPath = buyAdDtos[i].photos.length > 0 ? buyAdDtos[i].photos[0].photoPath : null;
+                var photo = "<img src='" + photoPath + "' alt='obqva' width='190' height='190'>"
+                newRowTableBuys.insertCell(2).innerHTML = photo;
+
+                displayMessagesByAdBuys(tableBuysMessages, adId, 2); // show first 2
+
+                const moreBtn = tableBuysMessages.querySelector(".moreMessages");
+                moreBtn.addEventListener("click", function () {
+                    displayMessagesByAdBuys(tableBuysMessages, adId, 2); // load 2 more
+                });
+            }
+        }
+
+        function displayMessagesByAdSells(tableSellsMessages, adId, count) {
             const maxSymbols = 10;
 
-            const messages = globalMessagesByAd[adId];
+            const messages = globalMessagesByAdSells[adId];
             if (!messages || messages.length === 0) return;
 
             // Keep only the last message per communicationId (since they're in order)
@@ -156,8 +205,8 @@
 
             const uniqueLatestMessages = Array.from(latestMessagesMap.values());
 
-            if (!globalShownMessagesByAd[adId]) globalShownMessagesByAd[adId] = 0;
-            const start = globalShownMessagesByAd[adId];
+            if (!globalShownMessagesByAdSells[adId]) globalShownMessagesByAdSells[adId] = 0;
+            const start = globalShownMessagesByAdSells[adId];
             const end = Math.min(start + count, uniqueLatestMessages.length);
 
             for (let j = start; j < end; j++) {
@@ -181,7 +230,7 @@
                 newRowTableSellsMessages.insertCell(3).appendChild(more);
 
                 more.addEventListener("click", function () {
-                    displayAllMessagesPerCommunicationId(this);
+                    displayAllMessagesSellsPerCommunicationId(this);
                 });
 
                 const formRow = tableSellsMessages.insertRow(-1);
@@ -197,7 +246,7 @@
 `;
             }
 
-            globalShownMessagesByAd[adId] = end;
+            globalShownMessagesByAdSells[adId] = end;
 
             const moreMessagesRow = tableSellsMessages.querySelector(".more-messages-row");
             if (end < uniqueLatestMessages.length) {
@@ -206,12 +255,12 @@
                 moreMessagesRow.style.display = "none";
             }
         };
-        function displayAllMessagesPerCommunicationId(viewMore) {
+        function displayAllMessagesSellsPerCommunicationId(viewMore) {
             const communicationId = viewMore.dataset.communicationId;
 
             // NEW: find the adId from dataset
             const adId = viewMore.dataset.adId;
-            const allMessages = globalMessagesByAd[adId];
+            const allMessages = globalMessagesByAdSells[adId];
 
             if (!allMessages) return;
 
@@ -221,10 +270,10 @@
 
 
             // Clone and prepare the message display
-            const template = document.getElementById("adSellsTemplate");
+            const template = document.getElementById("adsSellsTemplate");
             const tableMessagesTemplate = template.content.querySelector(".table__messages__sells");
             const newClone = tableMessagesTemplate.cloneNode(true);
-            newClone.className = "allMessages";
+            newClone.className = "allMessagesSells";
             // Remove the "more messages" row
             const moreMessagesRow = newClone.querySelector(".more-messages-row");
             if (moreMessagesRow) {
@@ -244,10 +293,10 @@
             cell.colSpan = 3;
             cell.className = "tablePageSelling_message--textarea";
             cell.innerHTML = `
-    <form method="POST" action="/createMessage" class="messageForm">
+    <form method="POST" action="/addMessage" class="messageForm">
         <textarea class="tablePageSelling_message--text" placeholder="напиши съобщение" name="text"></textarea>
-        <input class="tablePageSelling_message--send" type="submit" value="Изпращане">
         <input type="hidden" name="communicationId" value="${communicationId}">
+        <input class="tablePageSelling_message--send" type="submit" value="Изпращане">
     </form>
 `;
             viewMore.parentElement.style.position = "relative";
@@ -255,39 +304,182 @@
 
             viewMore.parentElement.appendChild(newClone);
 
-                // Detect outside click
-    setTimeout(() => {  // timeout ensures it doesn't immediately trigger on same click
-        function outsideClickHandler(event) {
-            if (!newClone.contains(event.target) && event.target !== viewMore) {
-                newClone.remove();
-                viewMore.style.background = "pink"; // Restore color
-                document.removeEventListener("click", outsideClickHandler);
-            }
+            // Detect outside click
+            setTimeout(() => {  // timeout ensures it doesn't immediately trigger on same click
+                function outsideClickHandler(event) {
+                    if (!newClone.contains(event.target) && event.target !== viewMore) {
+                        newClone.remove();
+                        viewMore.style.background = "pink"; // Restore color
+                        document.removeEventListener("click", outsideClickHandler);
+                    }
+                }
+                document.addEventListener("click", outsideClickHandler);
+            }, 0);
         }
-        document.addEventListener("click", outsideClickHandler);
-    }, 0);
-        }
 
-document.addEventListener("submit", function(event) {
-    if (event.target && event.target.matches("form[class='messageForm']")) {
-        event.preventDefault(); // Prevents the page from reloading
+        document.addEventListener("submit", function (event) {
+            if (event.target && event.target.matches("form[class='messageForm']")) {
+                event.preventDefault(); // Prevents the page from reloading
 
-        let formData = new FormData(event.target);
+                let formData = new FormData(event.target);
 
-        fetch("/addMessage", {
-            method: "POST",
-            body: formData
-        })
-        .then(response => {
-            if (response.ok) {
-                alert("Message sent successfully!");
-            } else {
-                alert("Error sending message.");
+                fetch("/addMessage", {
+                    method: "POST",
+                    body: formData
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            alert("Message sent successfully!");
+                        } else {
+                            alert("Error sending message.");
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
             }
-        })
-        .catch(error => console.error("Error:", error));
-    }
-});
+        });
+
+        function displayMessagesByAdBuys(tableBuysMessages, adId, count) {
+
+            const newTh = document.createElement("th");
+            newTh.style.border = "none";
+
+            const headerRow = tableBuysMessages.getElementsByClassName("table__messages__buys__header")[0];
+            headerRow.insertBefore(newTh, headerRow.firstChild);
+
+            const newColumnTh = document.createElement("th");
+            newColumnTh.style.border = "none";
+            const headerRowColumns = tableBuysMessages.getElementsByClassName("table__messages__buys__columns")[0];
+            headerRowColumns.insertBefore(newColumnTh, headerRowColumns.firstChild);
+
+
+            const maxSymbols = 10;
+
+            const messages = globalMessagesByAdBuys[adId];
+            if (!messages || messages.length === 0) return;
+
+            // Keep only the last message per communicationId (since they're in order)
+            const latestMessagesMap = new Map();
+            messages.forEach(msg => latestMessagesMap.set(msg.communicationId, msg));
+
+            const uniqueLatestMessages = Array.from(latestMessagesMap.values());
+
+            if (!globalShownMessagesByAdBuys[adId]) globalShownMessagesByAdBuys[adId] = 0;
+            const start = globalShownMessagesByAdBuys[adId];
+            const end = Math.min(start + count, uniqueLatestMessages.length);
+
+            for (let j = start; j < end; j++) {
+
+                const message = uniqueLatestMessages[j];
+                const communicationId = message.communicationId;
+
+                const newRowTableBuysMessages = tableBuysMessages.insertRow(-1);
+
+                let text = message.text;
+                text = text.length > maxSymbols ? text.substring(0, maxSymbols) + "..." : text;
+
+                const more = document.createElement("BUTTON");
+                more.innerText = "view more";
+                more.classList.add("viewMoreThisCommunication");
+                more.dataset.communicationId = communicationId;
+                more.dataset.adId = adId; // hidden attribute as requested
+                newRowTableBuysMessages.insertCell(0).appendChild(more);
+                more.addEventListener("click", function () {
+                    displayAllMessagesBuysPerCommunicationId(this);
+                });
+
+
+                newRowTableBuysMessages.insertCell(1).innerHTML = text;
+
+                newRowTableBuysMessages.insertCell(2).innerHTML = message.senderName;
+                newRowTableBuysMessages.insertCell(3).innerHTML = message.date;
+
+
+                const formRow = tableBuysMessages.insertRow(-1);
+                const invisibleCell = formRow.insertCell(0);
+                invisibleCell.style.border = "none";
+                const cell = formRow.insertCell(1);
+                cell.colSpan = 3;
+                cell.className = "tablePageBuying_message--textarea";
+                cell.innerHTML = `
+    <form method="POST" action="/addMessage" class="messageForm">
+        <textarea class="tablePageBuying_message--text" placeholder="напиши съобщение" name="text"></textarea>
+        <input type="hidden" name="communicationId" value="${communicationId}">
+        <input class="tablePageBuying_message--send" type="submit" value="Изпращане">
+    </form>
+`;
+            }
+
+            globalShownMessagesByAdBuys[adId] = end;
+
+            const moreMessagesRow = tableBuysMessages.querySelector(".more-messages-row");
+            if (end < uniqueLatestMessages.length) {
+                tableBuysMessages.appendChild(moreMessagesRow);
+            } else if (moreMessagesRow) {
+                moreMessagesRow.style.display = "none";
+            }
+        };
+        function displayAllMessagesBuysPerCommunicationId(viewMore) {
+            const communicationId = viewMore.dataset.communicationId;
+
+            // NEW: find the adId from dataset
+            const adId = viewMore.dataset.adId;
+            const allMessages = globalMessagesByAdBuys[adId];
+
+            if (!allMessages) return;
+
+            // NEW: filter messages matching the communicationId
+            const filteredMessages = allMessages.filter(msg => msg.communicationId == communicationId);
+
+
+
+            // Clone and prepare the message display
+            const template = document.getElementById("adsBuysTemplate");
+            const tableMessagesTemplate = template.content.querySelector(".table__messages__buys");
+            const newClone = tableMessagesTemplate.cloneNode(true);
+            newClone.className = "allMessagesBuys";
+            // Remove the "more messages" row
+            const moreMessagesRow = newClone.querySelector(".more-messages-row");
+            if (moreMessagesRow) {
+                moreMessagesRow.remove();
+            }
+
+            // Optionally, fill the cloned table with the full messages
+            const messagesTableBody = newClone;
+            filteredMessages.forEach(msg => {
+                const row = messagesTableBody.insertRow(-1);
+                row.insertCell(0).innerText = msg.text;
+                row.insertCell(1).innerText = msg.senderName;
+                row.insertCell(2).innerText = msg.date;
+
+            });
+            const formRow = messagesTableBody.insertRow(-1);
+            const cell = formRow.insertCell(0);
+            cell.colSpan = 3;
+            cell.className = "tablePageBuying_message--textarea";
+            cell.innerHTML = `
+    <form method="POST" action="/addMessage" class="messageForm">
+        <textarea class="tablePageBuying_message--text" placeholder="напиши съобщение" name="text"></textarea>
+        <input type="hidden" name="communicationId" value="${communicationId}">
+        <input class="tablePageBuying_message--send" type="submit" value="Изпращане">
+    </form>
+`;
+            viewMore.parentElement.style.position = "relative";
+            viewMore.style.background = "yellow";
+
+            viewMore.parentElement.appendChild(newClone);
+
+            // Detect outside click
+            setTimeout(() => {  // timeout ensures it doesn't immediately trigger on same click
+                function outsideClickHandler(event) {
+                    if (!newClone.contains(event.target) && event.target !== viewMore) {
+                        newClone.remove();
+                        viewMore.style.background = "pink"; // Restore color
+                        document.removeEventListener("click", outsideClickHandler);
+                    }
+                }
+                document.addEventListener("click", outsideClickHandler);
+            }, 0);
+        }
 
     </script>
 </body>

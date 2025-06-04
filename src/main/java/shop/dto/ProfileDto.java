@@ -21,6 +21,10 @@ public class ProfileDto {
    public void addSellAdDto (SellAdDto sellAdDto) {
       sellAdDtos.add(sellAdDto);
    }
+   public void addBuyAdDto (BuyAdDto buyAdDto) {
+      buyAdDtos.add(buyAdDto);
+   }
+
 
    @Override
    public boolean equals(Object o) {
