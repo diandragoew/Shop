@@ -18,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @EqualsAndHashCode(exclude = {"photos", "messages"})
 @Access(AccessType.FIELD)
-public class Ad {
+public class Ad implements Comparable<Ad> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -41,5 +41,14 @@ public class Ad {
 
     public void addPhoto(Photo photo)    {
         photos.add(photo);
+    }
+
+    @Override
+    public int compareTo(Ad o) {
+        if (this.title.compareTo(o.title) != 0) {
+            return this.title.compareTo(o.title);
+        }else {
+            return this.id.compareTo(o.id);
+        }
     }
 }

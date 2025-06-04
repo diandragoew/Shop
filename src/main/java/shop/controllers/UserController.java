@@ -105,7 +105,7 @@ public class UserController {
         }
     }
     private void setBuyAdDtos(User user, ProfileDto profileDto) {
-        Set<Communication> communications = communicationRepository.findByCreator(user);
+        Set<Communication> communications = new TreeSet<>(communicationRepository.findByCreator(user));
         for (Communication communication : communications) {
             Ad ad = communication.getAd();
             BuyAdDto buyAdDto = new BuyAdDto();

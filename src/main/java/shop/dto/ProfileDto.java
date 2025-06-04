@@ -3,9 +3,7 @@ package shop.dto;
 import lombok.*;
 //import shop.model.Message;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Getter
 @Setter
@@ -15,8 +13,8 @@ import java.util.Objects;
 public class ProfileDto {
    private Long id;
    private String userName;
-   private List<SellAdDto> sellAdDtos = new ArrayList<>();
-   private List<BuyAdDto> buyAdDtos = new ArrayList<>();
+   private Set<SellAdDto> sellAdDtos = new TreeSet<>();
+   private Set<BuyAdDto> buyAdDtos = new TreeSet<>();
 
    public void addSellAdDto (SellAdDto sellAdDto) {
       sellAdDtos.add(sellAdDto);

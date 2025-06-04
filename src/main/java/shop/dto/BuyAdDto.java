@@ -15,7 +15,7 @@ import java.util.TreeSet;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BuyAdDto {
+public class BuyAdDto implements Comparable<BuyAdDto> {
 
     Long adId;
     String title;
@@ -24,4 +24,12 @@ public class BuyAdDto {
 
     private Set<MessageDto> messageDtos;
 
+    @Override
+    public int compareTo(BuyAdDto buyAdDto) {
+        if (this.title.compareTo(buyAdDto.title) != 0) {
+            return this.title.compareTo(buyAdDto.title);
+        }else {
+            return this.adId.compareTo(buyAdDto.adId);
+        }
+    }
 }

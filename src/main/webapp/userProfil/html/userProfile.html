@@ -195,10 +195,13 @@
 
         function displayMessagesByAdSells(tableSellsMessages, adId, count) {
             const maxSymbols = 10;
+            const moreMessagesRow = tableSellsMessages.querySelector(".more-messages-row");
 
             const messages = globalMessagesByAdSells[adId];
-            if (!messages || messages.length === 0) return;
-
+            if (!messages || messages.length === 0) {
+                moreMessagesRow.style.display = "none";
+                return;
+            }
             // Keep only the last message per communicationId (since they're in order)
             const latestMessagesMap = new Map();
             messages.forEach(msg => latestMessagesMap.set(msg.communicationId, msg));
@@ -248,7 +251,6 @@
 
             globalShownMessagesByAdSells[adId] = end;
 
-            const moreMessagesRow = tableSellsMessages.querySelector(".more-messages-row");
             if (end < uniqueLatestMessages.length) {
                 tableSellsMessages.appendChild(moreMessagesRow);
             } else if (moreMessagesRow) {
