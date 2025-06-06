@@ -41,15 +41,16 @@
 
                         <table class="table__messages__sells">
                             <tr>
-                                <th colspan="3" style="text-align: center;">съобщения</th>
+                                <th colspan="4" style="text-align: center;">съобщения</th>
                             </tr>
                             <tr>
+                                <th class="table__messages__sells__header__buyer">купувач</th>
                                 <th>date</th>
                                 <th>sender</th>
                                 <th>messages</th>
                             </tr>
                             <tr class="more-messages-row">
-                                <td colspan="3" style="text-align: left;">
+                                <td colspan="4" style="text-align: left;">
                                     <button class="moreMessages">още съобщения...</button>
                                 </td>
                             </tr>
@@ -64,16 +65,18 @@
 
                         <table class="table__messages__buys">
                             <tr class="table__messages__buys__header">
-                                <th colspan="3" style="text-align: center;">съобщения</th>
+                                <th colspan="4" style="text-align: center;">съобщения</th>
                             </tr>
                             <tr class="table__messages__buys__columns">
                                 <th>messages</th>
                                 <th>sender</th>
                                 <th>date</th>
+                                <th class="table__messages__sells__header__seller">продавач</th>
+
 
                             </tr>
                             <tr class="more-messages-row">
-                                <td colspan="3" style="text-align: left;">
+                                <td colspan="4" style="text-align: left;">
                                     <button class="moreMessages">още съобщения...</button>
                                 </td>
                             </tr>
@@ -218,19 +221,21 @@
 
                 const newRowTableSellsMessages = tableSellsMessages.insertRow(-1);
 
-                newRowTableSellsMessages.insertCell(0).innerHTML = message.date;
-                newRowTableSellsMessages.insertCell(1).innerHTML = message.senderName;
+                newRowTableSellsMessages.insertCell(0).innerHTML = message.communicationCreatorName;
+
+                newRowTableSellsMessages.insertCell(1).innerHTML = message.date;
+                newRowTableSellsMessages.insertCell(2).innerHTML = message.senderName;
 
                 let text = message.text;
                 text = text.length > maxSymbols ? text.substring(0, maxSymbols) + "..." : text;
-                newRowTableSellsMessages.insertCell(2).innerHTML = text;
+                newRowTableSellsMessages.insertCell(3).innerHTML = text;
 
                 const more = document.createElement("BUTTON");
                 more.innerText = "view more";
                 more.classList.add("viewMoreThisCommunication");
                 more.dataset.communicationId = communicationId;
                 more.dataset.adId = adId; // hidden attribute as requested
-                newRowTableSellsMessages.insertCell(3).appendChild(more);
+                newRowTableSellsMessages.insertCell(4).appendChild(more);
 
                 more.addEventListener("click", function () {
                     displayAllMessagesSellsPerCommunicationId(this);
@@ -238,7 +243,7 @@
 
                 const formRow = tableSellsMessages.insertRow(-1);
                 const cell = formRow.insertCell(0);
-                cell.colSpan = 3;
+                cell.colSpan = 4;
                 cell.className = "tablePageSelling_message--textarea";
                 cell.innerHTML = `
     <form method="POST" action="/addMessage" class="messageForm">
@@ -247,6 +252,14 @@
         <input class="tablePageSelling_message--send" type="submit" value="Изпращане">
     </form>
 `;
+        // --- INSERT SPACER ROW HERE ---
+        const spacerRow = tableSellsMessages.insertRow(-1);
+        const spacerCell = spacerRow.insertCell(0);
+        spacerCell.colSpan = 3; /* Ensure it spans the full width of the table */
+        spacerCell.style.height = "10px"; /* Set the desired height of the space */
+        spacerCell.style.border = "none"; /* Remove any default cell borders */
+        spacerCell.style.backgroundColor = "transparent"; /* Ensure no background interferes */
+
             }
 
             globalShownMessagesByAdSells[adId] = end;
@@ -280,6 +293,12 @@
             const moreMessagesRow = newClone.querySelector(".more-messages-row");
             if (moreMessagesRow) {
                 moreMessagesRow.remove();
+            }
+
+            // Remove the "table__messages__sells__header__buyer" cell
+            const headerBuyer = newClone.querySelector(".table__messages__sells__header__buyer");
+            if (headerBuyer) {
+                headerBuyer.remove();
             }
 
             // Optionally, fill the cloned table with the full messages
@@ -394,13 +413,15 @@
 
                 newRowTableBuysMessages.insertCell(2).innerHTML = message.senderName;
                 newRowTableBuysMessages.insertCell(3).innerHTML = message.date;
+                newRowTableBuysMessages.insertCell(4).innerHTML = message.adCreatorName;
+
 
 
                 const formRow = tableBuysMessages.insertRow(-1);
                 const invisibleCell = formRow.insertCell(0);
                 invisibleCell.style.border = "none";
                 const cell = formRow.insertCell(1);
-                cell.colSpan = 3;
+                cell.colSpan = 4;
                 cell.className = "tablePageBuying_message--textarea";
                 cell.innerHTML = `
     <form method="POST" action="/addMessage" class="messageForm">
@@ -443,6 +464,12 @@
             const moreMessagesRow = newClone.querySelector(".more-messages-row");
             if (moreMessagesRow) {
                 moreMessagesRow.remove();
+            }
+
+            // Remove the "table__messages__sells__header__seller" cell
+            const headerSeller = newClone.querySelector(".table__messages__sells__header__seller");
+            if (headerSeller) {
+                headerSeller.remove();
             }
 
             // Optionally, fill the cloned table with the full messages

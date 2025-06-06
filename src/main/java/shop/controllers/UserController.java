@@ -96,7 +96,10 @@ public class UserController {
                     messageDto.setDate(message.getDate());
                     messageDto.setSenderName(message.getSender().getUserName());
                     messageDto.setText(message.getText());
-                    messageDto.setCommunicationId(message.getCommunication().getId());
+                    messageDto.setCommunicationId(communication.getId());
+                    messageDto.setCommunicationCreatorId(communication.getCreator().getId());
+                    messageDto.setCommunicationCreatorName(communication.getCreator().getUserName());
+
                     messagesDtos.add(messageDto);
                 }
             }
@@ -122,7 +125,9 @@ public class UserController {
                 messageDto.setDate(message.getDate());
                 messageDto.setSenderName(message.getSender().getUserName());
                 messageDto.setText(message.getText());
-                messageDto.setCommunicationId(message.getCommunication().getId());
+                messageDto.setCommunicationId(communication.getId());
+                messageDto.setAdCreatorId(ad.getCreator().getId());
+                messageDto.setAdCreatorName(ad.getCreator().getUserName());
                 messagesDtos.add(messageDto);
             }
             buyAdDto.setMessageDtos(messagesDtos);

@@ -19,6 +19,10 @@ public class MessageDto implements Comparable<MessageDto> {
     private String senderName;
     private String text;
     private Long communicationId;
+    private Long communicationCreatorId;
+    private String communicationCreatorName;
+    private Long adCreatorId;
+    private String adCreatorName;
 
     @Override
     public int compareTo(MessageDto other) {
