@@ -6,29 +6,8 @@
 	<link rel="stylesheet" type="text/css" href="/homePage/css/style.css">
 </head>
 <body>
-	<header class="headerSection">
+<div id="header-placeholder"></div>
 
-		  <h1><a href="/homePage/html/home.html">Сергия BG</a></h1>
-		<table class="headerSection__table">
-			<td>
-				<div class="headerSection__createAd">
-					<a  href="/createAd/html/createAd.html"><p>create ad</p></a>
-				</div>
-			</td>
-			<td>
-
-				<div class="headerSection__myProfile">
-					<a  href="/userProfil/html/userProfile.html"><p>my profil или create profil(според това дали си логнат или не)</p></a>
-				</div>
-			</td>
-			<td>
-
-				<div class="headerSection__login">
-					<a  href="/loginPage/html/loginPage.html"><p>вход или изход(според това дали си логнат или не)</p></a>
-				</div>
-			</td>
-		</table>
-	</header>
 	<div class="selling">
 		<a class="selling__picture--link" title="pageSelling" href="/pageSelling/html/pageSelling.html"> <img class="selling_picture" src="/homePage/img/1.png" alt="selling picture" width="500" height="500">
 		</a>
@@ -37,6 +16,10 @@
 	<footer id="footerSection">
 
 	</footer>
-
+	<script src="/js/api.js"></script>
+	<script>
+        // Call the function to load the header
+        loadHeader('/headerSection/html/header.html', 'header-placeholder'); // Adjust path as needed
+	</script>
 </body>
 </html>
