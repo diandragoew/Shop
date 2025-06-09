@@ -21,22 +21,22 @@ margin: 0px;
 }
 
 
-.headerSection .headerSection__myProfile,.headerSection .headerSection__login{
+.headerSection #headerSection__about__myProfile,.headerSection #headerSection__about__login{
 	    display: inline-block;
 	    text-align: right;
       padding-left: 20px;
 
 }
-.headerSection .headerSection__myProfile p,.headerSection .headerSection__login p{
+.headerSection #headerSection__about__myProfile p,.headerSection #headerSection__about__login p{
 	    display: inline-block;
 color: black;
   font-size: 30px;
 }
-.headerSection .headerSection__createAd{
+.headerSection #headerSection__createAd{
       display: inline-block;
       text-align: right;
 }
-.headerSection .headerSection__createAd p{
+.headerSection #headerSection__createAd p{
       display: inline-block;
 color: black;
   font-size: 30px;

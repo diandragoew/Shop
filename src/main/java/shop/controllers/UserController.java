@@ -11,6 +11,7 @@ import shop.dao.CommunicationRepository;
 import shop.dao.UserDao;
 import shop.dao.UserRepository;
 import shop.dto.*;
+import shop.exceptions.UnauthorizedException;
 import shop.model.*;
 
 import java.sql.SQLException;
@@ -27,6 +28,7 @@ public class UserController {
 
     @Autowired
     private CommunicationRepository communicationRepository;
+
     @GetMapping("/users/sign-up")
     public void createUser() throws SQLException {
         System.out.println("createUser++++++++++++++++++++++");
@@ -48,6 +50,18 @@ public class UserController {
         HttpSession session = request.getSession();
         session.setAttribute("userId", user.getId());
         session.setMaxInactiveInterval(3000);
+    }
+
+    @GetMapping("/isLoggedIn")
+    public boolean isLoggedIn(HttpServletRequest request) throws SQLException {
+        HttpSession session = request.getSession();
+        Long loggedUserId = (Long) session.getAttribute("userId");
+
+        if (loggedUserId == null) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     @GetMapping("/profile")
@@ -74,7 +88,6 @@ public class UserController {
     }
 
 
-
     private static void setSellAdDtos(Set<Ad> ads, ProfileDto profileDto) {
         for (Ad ad : ads) {
             SellAdDto sellAdDto = new SellAdDto();
@@ -90,7 +103,7 @@ public class UserController {
             for (int i = 0; i < communications.size(); i++) {
                 Communication communication = communications.get(i);
                 List<Message> messages = communication.getMessages();
-                for (int j = 0; j <messages.size() ; j++) {
+                for (int j = 0; j < messages.size(); j++) {
                     MessageDto messageDto = new MessageDto();
                     Message message = messages.get(j);
                     messageDto.setDate(message.getDate());
@@ -107,6 +120,7 @@ public class UserController {
             profileDto.addSellAdDto(sellAdDto);
         }
     }
+
     private void setBuyAdDtos(User user, ProfileDto profileDto) {
         Set<Communication> communications = new TreeSet<>(communicationRepository.findByCreator(user));
         for (Communication communication : communications) {
