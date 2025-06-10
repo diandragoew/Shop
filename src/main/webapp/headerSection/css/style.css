@@ -21,22 +21,22 @@ margin: 0px;
 }
 
 
-.headerSection .headerSection__myProfile,.headerSection .headerSection__login{
+.headerSection #headerSection__about__myProfile,.headerSection #headerSection__about__login{
 	    display: inline-block;
 	    text-align: right;
       padding-left: 20px;
 
 }
-.headerSection .headerSection__myProfile p,.headerSection .headerSection__login p{
+.headerSection #headerSection__about__myProfile p,.headerSection #headerSection__about__login p{
 	    display: inline-block;
 color: black;
   font-size: 30px;
 }
-.headerSection .headerSection__createAd{
+.headerSection #headerSection__createAd{
       display: inline-block;
       text-align: right;
 }
-.headerSection .headerSection__createAd p{
+.headerSection #headerSection__createAd p{
       display: inline-block;
 color: black;
   font-size: 30px;
@@ -55,46 +55,20 @@ color: black;
 }
 
 .loginForm{
-  position: absolute;
+    position: absolute;
     top: 50%;
     left: 50%;
-padding: 20px;
-background-color:yellow; 
+    transform: translate(-50%, -50%); /* Crucial for centering the form itself */
+    padding: 20px;
+    background-color:yellow;
+
+    display: flex; /* Make the form a flex container */
+    flex-direction: column; /* Stack items vertically */
+    align-items: start; /* Center items horizontally across the main axis */
 }
 .loginForm input{
   padding: 5px;
   margin:2px;
 background-color: orange;
 }
-.loginForm__credentials{
-  display: block;
-}
-.loginForm__enter{
-display: inline-block;
-position: relative;
-/*left: 10px; */
-    left: 40%;
 
-}
-.createProfilForm{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-padding: 20px;
-background-color:yellow; 
-}
-.createProfilForm input{
-  padding: 5px;
-  margin:2px;
-background-color: orange;
-}
-.createProfilForm__credentials{
-  display: block;
-}
-.createProfilForm__create{
-display: inline-block;
-position: relative;
-/*left: 10px; */
-    left: 40%;
-
-}

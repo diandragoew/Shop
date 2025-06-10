@@ -16,8 +16,16 @@
         <td>
 
             <div id="headerSection__about__login">
-                <a  href="/loginPage/html/loginPage.html"><p>вход или изход(според това дали си логнат или не)</p></a>
+                <p>вход или изход(според това дали си логнат или не)</p>
+                <template id="loginFormTemplate">
+                    <form class="loginForm" method="POST" action="/login" id="loginForm">
+                        <input class="loginForm__credentials" type="text" id="name" name="userName" placeholder="name">
+                        <input class="loginForm__credentials" type="password" id="pass" name="password" placeholder="password">
+                        <input class="loginForm__enter" type="submit" value="влез">
+                    </form>
+                </template>
             </div>
         </td>
     </table>
 </header>
+

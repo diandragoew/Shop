@@ -45,11 +45,17 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public void login(@RequestBody LoginDto LoginUser, HttpServletRequest request) throws SQLException {
+    public void login(@RequestBody LoginDto LoginUser, HttpServletRequest request, HttpServletResponse response) throws SQLException {
         User user = userRepository.findByUserNameAndPassword(LoginUser.getUserName(), LoginUser.getPassword());
         HttpSession session = request.getSession();
+
+        if (user == null) {
+            response.setStatus(401);
+            return;
+        }
         session.setAttribute("userId", user.getId());
         session.setMaxInactiveInterval(3000);
+        response.setStatus(200);
     }
 
     @GetMapping("/isLoggedIn")
