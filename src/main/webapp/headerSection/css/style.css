@@ -21,13 +21,13 @@ margin: 0px;
 }
 
 
-.headerSection #headerSection__about__myProfile,.headerSection #headerSection__about__login{
+.headerSection #headerSection__about__myProfile,.headerSection #headerSection__about__log{
 	    display: inline-block;
 	    text-align: right;
       padding-left: 20px;
 
 }
-.headerSection #headerSection__about__myProfile p,.headerSection #headerSection__about__login p{
+.headerSection #headerSection__about__myProfile p,.headerSection #headerSection__about__log p{
 	    display: inline-block;
 color: black;
   font-size: 30px;
@@ -71,4 +71,57 @@ color: black;
   margin:2px;
 background-color: orange;
 }
+
+.loginForm__enter{
+display: inline-block;
+position: relative;
+/*left: 10px; */
+    left: 40%;
+}
+
+/* Styling for the overall logout form container */
+.logoutForm {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* For centering the form itself on the page */
+    padding: 20px;
+    background-color: yellow;
+
+    text-align: center; /* This is key: it centers the inline-block buttons
+                           and the text content of the paragraph */
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    /* Set a max-width to ensure the form doesn't stretch too wide */
+    max-width: 300px;
+    width: 90%; /* Responsive width */
+}
+
+/* Styling for the paragraph within the logout form */
+.logoutForm p {
+    /* p is display: block by default, so it takes its own line */
+    margin-top: 0;
+    margin-bottom: 15px; /* Space below the paragraph */
+    font-size: 1.1em;
+    color: #333;
+    /* text-align: center inherited from .logoutForm, centers the text within the paragraph */
+}
+
+/* Styling for buttons within the logout form */
+.logoutForm button {
+    padding: 8px 15px;
+    margin: 0 5px; /* Adds horizontal spacing between buttons */
+    background-color: orange;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.logoutForm button:hover {
+    background-color: #ff8c00;
+}
+
 

@@ -70,6 +70,12 @@ public class UserController {
         }
     }
 
+    @PostMapping("/logout")
+    public void logout(HttpServletRequest request) throws SQLException {
+        HttpSession session = request.getSession();
+        session.invalidate();
+    }
+
     @GetMapping("/profile")
     public final ProfileDto getUserProfile(HttpServletRequest request, HttpServletResponse response) {
 

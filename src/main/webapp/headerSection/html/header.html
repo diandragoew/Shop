@@ -15,7 +15,7 @@
         </td>
         <td>
 
-            <div id="headerSection__about__login">
+            <div id="headerSection__about__log">
                 <p>вход или изход(според това дали си логнат или не)</p>
                 <template id="loginFormTemplate">
                     <form class="loginForm" method="POST" action="/login" id="loginForm">
@@ -23,6 +23,13 @@
                         <input class="loginForm__credentials" type="password" id="pass" name="password" placeholder="password">
                         <input class="loginForm__enter" type="submit" value="влез">
                     </form>
+                </template>
+                <template id="logoutFormTemplate">
+                    <div class="logoutForm">
+                        <p>искате ли да излезете ?</p>
+                        <button class="logoutForm__button__yes">yes</button>
+                        <button class="logoutForm__button__no">no</button>
+                    </div>
                 </template>
             </div>
         </td>
