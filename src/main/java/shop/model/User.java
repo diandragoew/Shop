@@ -17,7 +17,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    private Long id;
     @Column(name = "user_name")
     private String userName;
     @Column(name = "email")
@@ -28,4 +28,10 @@ public class User {
     private String phone;
     @OneToMany(mappedBy = "creator", fetch = FetchType.EAGER)
     private Set<Ad> ads;
+    public User(String userName, String email, String password, String phone) {
+        this.userName = userName;
+        this.email = email;
+        this.password = password;
+        this.phone = phone;
+    }
 }

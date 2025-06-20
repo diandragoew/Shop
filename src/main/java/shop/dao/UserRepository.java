@@ -11,5 +11,7 @@ import javax.xml.crypto.Data;
 @Repository
 public interface UserRepository extends JpaRepository<User,Long> {
     public  User findByUserNameAndPassword(String userName, String password);
-
+    // New methods to check for existence by username or email
+    boolean existsByUserName(String userName);
+    boolean existsByEmail(String email);
 }

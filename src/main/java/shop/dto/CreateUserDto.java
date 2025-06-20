@@ -10,8 +10,8 @@ import java.util.Set;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class CreateUserDto {
-    private String userName="georgi";
-    private String email="abv@bg";
-    private String password="parola";
-    private String phone="0435";
+    private String userName;
+    private String email;
+    private String password;
+    private String phone;
 }

@@ -4,13 +4,34 @@
     <table class="headerSection__table">
         <td>
             <div id="headerSection__createAd">
-                <a  href="/createAd/html/createAd.html"><p>create ad</p></a>
+                <a href="/createAd/html/createAd.html">
+                    <p>create ad</p>
+                </a>
             </div>
         </td>
         <td>
-
-            <div id="headerSection__about__myProfile">
-                <a  href="/userProfil/html/userProfile.html"><p>my profil или create profil(според това дали си логнат или не)</p></a>
+            <div id="headerSection__about__profile">
+                <p></p>
+                <template id="myProfileTemplate">
+                    <div id="myProfile">
+                        <a href="/userProfil/html/userProfile.html">
+                            <p>my profile</p>
+                        </a>
+                    </div>
+                </template>
+                <template id="createProfileTemplate">
+                    <form class="createForm" method="POST" action="/create-user" id="createForm">
+                        <input class="createForm__credentials" type="email" id="createEmail" name="createEmail"
+                            placeholder="email" required>
+                        <input class="createForm__credentials" type="text" id="createName" name="createName"
+                            placeholder="name" required>
+                        <input class="createForm__credentials" type="number" id="createPhone" name="createPhone"
+                            placeholder="phone">
+                        <input class="createForm__credentials" type="password" id="createPass" name="createPass"
+                            placeholder="password" required>
+                        <input class="createForm__submit" type="submit" value="create">
+                    </form>
+                </template>
             </div>
         </td>
         <td>
@@ -20,7 +41,8 @@
                 <template id="loginFormTemplate">
                     <form class="loginForm" method="POST" action="/login" id="loginForm">
                         <input class="loginForm__credentials" type="text" id="name" name="userName" placeholder="name">
-                        <input class="loginForm__credentials" type="password" id="pass" name="password" placeholder="password">
+                        <input class="loginForm__credentials" type="password" id="pass" name="password"
+                            placeholder="password">
                         <input class="loginForm__enter" type="submit" value="влез">
                     </form>
                 </template>
@@ -35,4 +57,3 @@
         </td>
     </table>
 </header>
-

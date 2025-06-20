@@ -14,6 +14,7 @@ import shop.dto.*;
 import shop.exceptions.UnauthorizedException;
 import shop.model.*;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -98,7 +99,38 @@ public class UserController {
 
         return profileDto;
     }
+    @PostMapping("/create-user")
+    public void createUser(@RequestBody CreateUserDto createUserDto, HttpServletRequest request, HttpServletResponse response) throws IOException { // Changed SQLException to IOException for response.getWriter()
+        boolean userNameExists = userRepository.existsByUserName(createUserDto.getUserName());
+        boolean emailExists = userRepository.existsByEmail(createUserDto.getEmail());
 
+        if (userNameExists) {
+            response.setStatus(HttpServletResponse.SC_CONFLICT); // HTTP 409 Conflict
+            response.setContentType("text/plain"); // Set content type for plain text message
+            response.getWriter().write("name '" + createUserDto.getUserName() + "' is already registered so use other name.");
+            return; // Stop execution here
+        }
+
+        if (emailExists) {
+            response.setStatus(HttpServletResponse.SC_CONFLICT); // HTTP 409 Conflict
+            response.setContentType("text/plain"); // Set content type for plain text message
+            response.getWriter().write("Email '" + createUserDto.getEmail() + "' is already registered so use other Email.");
+            return; // Stop execution here
+        }
+
+        // If neither username nor email exists, proceed with user creation
+        User user = new User(createUserDto.getUserName(), createUserDto.getEmail(), createUserDto.getPassword(), createUserDto.getPhone());
+        userRepository.save(user);
+        if (user.getId() == null){
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // HTTP 500 Internal Server Error
+            return;
+        }
+
+        HttpSession session = request.getSession();
+        session.setAttribute("userId", user.getId());
+        session.setMaxInactiveInterval(3000); // Session timeout in seconds (50 minutes)
+        response.setStatus(HttpServletResponse.SC_CREATED);
+    }
 
     private static void setSellAdDtos(Set<Ad> ads, ProfileDto profileDto) {
         for (Ad ad : ads) {

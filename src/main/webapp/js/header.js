@@ -26,42 +26,47 @@ function updateHeaderTextBasedOnLogin() {
         }
 
         const isLoggedIn = data.trim() === "true";
+
         const logDiv = document.getElementById("headerSection__about__log");
-        const loginText = logDiv?.querySelector("p");
+        const loginText = logDiv?.querySelector(":scope > p");
 
-        const profileDiv = document.getElementById("headerSection__about__myProfile");
-        const profileText = profileDiv?.querySelector("p");
+        const profileDiv = document.getElementById("headerSection__about__profile");
+        const profileText = profileDiv?.querySelector(":scope > p");
 
-        if (loginText && profileText) {
-            if (isLoggedIn) {
-                logDiv.className = 'headerSection__log__out';
-                loginText.textContent = 'изход';
+        if (isLoggedIn) {
+            logDiv.className = 'headerSection__log__out';
+            loginText.textContent = 'изход';
 
-                profileDiv.className = 'headerSection__myProfile';
-                profileText.textContent = 'my profile';
+            profileText.remove();
+            addMyProfileInHeader();
 
-                // ✅ Only attach click listener if class is headerSection__log__out
-                logDiv.addEventListener("click", function () {
-                    if (logDiv.classList.contains("headerSection__log__out") ) {
-                        displayLogoutForm();
-                    }
-                });
-            } else {
-                logDiv.className = 'headerSection__log__in';
-                loginText.textContent = 'вход';
+            // ✅ Only attach click listener if class is headerSection__log__out
+            logDiv.addEventListener("click", function () {
+                if (logDiv.classList.contains("headerSection__log__out")) {
+                    displayLogoutForm();
+                }
+            });
 
-                profileDiv.className = 'headerSection__createProfile';
-                profileText.textContent = 'create profile';
+        } else {
+            logDiv.className = 'headerSection__log__in';
+            loginText.textContent = 'вход';
 
-
-                // ✅ Only attach click listener if class is headerSection__log__in
-                logDiv.addEventListener("click", function () {
-                    if (logDiv.classList.contains("headerSection__log__in")) {
-                        displayLoginForm();
-                    }
-                });
-            }
+            profileDiv.className = 'headerSection__createProfile';
+            profileText.textContent = 'create profile';
+            // ✅ Only attach click listener if class is headerSection__createProfile
+            profileDiv.addEventListener("click", function () {
+                if (profileDiv.classList.contains("headerSection__createProfile")) {
+                    displayCreateProfile();
+                }
+            });
+            // ✅ Only attach click listener if class is headerSection__log__in
+            logDiv.addEventListener("click", function () {
+                if (logDiv.classList.contains("headerSection__log__in")) {
+                    displayLoginForm();
+                }
+            });
         }
+
     });
 }
 
@@ -154,6 +159,94 @@ function fillLoginForm() {
             });
     });
 }
+
+function fillCreateForm() {
+    const form = document.querySelector("#headerSection__about__profile .createForm");
+    if (!form) {
+        console.error("Create form not found in DOM"); // Corrected console error message
+        return;
+    }
+
+    form.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const createData = {
+            userName: form.querySelector("#createName").value,
+            password: form.querySelector("#createPass").value,
+            email: form.querySelector("#createEmail").value,
+            phone: form.querySelector("#createPhone").value
+        };
+
+        console.log("Sending create user request:", createData); // Corrected console message
+
+        fetch("http://localhost:8080/create-user", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(createData)
+        })
+            .then(response => {
+                // Check the response status FIRST
+                if (response.status === 201) { // Changed from 200 to 201 for successful creation
+                    console.log("User created successfully!");
+                    alert("User created successfully!"); // Display success message
+                    window.location.reload(); // Reload page to reflect login status
+
+                    // If your backend for 201 returns any JSON, you can parse it here
+                    // If it returns nothing or just a plain text success, you can just return
+                    return response.text().then(text => text ? JSON.parse(text) : {}); // Handle potential empty/text response for 201
+                } else if (response.status === 409) { // Handle 409 Conflict specifically
+                    return response.text().then(errorMessage => {
+                        console.error("User creation failed: " + errorMessage);
+                        alert(errorMessage); // Display the specific message from the backend
+                        throw new Error(errorMessage); // Throw to stop further .then() execution
+                    });
+                } else if (response.status >= 400) { // Handle other client-side errors (4xx)
+                    // Attempt to parse JSON error message if provided by backend, otherwise, read as text
+                    return response.text().then(text => { // Always try to read as text first for generic errors
+                        let errorMessage = "An unexpected error occurred.";
+                        try {
+                            const errorData = JSON.parse(text); // Try parsing as JSON
+                            errorMessage = errorData.message || JSON.stringify(errorData);
+                        } catch (e) {
+                            errorMessage = text; // If not JSON, use the raw text
+                        }
+                        console.error(`User creation failed with status ${response.status}: ${errorMessage}`);
+                        alert(errorMessage);
+                        throw new Error(`Server error: ${response.status} - ${errorMessage}`);
+                    });
+                }
+                // Fallback for unexpected status codes (e.g., 5xx server errors)
+                // Always try to read as text for a fallback to avoid parsing errors
+                return response.text().then(text => {
+                    let errorMessage = "An unexpected server error occurred.";
+                    try {
+                        const errorData = JSON.parse(text);
+                        errorMessage = errorData.message || JSON.stringify(errorData);
+                    } catch (e) {
+                        errorMessage = text;
+                    }
+                    console.error(`Unexpected response status ${response.status}: ${errorMessage}`);
+                    alert(errorMessage);
+                    throw new Error(`Unexpected server response: ${response.status} - ${errorMessage}`);
+                });
+            })
+            .then(data => {
+                // This .then() block will only execute if the initial response was 201
+                // and you decided to parse its body.
+                console.log("Create user response data (for 201 status):", data);
+            })
+            .catch(error => {
+                // This .catch() block will handle any errors thrown in the .then() blocks
+                // or network errors from the fetch itself.
+                console.error("Error during user creation request:", error);
+                if (error.message.includes("Failed to fetch")) {
+                    alert("Network error or server unreachable. Please try again.");
+                }
+                // For other specific errors, the alert is already given in the .then() chain
+            });
+    });
+}
+
 function removeElement(element) {
 
     // Detect outside click
@@ -171,11 +264,44 @@ function removeElement(element) {
     }, 0);
 }
 
+function addMyProfileInHeader() {
+
+    // Avoid duplicates by checking if form is already in the DOM
+    if (document.querySelector("#headerSection__about__profile #myProfile")) return;
+
+    const template = document.querySelector("#headerSection__about__profile #myProfileTemplate");
+    if (!template) {
+        console.error("myProfile template not found");
+        return;
+    }
+    const clone = template.content.cloneNode(true);
+    const myProfile = clone.querySelector("#myProfile");
+    document.getElementById("headerSection__about__profile").appendChild(myProfile);
+}
+
+function displayCreateProfile() {
+
+    // Avoid duplicates by checking if form is already in the DOM
+    if (document.querySelector("#headerSection__about__profile #createForm")) return;
+
+    const template = document.querySelector("#headerSection__about__profile #createProfileTemplate");
+    if (!template) {
+        console.error("createProfile template not found");
+        return;
+    }
+    const clone = template.content.cloneNode(true);
+    const createForm = clone.querySelector("#createForm");
+
+    document.getElementById("headerSection__about__profile").appendChild(createForm);
+    removeElement(createForm);
+    fillCreateForm(); // Call after appending to DOM
+
+}
 function displayLogoutForm() {
     // Avoid duplicates by checking if form is already in the DOM
-    if (document.querySelector("#headerSection__about__log .logoutForm")){
-     return;
-}
+    if (document.querySelector("#headerSection__about__log .logoutForm")) {
+        return;
+    }
     const template = document.querySelector("#headerSection__about__log #logoutFormTemplate");
     if (!template) {
         console.error("Logout form template not found");
@@ -202,7 +328,7 @@ function chooseFromLogoutForm() {
 
     // Attach click listener to the "Yes" button
     if (yesButton) {
-        yesButton.addEventListener('click', function() {
+        yesButton.addEventListener('click', function () {
             logOut(); // Call the logout API (presumably handles actual logout and page reload)
             form.remove(); // Close the form after initiating logout
             event.stopPropagation(); // Prevent click from bubbling up to logDiv
@@ -210,7 +336,7 @@ function chooseFromLogoutForm() {
     }
     // Attach click listener to the "No" button
     if (noButton) {
-        noButton.addEventListener('click', function() {
+        noButton.addEventListener('click', function () {
             console.log("Logout 'No' button clicked. Closing form."); // For debugging
             form.remove(); // Close the form without logging out
             event.stopPropagation(); // Prevent click from bubbling up to logDiv
