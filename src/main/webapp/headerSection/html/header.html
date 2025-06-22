@@ -1,59 +1,63 @@
 <header class="headerSection">
-
     <h1><a href="/homePage/html/home.html">Сергия BG</a></h1>
-    <table class="headerSection__table">
-        <td>
-            <div id="headerSection__createAd">
-                <a href="/createAd/html/createAd.html">
-                    <p>create ad</p>
-                </a>
-            </div>
-        </td>
-        <td>
-            <div id="headerSection__about__profile">
-                <p></p>
-                <template id="myProfileTemplate">
-                    <div id="myProfile">
-                        <a href="/userProfil/html/userProfile.html">
-                            <p>my profile</p>
+    <table id="headerSection__table" class="headerSection__table">
+        <tr id="headerMainRow">
+            <template id="headerSection__createAd__template">
+                <td id="cell__about__headerSection__createAd">
+                    <div id="headerSection__createAd">
+                        <a href="/createAd/html/createAd.html">
+                            <p>create ad</p>
                         </a>
                     </div>
-                </template>
-                <template id="createProfileTemplate">
-                    <form class="createForm" method="POST" action="/create-user" id="createForm">
-                        <input class="createForm__credentials" type="email" id="createEmail" name="createEmail"
-                            placeholder="email" required>
-                        <input class="createForm__credentials" type="text" id="createName" name="createName"
-                            placeholder="name" required>
-                        <input class="createForm__credentials" type="number" id="createPhone" name="createPhone"
-                            placeholder="phone">
-                        <input class="createForm__credentials" type="password" id="createPass" name="createPass"
-                            placeholder="password" required>
-                        <input class="createForm__submit" type="submit" value="create">
-                    </form>
-                </template>
-            </div>
-        </td>
-        <td>
+                </td>
+            </template>
 
-            <div id="headerSection__about__log">
-                <p>вход или изход(според това дали си логнат или не)</p>
-                <template id="loginFormTemplate">
-                    <form class="loginForm" method="POST" action="/login" id="loginForm">
-                        <input class="loginForm__credentials" type="text" id="name" name="userName" placeholder="name">
-                        <input class="loginForm__credentials" type="password" id="pass" name="password"
-                            placeholder="password">
-                        <input class="loginForm__enter" type="submit" value="влез">
-                    </form>
-                </template>
-                <template id="logoutFormTemplate">
-                    <div class="logoutForm">
-                        <p>искате ли да излезете ?</p>
-                        <button class="logoutForm__button__yes">yes</button>
-                        <button class="logoutForm__button__no">no</button>
-                    </div>
-                </template>
-            </div>
-        </td>
+            <td>
+                <div id="headerSection__about__profile">
+                    <p></p>
+                    <template id="myProfileTemplate">
+                        <div id="myProfile">
+                            <a href="/userProfil/html/userProfile.html">
+                                <p>my profile</p>
+                            </a>
+                        </div>
+                    </template>
+                    <template id="createProfileTemplate">
+                        <form class="createForm" method="POST" action="/create-user" id="createForm">
+                            <input class="createForm__credentials" type="email" id="createEmail" name="createEmail"
+                                   placeholder="email" required>
+                            <input class="createForm__credentials" type="text" id="createName" name="createName"
+                                   placeholder="name" required>
+                            <input class="createForm__credentials" type="number" id="createPhone" name="createPhone"
+                                   placeholder="phone">
+                            <input class="createForm__credentials" type="password" id="createPass" name="createPass"
+                                   placeholder="password" required>
+                            <input class="createForm__submit" type="submit" value="create">
+                        </form>
+                    </template>
+                </div>
+            </td>
+            <td>
+
+                <div id="headerSection__about__log">
+                    <p>вход или изход(според това дали си логнат или не)</p>
+                    <template id="loginFormTemplate">
+                        <form class="loginForm" method="POST" action="/login" id="loginForm">
+                            <input class="loginForm__credentials" type="text" id="name" name="userName" placeholder="name">
+                            <input class="loginForm__credentials" type="password" id="pass" name="password"
+                                   placeholder="password">
+                            <input class="loginForm__enter" type="submit" value="влез">
+                        </form>
+                    </template>
+                    <template id="logoutFormTemplate">
+                        <div class="logoutForm">
+                            <p>искате ли да излезете ?</p>
+                            <button class="logoutForm__button__yes">yes</button>
+                            <button class="logoutForm__button__no">no</button>
+                        </div>
+                    </template>
+                </div>
+            </td>
+        </tr>
     </table>
 </header>

@@ -34,6 +34,8 @@ function updateHeaderTextBasedOnLogin() {
         const profileText = profileDiv?.querySelector(":scope > p");
 
         if (isLoggedIn) {
+            addCreateAdInHeader();
+
             logDiv.className = 'headerSection__log__out';
             loginText.textContent = 'изход';
 
@@ -68,6 +70,17 @@ function updateHeaderTextBasedOnLogin() {
         }
 
     });
+}
+
+function addCreateAdInHeader() {
+    const headerTable = document.getElementById("headerSection__table");
+
+    const template = document.getElementById("headerSection__createAd__template");
+    const clone = template.content.cloneNode(true);
+    const createAdCell = clone.querySelector("#cell__about__headerSection__createAd");
+    const targetRow = headerTable.querySelector("#headerMainRow");
+    targetRow.insertBefore(createAdCell, targetRow.firstChild);
+
 }
 
 function displayLoginForm() {

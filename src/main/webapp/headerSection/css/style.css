@@ -7,6 +7,11 @@ body {
   margin-top: 0px;
   margin-bottom: 0px;
   padding: 10px;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
 }
 
 .headerSection a {
@@ -57,8 +62,7 @@ body {
 }
 
 .headerSection__table {
-  display: inline-block;
-  margin-left: 900px;
+
   background: green;
 
 }
