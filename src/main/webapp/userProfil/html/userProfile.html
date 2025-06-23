@@ -97,14 +97,44 @@
         </div>
 
     </div>
+
+    <template id="headerSection__editProfile__template">
+        <td id="cell__about__headerSection__editProfile">
+            <div id="headerSection__editProfile">
+                <a href="/editProfile/html/editProfile.html">
+                    <p>edit profile</p>
+                </a>
+            </div>
+        </td>
+    </template>
+
     <footer id="footerSection">
 
     </footer>
     <script src="/js/api.js"></script>
     <script src="/js/header.js"></script>
     <script>
-        // Call the function to load the header
-        loadHeader('/headerSection/html/header.html', 'header-placeholder'); // Adjust path as needed
+
+
+        // Call loadHeader with a callback. This callback runs AFTER header HTML is in DOM.
+        loadHeader('/headerSection/html/header.html', 'header-placeholder', function() {
+            getUrl("/isLoggedIn", function (data, error) {
+                if (error) {
+                    console.error("Error checking login status for page-specific logic:", error);
+                    return;
+                }
+
+                const isLoggedIn = data.trim() === "true";
+
+
+                if (isLoggedIn) {
+                    // User is logged in AND is on the userProfile.html page
+                    // Now, perform а specific replacement for THIS page
+                    replaceProfileCellWithEditProfile();
+                }
+            });
+        });
+
     </script>
     <script>
         var globalMessagesByAdSells = [];  // Declare a global array to store messages for sells by ad index or id

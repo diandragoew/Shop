@@ -1,12 +1,16 @@
-function loadHeader(headerPath, targetElementId) {
+function loadHeader(headerPath, targetElementId, callback) {
     var req = new XMLHttpRequest();
     req.open("GET", headerPath, true);
     req.addEventListener("load", function () {
         if (req.status >= 200 && req.status < 400) {
             document.getElementById(targetElementId).innerHTML = req.responseText;
 
-            // Wait for DOM update, then run login/profile logic
             updateHeaderTextBasedOnLogin();
+
+            if (typeof callback === 'function') {
+                callback();
+            }
+
         } else {
             console.error("Failed to load header: " + req.statusText);
         }
@@ -72,6 +76,21 @@ function updateHeaderTextBasedOnLogin() {
     });
 }
 
+
+function replaceProfileCellWithEditProfile() {
+    const headerMainRow = document.getElementById("headerMainRow");
+
+    const oldProfileCell = document.getElementById("cell__about__headerSection__about__profile");
+
+    const editProfileTemplate = document.getElementById("headerSection__editProfile__template");
+
+    const clone = editProfileTemplate.content.cloneNode(true);
+
+    const newEditProfileCell = clone.querySelector("#cell__about__headerSection__editProfile");
+
+    headerMainRow.replaceChild(newEditProfileCell, oldProfileCell);
+
+}
 function addCreateAdInHeader() {
     const headerTable = document.getElementById("headerSection__table");
 

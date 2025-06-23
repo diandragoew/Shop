@@ -30,7 +30,8 @@ body {
 
 
 .headerSection #headerSection__about__profile,
-.headerSection #headerSection__about__log {
+.headerSection #headerSection__about__log,
+ .headerSection #headerSection__editProfile{
   display: inline-block;
   text-align: right;
   padding-left: 20px;
@@ -38,7 +39,9 @@ body {
 }
 
 .headerSection #headerSection__about__profile p,
-.headerSection #headerSection__about__log p {
+.headerSection #headerSection__about__log p ,
+.headerSection #headerSection__editProfile p {
+
   display: inline-block;
   color: black;
   font-size: 30px;
