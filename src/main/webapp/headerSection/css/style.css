@@ -123,6 +123,7 @@ body {
   max-width: 300px;
   width: 90%;
   /* Responsive width */
+    z-index: 1; /* A high value more than the default value which is 0 to ensure it's above the other relative or absolute element */
 }
 
 /* Styling for the paragraph within the logout form */

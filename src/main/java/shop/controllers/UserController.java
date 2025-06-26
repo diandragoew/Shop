@@ -4,6 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 //import shop.dao.UserRepository;
@@ -18,6 +20,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 
+import org.springframework.http.HttpStatus; // Import HttpStatus
+import org.springframework.http.ResponseEntity; // Import ResponseEntity
 
 @RestController
 public class UserController {
@@ -99,6 +103,97 @@ public class UserController {
 
         return profileDto;
     }
+
+    @GetMapping("/user")
+    public CreateUserDto getUser(HttpServletRequest request, HttpServletResponse response) {
+
+        HttpSession session = request.getSession();
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            response.setStatus(401);
+            return null;
+        }
+        User user = userRepository.findById(userId).get();
+        CreateUserDto createUserDto = new CreateUserDto();
+        createUserDto.setUserName(user.getUserName());
+        createUserDto.setEmail(user.getEmail());
+        createUserDto.setPhone(user.getPhone());
+
+        return createUserDto;
+    }
+
+    @PatchMapping("/edit-password")
+    public void editPassword(@RequestBody EditPasswordDto editPasswordDto, HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+        HttpSession session = request.getSession();
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            response.setStatus(401);
+            return;
+        }
+        User user = userRepository.findById(userId).get();
+
+        String oldPassword = editPasswordDto.getPassOld();
+        String newPassword = editPasswordDto.getPassNew();
+        String newPasswordConfirm = editPasswordDto.getPassNewConfirm();
+
+        if ("".equalsIgnoreCase(oldPassword) || "".equalsIgnoreCase(newPassword) || "".equalsIgnoreCase(newPasswordConfirm)) {
+            response.setStatus(409);
+            response.setContentType("text/plain");
+            response.getWriter().write("Each field should be filled");
+            return;
+        }
+        if (!user.getPassword().equals(oldPassword)) {
+            response.setStatus(409);
+            response.setContentType("text/plain");
+            response.getWriter().write("your old password is not correct");
+            return;
+        }
+        if (!newPassword.equals(newPasswordConfirm)) {
+            response.setStatus(409);
+            response.setContentType("text/plain");
+            response.getWriter().write("your confirmed password is different from new password");
+            return;
+        }
+
+
+        user.setPassword(newPassword);
+
+        userRepository.save(user);
+
+        response.setStatus(200);
+    }
+
+
+
+    @PostMapping("/edit-initials")
+    public ResponseEntity<Void> editInitials(@RequestBody EditInitialsDto editInitialsDto, HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+        HttpSession session = request.getSession();
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {;
+            response.setStatus(401);
+            return null;
+        }
+        User user = userRepository.findById(userId).get(); // Consider .orElseThrow() or .orElse(null) and handle null
+        if (user == null) {
+            response.setStatus(404); // User not found
+            response.setContentType("text/plain");
+            response.getWriter().write("User not found.");
+            return null;
+        }
+
+        String newEmail = editInitialsDto.getEmail();
+        String newUserName = editInitialsDto.getName();
+        String newPhone = editInitialsDto.getPhone();
+
+        user.setUserName(newUserName);
+        user.setEmail(newEmail);
+        user.setPhone(newPhone);
+
+        userRepository.save(user);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); // HTTP 204 No Content
+    }
+
     @PostMapping("/create-user")
     public void createUser(@RequestBody CreateUserDto createUserDto, HttpServletRequest request, HttpServletResponse response) throws IOException { // Changed SQLException to IOException for response.getWriter()
         boolean userNameExists = userRepository.existsByUserName(createUserDto.getUserName());
@@ -121,7 +216,7 @@ public class UserController {
         // If neither username nor email exists, proceed with user creation
         User user = new User(createUserDto.getUserName(), createUserDto.getEmail(), createUserDto.getPassword(), createUserDto.getPhone());
         userRepository.save(user);
-        if (user.getId() == null){
+        if (user.getId() == null) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // HTTP 500 Internal Server Error
             return;
         }
