@@ -117,7 +117,7 @@
 
 
         // Call loadHeader with a callback. This callback runs AFTER header HTML is in DOM.
-        loadHeader('/headerSection/html/header.html', 'header-placeholder', function() {
+        loadHeader('/headerSection/html/header.html', 'header-placeholder', function () {
             getUrl("/isLoggedIn", function (data, error) {
                 if (error) {
                     console.error("Error checking login status for page-specific logic:", error);
@@ -286,13 +286,13 @@
         <input class="tablePageSelling_message--send" type="submit" value="Изпращане">
     </form>
 `;
-        // --- INSERT SPACER ROW HERE ---
-        const spacerRow = tableSellsMessages.insertRow(-1);
-        const spacerCell = spacerRow.insertCell(0);
-        spacerCell.colSpan = 3; /* Ensure it spans the full width of the table */
-        spacerCell.style.height = "10px"; /* Set the desired height of the space */
-        spacerCell.style.border = "none"; /* Remove any default cell borders */
-        spacerCell.style.backgroundColor = "transparent"; /* Ensure no background interferes */
+                // --- INSERT SPACER ROW HERE ---
+                const spacerRow = tableSellsMessages.insertRow(-1);
+                const spacerCell = spacerRow.insertCell(0);
+                spacerCell.colSpan = 3; /* Ensure it spans the full width of the table */
+                spacerCell.style.height = "10px"; /* Set the desired height of the space */
+                spacerCell.style.border = "none"; /* Remove any default cell borders */
+                spacerCell.style.backgroundColor = "transparent"; /* Ensure no background interferes */
 
             }
 

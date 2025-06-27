@@ -1,126 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>sergiya.bg</title>
     <link rel="stylesheet" type="text/css" href="/headerSection/css/style.css">
     <link rel="stylesheet" type="text/css" href="/editProfile/css/style.css">
 </head>
+
 <body>
-<div id="header-placeholder"></div>
-<div class="editProfile">
+    <div id="header-placeholder"></div>
+    <div class="editProfile">
 
-    <div class="editProfile__initials">
-        <label class="editProfile__initials__title">edit initials</label>
-        <form class="editProfile__initials__form" method="POST" action="/edit-initials" id="editProfileInitialsForm">
-            <textarea class="editProfile__initials__form__credentials" type="email" id="editEmail" name="email"
-                      placeholder="email" required></textarea>
-            <textarea class="editProfile__initials__form__credentials" type="text" id="editName" name="name"
-                      placeholder="name" required></textarea>
-            <textarea class="editProfile__initials__form__credentials" type="number" id="editPhone" name="phone"
-                      placeholder="phone"></textarea>
-            <input class="editProfile__initials__form__submit" type="submit" value="edit initials">
-        </form>
+        <div class="editProfile__initials">
+            <label class="editProfile__initials__title">edit initials</label>
+            <form class="editProfile__initials__form" method="POST" action="/edit-initials"
+                id="editProfileInitialsForm">
+                <textarea class="editProfile__initials__form__credentials" type="email" id="editEmail" name="email"
+                    placeholder="email" required></textarea>
+                <textarea class="editProfile__initials__form__credentials" type="text" id="editName" name="name"
+                    placeholder="name" required></textarea>
+                <textarea class="editProfile__initials__form__credentials" type="number" id="editPhone" name="phone"
+                    placeholder="phone"></textarea>
+                <input class="editProfile__initials__form__submit" type="submit" value="edit initials">
+            </form>
+        </div>
+
+        <div class="editProfile__password">
+            <label class="editProfile__password__title">edit password</label>
+            <form class="editProfile__password__form" method="POST" action="/edit-password"
+                id="editProfilePasswordForm">
+                <textarea class="editPassword" type="password" id="editPass__old" name="passOld"
+                    placeholder="enter old password"></textarea>
+                <textarea class="editPassword" type="password" id="editPass__new" name="passNew"
+                    placeholder="enter new password"></textarea>
+                <textarea class="editPassword" type="password" id="editPass__confirm__new" name="passNewConfirm"
+                    placeholder="confirm new password"></textarea>
+                <input class="editProfile__form__submit" type="submit" value="edit password">
+            </form>
+        </div>
+
+        <div class="delete__profile" id="deleteProfile">
+            <button id="deleteProfileButton">delete profile</button>
+        </div>
+
     </div>
 
-    <div class="editProfile__password">
-        <label class="editProfile__password__title">edit password</label>
-        <form class="editProfile__password__form" method="POST" action="/edit-password" id="editProfilePasswordForm">
-            <textarea class="editPassword" type="password" id="editPass__old" name="passOld"
-                      placeholder="enter old password"></textarea>
-            <textarea class="editPassword" type="password" id="editPass__new" name="passNew"
-                      placeholder="enter new password"></textarea>
-            <textarea class="editPassword" type="password" id="editPass__confirm__new" name="passNewConfirm"
-                      placeholder="confirm new password"></textarea>
-            <input class="editProfile__form__submit" type="submit" value="edit password">
-        </form>
-    </div>
+    <template id="confirmDeleteProfileTemplate">
+        <div id="confirmDeleteProfile">
+            <p>Are you sure you want to delete your profile?</p>
+            <button id="confirmDeleteProfileButton">Yes</button>
+            <button id="cancelDeleteProfileButton">No</button>
+        </div>
+    </template>
 
-</div>
+    <script src="/js/api.js"></script>
+    <script src="/js/header.js"></script>
+    <script>
+        // Call the function to load the header
+        loadHeader('/headerSection/html/header.html', 'header-placeholder'); // Adjust path as needed
+    </script>
 
-<script src="/js/api.js"></script>
-<script src="/js/header.js"></script>
-<script>
-    // Call the function to load the header
-    loadHeader('/headerSection/html/header.html', 'header-placeholder'); // Adjust path as needed
-</script>
-
-<script>
-    getUrl("/user", function (data, error) {
-    const editProfileInitialsForm = document.getElementById('editProfileInitialsForm');
-    user = JSON.parse(data);
-    editProfileInitialsForm.email.value = user.email;
-    editProfileInitialsForm.name.value = user.userName;
-    editProfileInitialsForm.phone.value = user.phone;
-    });
-</script>
-
-<script>
-    const editProfileInitialsForm = document.getElementById('editProfileInitialsForm');
-    editProfileInitialsForm.addEventListener('submit', (event) => {
-        event.preventDefault();
-        const editEmail = document.getElementById('editEmail').value;
-        const editName = document.getElementById('editName').value;
-        const editPhone = document.getElementById('editPhone').value;
-        editInitials(editEmail, editName, editPhone);
-    });
-
-    function editInitials(editEmail, editName, editPhone) {
-        const editData = {
-            email: editEmail,
-            name: editName,
-            phone: editPhone,
-        };
-        fetch('/edit-initials', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(editData)
-        })
-        .then(response => {
-            if (response.ok) {
-                // If the status is 204 No Content, there's no body to parse.
-                if (response.status === 204) {
-                    console.log("Edit Initials request successful (204 No Content).");
-                    return null; // Return null or an empty object as there's no body
-                }
-                // For other 2xx statuses (like 200 OK), assume there might be a JSON body
-                console.log("Edit Initials request successful (200 OK with content).");
-                return response.json(); // Attempt to parse JSON if status is not 204
-            } else {
-                console.error(`Edit Initials request failed with status: ${response.status}`);
-                return response.text().then(text => {
-                    let errorMessage = `Server responded with status ${response.status}.`;
-                    try {
-                        const errorData = JSON.parse(text);
-                        errorMessage = errorData.message || JSON.stringify(errorData);
-                    } catch (e) {
-                        errorMessage = text || `Unknown error with status ${response.status}.`;
-                    }
-                    throw new Error(errorMessage);
-                });
-            }
-        })
-        .then(data => {
-            // This block will execute if response.ok and either parsed data or received null/empty for 204
-            console.log("Edit Initials response data (if any):", data); // 'data' will be null for 204
-            alert('Profile initials updated successfully!');
-            window.location.reload();
-        })
-        .catch(error => {
-            console.error("Error during Edit Initials process:", error);
-            if (error.message.includes("Failed to fetch")) {
-                alert("Network error or server unreachable. Please try again.");
-            } else {
-                alert("Failed to update profile initials: " + error.message);
-            }
+    <script>
+        getUrl("/user", function (data, error) {
+            const editProfileInitialsForm = document.getElementById('editProfileInitialsForm');
+            user = JSON.parse(data);
+            editProfileInitialsForm.email.value = user.email;
+            editProfileInitialsForm.name.value = user.userName;
+            editProfileInitialsForm.phone.value = user.phone;
         });
-    }
-</script>
+    </script>
 
-<script>
-    const editProfilePasswordForm = document.getElementById('editProfilePasswordForm');
+    <script>
+        const editProfileInitialsForm = document.getElementById('editProfileInitialsForm');
+        editProfileInitialsForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const editEmail = document.getElementById('editEmail').value;
+            const editName = document.getElementById('editName').value;
+            const editPhone = document.getElementById('editPhone').value;
+            editInitials(editEmail, editName, editPhone);
+        });
+
+        function editInitials(editEmail, editName, editPhone) {
+            const editData = {
+                email: editEmail,
+                name: editName,
+                phone: editPhone,
+            };
+            fetch('/edit-initials', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(editData)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        // If the status is 204 No Content, there's no body to parse.
+                        if (response.status === 204) {
+                            console.log("Edit Initials request successful (204 No Content).");
+                            return null; // Return null or an empty object as there's no body
+                        }
+                        // For other 2xx statuses (like 200 OK), assume there might be a JSON body
+                        console.log("Edit Initials request successful (200 OK with content).");
+                        return response.json(); // Attempt to parse JSON if status is not 204
+                    } else {
+                        console.error(`Edit Initials request failed with status: ${response.status}`);
+                        return response.text().then(text => {
+                            let errorMessage = `Server responded with status ${response.status}.`;
+                            try {
+                                const errorData = JSON.parse(text);
+                                errorMessage = errorData.message || JSON.stringify(errorData);
+                            } catch (e) {
+                                errorMessage = text || `Unknown error with status ${response.status}.`;
+                            }
+                            throw new Error(errorMessage);
+                        });
+                    }
+                })
+                .then(data => {
+                    // This block will execute if response.ok and either parsed data or received null/empty for 204
+                    console.log("Edit Initials response data (if any):", data); // 'data' will be null for 204
+                    alert('Profile initials updated successfully!');
+                    window.location.reload();
+                })
+                .catch(error => {
+                    console.error("Error during Edit Initials process:", error);
+                    if (error.message.includes("Failed to fetch")) {
+                        alert("Network error or server unreachable. Please try again.");
+                    } else {
+                        alert("Failed to update profile initials: " + error.message);
+                    }
+                });
+        }
+    </script>
+
+    <script>
+        const editProfilePasswordForm = document.getElementById('editProfilePasswordForm');
         editProfilePasswordForm.addEventListener('submit', (event) => {
             event.preventDefault();
             const editPassOld = document.getElementById('editPass__old').value;
@@ -142,42 +158,77 @@
                 },
                 body: JSON.stringify(editData)
             })
-            .then(response => {
-                // If the response is OK (200-299), and we expect NO JSON body on success
-                if (response.ok) {
-                    console.log(`Password updated successfully (HTTP status: ${response.status}).`);
-                    // We DO NOT call response.json() here.
-                    // Just return the response object or a resolved promise with no data.
-                    return Promise.resolve(null); // Explicitly return a resolved promise with null data
-                } else {
-                    // For error statuses (e.g., 401, 409, 500), we expect plain text error messages
-                    console.error(`Password update failed with status: ${response.status}`);
-                    return response.text().then(errorMessage => {
-                        // This 'errorMessage' will contain the plain text written by Spring's getWriter().write()
-                        // or a default Spring error message.
-                        throw new Error(errorMessage || `Server responded with status ${response.status}.`);
-                    });
-                }
-            })
-            .then(data => {
-                // This block executes if `response.ok` was true and the previous `.then` returned successfully.
-                // `data` will be `null` here, as we returned `Promise.resolve(null)` for success.
-                console.log("Password update process completed.");
-                alert('Password updated successfully!');
-                window.location.reload();
-            })
-            .catch(error => {
-                // This .catch() block handles network errors and errors thrown in the .then() chain.
-                console.error("Error during password update process:", error);
-                if (error.message.includes("Failed to fetch")) {
-                    alert("Network error or server unreachable. Please check your internet connection.");
-                } else {
-                    // The error.message will contain the plain text error from the backend or a generic message.
-                    alert("Failed to update password: " + error.message);
-                }
-            });
+                .then(response => {
+                    // If the response is OK (200-299), and we expect NO JSON body on success
+                    if (response.ok) {
+                        console.log(`Password updated successfully (HTTP status: ${response.status}).`);
+                        // We DO NOT call response.json() here.
+                        // Just return the response object or a resolved promise with no data.
+                        return Promise.resolve(null); // Explicitly return a resolved promise with null data
+                    } else {
+                        // For error statuses (e.g., 401, 409, 500), we expect plain text error messages
+                        console.error(`Password update failed with status: ${response.status}`);
+                        return response.text().then(errorMessage => {
+                            // This 'errorMessage' will contain the plain text written by Spring's getWriter().write()
+                            // or a default Spring error message.
+                            throw new Error(errorMessage || `Server responded with status ${response.status}.`);
+                        });
+                    }
+                })
+                .then(data => {
+                    // This block executes if `response.ok` was true and the previous `.then` returned successfully.
+                    // `data` will be `null` here, as we returned `Promise.resolve(null)` for success.
+                    console.log("Password update process completed.");
+                    alert('Password updated successfully!');
+                    window.location.reload();
+                })
+                .catch(error => {
+                    // This .catch() block handles network errors and errors thrown in the .then() chain.
+                    console.error("Error during password update process:", error);
+                    if (error.message.includes("Failed to fetch")) {
+                        alert("Network error or server unreachable. Please check your internet connection.");
+                    } else {
+                        // The error.message will contain the plain text error from the backend or a generic message.
+                        alert("Failed to update password: " + error.message);
+                    }
+                });
         }
-</script>
+    </script>
 
+    <script>
+        const deleteProfile = document.getElementById('deleteProfile');
+        deleteProfile.addEventListener('click', () => {
+            addConfirmDeleteProfileForm()
+        });
+
+        function addConfirmDeleteProfileForm() {
+            if (document.getElementById("confirmDeleteProfile")) return;
+
+            const template = document.getElementById("confirmDeleteProfileTemplate");
+            const clone = template.content.cloneNode(true);
+            const confirmDeleteProfile = clone.querySelector('#confirmDeleteProfile');
+            const deleteProfile = document.getElementById('deleteProfile');
+            deleteProfile.appendChild(confirmDeleteProfile);
+            removeConfirmDeleteProfileForm();
+        }
+        function removeConfirmDeleteProfileForm() {
+            const deleteProfile = document.getElementById('deleteProfile');
+            const confirmDeleteProfile = document.getElementById('confirmDeleteProfile');
+            const cancelDeleteProfileButton = confirmDeleteProfile.querySelector('#cancelDeleteProfileButton');
+
+            // Detect outside click
+            setTimeout(() => {  // timeout ensures it doesn't immediately trigger on same click
+                function outsideClickHandler(event) {
+                    if (!deleteProfile.contains(event.target) || cancelDeleteProfileButton.contains(event.target)) {
+                        confirmDeleteProfile.remove();
+                        document.removeEventListener("click", outsideClickHandler);
+                    }
+                }
+                document.addEventListener("click", outsideClickHandler);
+            }, 0);
+        }
+
+    </script>
 </body>
+
 </html>

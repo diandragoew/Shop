@@ -286,8 +286,7 @@ function removeElement(element) {
         function outsideClickHandler(event) {
             // Check if the clicked target is NOT the element itself,
             // AND NOT a descendant of the element.
-            // .contains() checks if an element is a descendant of another.
-            if (!element.contains(event.target) && event.target !== element) {
+            if (!element.contains(event.target)) {
                 element.remove();
                 document.removeEventListener("click", outsideClickHandler);
             }
