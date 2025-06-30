@@ -210,6 +210,7 @@
             const deleteProfile = document.getElementById('deleteProfile');
             deleteProfile.appendChild(confirmDeleteProfile);
             removeConfirmDeleteProfileForm();
+            performDeleteProfile();
         }
         function removeConfirmDeleteProfileForm() {
             const deleteProfile = document.getElementById('deleteProfile');
@@ -228,6 +229,51 @@
             }, 0);
         }
 
+        function performDeleteProfile() {
+            const confirmDeleteProfile = document.getElementById('confirmDeleteProfile');
+            const confirmDeleteProfileButton = confirmDeleteProfile.querySelector('#confirmDeleteProfileButton');
+            confirmDeleteProfileButton.addEventListener('click', () => {
+
+
+                fetch('/delete-user', {
+                    method: 'DELETE',
+                })
+                    .then(response => {
+                        // If the response is OK (200-299), and we expect NO JSON body on success
+                        if (response.ok) {
+                            console.log(`Profile deleted successfully (HTTP status: ${response.status}).`);
+                            // We DO NOT call response.json() here.
+                            // Just return the response object or a resolved promise with no data.
+                            return Promise.resolve(null); // Explicitly return a resolved promise with null data
+                        } else {
+                            // For error statuses (e.g., 401, 409, 500), we expect plain text error messages
+                            console.error(`Profile deletion failed with status: ${response.status}`);
+                            return response.text().then(errorMessage => {
+                                // This 'errorMessage' will contain the plain text written by Spring's getWriter().write()
+                                // or a default Spring error message.
+                                throw new Error(errorMessage || `Server responded with status ${response.status}.`);
+                            });
+                        }
+                    })
+                    .then(data => {
+                        // This block executes if `response.ok` was true and the previous `.then` returned successfully.
+                        // `data` will be `null` here, as we returned `Promise.resolve(null)` for success.
+                        console.log("Profile deletion process completed.");
+                        alert('Profile deleted successfully!');
+                        window.location.reload();
+                    })
+                    .catch(error => {
+                        // This .catch() block handles network errors and errors thrown in the .then() chain.
+                        console.error("Error during profile deletion process:", error);
+                        if (error.message.includes("Failed to fetch")) {
+                            alert("Network error or server unreachable. Please check your internet connection.");
+                        } else {
+                            // The error.message will contain the plain text error from the backend or a generic message.
+                            alert("Failed to delete profile: " + error.message);
+                        }
+                    });
+            });
+        }
     </script>
 </body>
 

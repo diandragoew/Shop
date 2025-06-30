@@ -227,6 +227,21 @@ public class UserController {
         response.setStatus(HttpServletResponse.SC_CREATED);
     }
 
+    @DeleteMapping("/delete-user")
+    public void deleteUser(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession();
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            response.setStatus(401);
+            return;
+        }
+        User user = userRepository.findById(userId).get();
+        userRepository.delete(user);
+        session.invalidate();
+        response.setStatus(200);
+    }
+
+
     private static void setSellAdDtos(Set<Ad> ads, ProfileDto profileDto) {
         for (Ad ad : ads) {
             SellAdDto sellAdDto = new SellAdDto();
