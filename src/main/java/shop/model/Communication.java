@@ -21,7 +21,6 @@ public class Communication implements Comparable<Communication> {
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "ad_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private Ad ad;
 
@@ -31,7 +30,7 @@ public class Communication implements Comparable<Communication> {
     @JsonIgnore
     private User creator;
 
-    @OneToMany(mappedBy = "communication", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "communication", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> messages;
 
     @Override

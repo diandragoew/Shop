@@ -31,12 +31,11 @@ public class Ad implements Comparable<Ad> {
     private String phone;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "creator_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private User creator;
-    @OneToMany(mappedBy = "ad", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "ad", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Photo> photos= new ArrayList<>();
-    @OneToMany(mappedBy = "ad", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "ad", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Communication> communications;
 
     public void addPhoto(Photo photo)    {

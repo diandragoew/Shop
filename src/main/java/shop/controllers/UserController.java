@@ -169,7 +169,7 @@ public class UserController {
     public ResponseEntity<Void> editInitials(@RequestBody EditInitialsDto editInitialsDto, HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
         HttpSession session = request.getSession();
         Long userId = (Long) session.getAttribute("userId");
-        if (userId == null) {;
+        if (userId == null) {
             response.setStatus(401);
             return null;
         }

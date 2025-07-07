@@ -26,7 +26,7 @@ public class User {
     private String password;
     @Column(name = "phone")
     private String phone;
-    @OneToMany(mappedBy = "creator", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "creator", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Ad> ads;
     public User(String userName, String email, String password, String phone) {
         this.userName = userName;
