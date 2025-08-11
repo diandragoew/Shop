@@ -18,6 +18,7 @@
         <tr>
             <th>заглавие</th>
             <th>снимка</th>
+            <th>price</th>
             <th>потребител</th>
             <th>телефон</th>
             <th>съобщение</th>
@@ -40,21 +41,27 @@
             for (var i = 0; i < ads.length; i++) {
                 var newRow = table.insertRow(i + 1);
 
-                newRow.insertCell(0).innerHTML = ads[i].titleAd;
-                var photoPath = ads[i].photos.length > 0 ? ads[i].photos[0] : null;
+                var ad = ads[i];
+                newRow.insertCell(0).innerHTML = `<a href="/adPage/html/adPage.html?adId=${ad.id}"><p>${ad.titleAd}</p></a>`;
+
+
+                var photoPath = ad.photos.length > 0 ? ad.photos[0] : null;
 
                 var photo = "<img src='" + photoPath + "' alt='obqva' width='300' height='300'></a>"
                 newRow.insertCell(1).innerHTML = photo;
-                newRow.insertCell(2).innerHTML = "<a href='/publicUserProfil/html/publicUserProfil.html'><p>" + ads[i].creatorName + "</p></a>";
-                newRow.insertCell(3).innerHTML = ads[i].phone;
-                var creatorAdId = ads[i].creatorId;
-                var loggedUserId = ads[i].loggedUserId;
+                var price = ad.price;
+                newRow.insertCell(2).innerHTML = price === null ? "Price: 0" : "Price: " + price;
+
+                newRow.insertCell(3).innerHTML = "<a href='/publicUserProfil/html/publicUserProfil.html'><p>" + ad.creatorName + "</p></a>";
+                newRow.insertCell(4).innerHTML = ad.phone;
+                var creatorAdId = ad.creatorId;
+                var loggedUserId = ad.loggedUserId;
 
                 if(loggedUserId !== null && creatorAdId !== loggedUserId){
-                newRow.insertCell(4).innerHTML = `
+                newRow.insertCell(5).innerHTML = `
                 <form method="POST" action="/createMessage" id='tablePageSelling_message' >
                     <textarea class="tablePageSelling_message--text" name="text" rows="4" cols="20"></textarea>
-                    <input type="hidden" name="adId" value="${ads[i].id}">
+                    <input type="hidden" name="adId" value="${ad.id}">
                     <input type="hidden" name="creatorAdId" value="${creatorAdId}">
                     <input class="tablePageSelling_message--send" type="submit">
                 </form>

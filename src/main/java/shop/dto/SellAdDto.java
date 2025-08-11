@@ -21,6 +21,7 @@ public class SellAdDto implements Comparable<SellAdDto> {
     Long adId;
     String title;
     String description;
+    String price = "";
     List<Photo> photos;
 
     private Set<MessageDto> messageDtos;
@@ -32,6 +33,12 @@ public class SellAdDto implements Comparable<SellAdDto> {
             return this.title.compareTo(sellAdDto.title);
         }else {
             return this.adId.compareTo(sellAdDto.adId);
+        }
+    }
+
+    public void setPrice(String price){
+        if (price!=null) {
+            this.price = price;
         }
     }
 }

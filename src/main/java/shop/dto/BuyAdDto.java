@@ -20,6 +20,7 @@ public class BuyAdDto implements Comparable<BuyAdDto> {
     Long adId;
     String title;
     String description;
+    String price = "";
     List<Photo> photos;
 
     private Set<MessageDto> messageDtos;
@@ -30,6 +31,11 @@ public class BuyAdDto implements Comparable<BuyAdDto> {
             return this.title.compareTo(buyAdDto.title);
         }else {
             return this.adId.compareTo(buyAdDto.adId);
+        }
+    }
+    public void setPrice(String price){
+        if (price!=null) {
+            this.price = price;
         }
     }
 }

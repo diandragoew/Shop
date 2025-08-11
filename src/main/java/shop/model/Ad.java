@@ -29,6 +29,8 @@ public class Ad implements Comparable<Ad> {
     private String description;
     @Column(name = "phone")
     private String phone;
+    @Column(name = "price")
+    private String price;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "creator_id", nullable = false)
     @JsonIgnore

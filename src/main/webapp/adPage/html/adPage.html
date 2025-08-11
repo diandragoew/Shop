@@ -1,89 +1,207 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <title>sergiya.bg</title>
-  <meta charset="utf-8">
-  <link rel="stylesheet" type="text/css" href="/adPage/css/style.css">
+    <title id="pageTitle">sergiya.bg</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="/adPage/css/style.css">
 </head>
+
 <body>
-  <header class="headerSection">
-   <h1><a href="/homePage/html/home.html">Сергия BG</a></h1>
- </header>
- <div class="advertisement">
-  <table class="tableAdPage">
-    <tr>
-      <th class="tableAdPage__title">заглавие</th>
-      <th>описание</th>
-      <th>снимка</th>
-      <th>потребител</th>
-      <th>телефон</th>
-      <th>съобщение</th>
+    <header class="headerSection">
+        <h1><a href="/homePage/html/home.html">Сергия BG</a></h1>
+    </header>
+    <div class="advertisement">
+        <table class="tableAdPage">
+            <tr>
+                <th class="tableAdPage__title">заглавие</th>
+                <th>описание</th>
+                <th>снимка</th>
+                <th>потребител</th>
+                <th>телефон</th>
+                <th id="tableAdPage__message__title">съобщение</th>
 
-    </tr>
-    <tr>
-      <td>кола опел - запазена </td>
-      <td><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-      proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-    </td>
-    <td>
-      <a href="/adPage/html/adPage.html">
-        <img src="/adPage/img/1.jpeg" alt="обява" >
-      </a>
-    </td>
-    <td><a href="/publicUserProfil/html/publicUserProfil.html"><p>iivanov</p></a></td>
-    <td>0887654023</td>
-    <td>
-      <form method="POST" action="/submit-form" id="tableAdPage_message">
-        <textarea class="tableAdPage_message--text" type="text" rows="4" cols="20"> </textarea>
-        <input class="tableAdPage_message--send" type="submit">
-      </form>
-    </td>
-    <td class="ProcessAd">
-      <table class="tableProcessAd">
-        <tr>
-          <td>
-            <a class="tableProcessAd__edit" href="/editAd/html/editAd.html"><input type="submit" value="редакция"></a>
-          </td>
+            </tr>
+            <tr>
+                <td id="adTitle"></td>
+                <td id="adDescription"></td>
+                <td>
+                    <div id="adPhotos"></div>
+                </td>
+                <td><a id="creatorLink" href="">
+                        <p id="creatorName"></p>
+                    </a></td>
+                <td id="adPhone"></td>
+                <td>
+                    <form method="POST" action="/submit-form" id="tableAdPage_message">
+                        <textarea class="tableAdPage_message--text" type="text" rows="4" cols="20"> </textarea>
+                        <input class="tableAdPage_message--send" type="submit">
+                    </form>
+                </td>
+                <td class="ProcessAd">
+                    <table class="tableProcessAd">
+                        <tr>
+                            <td>
+                                <button class="tableProcessAd__edit" id="editAdLink">редакция</button>
+                            </td>
 
-        </tr>
-        <tr>
-          <td>
-            <a class="tableProcessAd__delete" href="">
-              <input type="submit" value="изтрий">
-            </a>
-          </td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-</table>
+                        </tr>
+                        <tr>
+                            <td>
+                                <button class="tableProcessAd__delete" id="deleteAdLink"> изтрий</button>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
 
-<h2 class="morePhotos">още снимки</h2>
-<ol class="listPhotos">
- <li>
-  <a href=""> <!-- ako 6trakne6 na snimkata da se otwori na cql ekran -->
-   <img src="/adPage/img/2.jpg" alt="photo" >
- </a>
-</li>
-<li>
-  <a href="">
-   <img src="/" alt="photo" >
- </a>
-</li>
-<li>
-  <a href="">
-   <img src="/" alt="photo" >
- </a>
-</li>
-</ol>
-</div>
-<footer id="footerSection">
+        <h2 class="morePhotos">още снимки</h2>
+        <ol class="listPhotos" id="morePhotosList">
+        </ol>
+    </div>
 
-</footer>
+<template id="editAd__template">
+    <div class="editAd">
+        <h2 class="form-heading">редактиране на обява</h2>
+        <table class="editAd__table">
+            <tr>
+                <form class="editAd__form">
+                    <td>
+                        <input type="name" name="name" placeholder="заглавие">
+                    </td>
+                    <td>
+                        <textarea placeholder="описание"></textarea>
+                    </td>
+                    <td>
+                        <input type="number" name="phone" placeholder="телефон">
+                    </td>
+                    <td>
+                        <form action="">
+                            <input type="file" id="photos" name="photos" value="choose">
+                            <input type="submit" value="upload">
+                        </form>
+                    </td>
+            </tr>
+            </tr>
+            <td class="emptyCell" style='border:none;     background-color: transparent;
+    '>
+            </td>
 
+            <td>
+
+                <a class="form-btn" href="/adPage/html/adPage.html"><input type="submit" value="потвърди"></a>
+            </td>
+            <td>
+                <a class="form-btn" href="/adPage/html/adPage.html"><input type="submit" value="откажи"></a>
+            </td>
+            <td class="emptyCell" style='border:none;     background-color: transparent;
+  '>
+            </td>
+            </tr>
+
+            </form>
+        </table>
+    </div>
+    </template>
+
+    <footer id="footerSection">
+
+    </footer>
+
+    <script>
+        document.addEventListener('click', (event) => {
+           var tableProcessAdEdit = document.querySelector('.tableProcessAd__edit');
+            if (event.target === tableProcessAdEdit) {
+var tableAdPage = document.querySelector('.tableAdPage');
+            var editAdTemplate = document.getElementById('editAd__template');
+            var clone = editAdTemplate.content.cloneNode(true);
+tableAdPage.after(clone);
+            }
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const adId = urlParams.get('adId');
+
+            if (adId) {
+                fetch(`/ad-details?adId=${adId}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(adDto => {
+                        document.getElementById('pageTitle').innerText = adDto.titleAd;
+                        document.getElementById('adTitle').innerText = adDto.titleAd;
+                        document.getElementById('adDescription').innerText = adDto.descriptionAd;
+                        document.getElementById('adPhone').innerText = adDto.phone;
+
+                        // Creator
+                        document.getElementById('creatorName').innerText = adDto.creatorName;
+                        document.getElementById('creatorLink').href = `/publicUserProfil/html/publicUserProfil.html?userId=${adDto.creatorId}`;
+
+                        // Photos
+                        const adPhotosDiv = document.getElementById('adPhotos');
+                        adPhotosDiv.innerHTML = ''; // Clear existing content
+                        if (adDto.photos && adDto.photos.length > 0) {
+                            const firstPhotoPath = adDto.photos[0]; // Get the first photo path
+                            const img = document.createElement('img');
+                            img.src = firstPhotoPath;
+                            img.alt = 'Ad Photo';
+                            img.style.maxWidth = '190px';
+                            img.style.maxHeight = '190px';
+                            adPhotosDiv.appendChild(img);
+                        } else {
+                            adPhotosDiv.innerHTML = '<img src="/adPage/img/default.jpg" alt="No photo" style="max-width: 190px; max-height: 190px;">';
+                        }
+
+                        // More Photos List
+                        const morePhotosList = document.getElementById('morePhotosList');
+                        morePhotosList.innerHTML = '';
+                        if (adDto.photos && adDto.photos.length > 0) {
+                            adDto.photos.forEach(photoPath => {
+                                const li = document.createElement('li');
+                                const a = document.createElement('a');
+                                a.href = photoPath; // Link to full-size image
+                                const img = document.createElement('img');
+                                img.src = photoPath;
+                                img.alt = 'photo';
+                                a.appendChild(img);
+                                li.appendChild(a);
+                                morePhotosList.appendChild(li);
+                            });
+                        } else {
+                            morePhotosList.innerHTML = '<li>No additional photos.</li>';
+                        }
+
+                        var creatorId = adDto.creatorId;
+                        var loggedUserId = adDto.loggedUserId;
+                        if (creatorId === loggedUserId) {
+                            var messageForm = document.getElementById('tableAdPage_message').parentNode;
+                            var messageFormTitle = document.getElementById('tableAdPage__message__title');
+                            messageForm.remove();
+                            messageFormTitle.remove();
+                        } else {
+                            var processAd = document.querySelector('.ProcessAd');
+                            processAd.remove();
+                        }
+
+                    })
+                    .catch(error => {
+                        console.error('Error fetching ad details:', error);
+                        // Display an error message to the user
+                        document.getElementById('adTitle').innerText = 'Error loading ad.';
+                    });
+            } else {
+                console.error('adId not found in URL');
+                document.getElementById('adTitle').innerText = 'Ad ID is missing.';
+            }
+        });
+    </script>
 </body>
+
 </html>

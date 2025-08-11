@@ -250,6 +250,7 @@ public class UserController {
             sellAdDto.setTitle(ad.getTitle());
             sellAdDto.setDescription(ad.getDescription());
             sellAdDto.setPhotos(ad.getPhotos());
+            sellAdDto.setPrice(ad.getPrice());
 
             TreeSet<MessageDto> messagesDtos = new TreeSet<>((o1, o2) -> o1.getDate().compareTo(o2.getDate()));
             List<Communication> communications = ad.getCommunications();
@@ -284,6 +285,7 @@ public class UserController {
             buyAdDto.setAdId(ad.getId());
             buyAdDto.setTitle(ad.getTitle());
             buyAdDto.setDescription(ad.getDescription());
+            buyAdDto.setPrice(ad.getPrice());
             List<Photo> photos = ad.getPhotos();
             buyAdDto.setPhotos(photos);
 

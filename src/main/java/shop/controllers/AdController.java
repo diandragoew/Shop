@@ -4,8 +4,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import shop.dao.AdRepository;
@@ -55,6 +57,7 @@ public class AdController {
                              @RequestParam("description") String description,
                              @RequestParam("phone") String phone,
                              @RequestParam("photos") MultipartFile[] photos,
+                             @RequestParam("price") String price,
                              HttpServletRequest request, HttpServletResponse response) {
 
         HttpSession session = request.getSession();
@@ -69,6 +72,7 @@ public class AdController {
         ad.setTitle(title);
         ad.setDescription(description);
         ad.setPhone(phone);
+        ad.setPrice(price);
         User user = new User();
         Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isPresent()) {
@@ -132,11 +136,48 @@ public class AdController {
             adDto.setLoggedUserId(loggedUserId);
             adDto.setPhone(ad.getPhone());
             adDto.setPhotos(ad.getPhotos().stream().map(Photo::getPhotoPath).collect(Collectors.toList()));
+            adDto.setPrice(ad.getPrice());
             adDtos.add(adDto);
         }
 
         return adDtos;
     }
+
+    @GetMapping("/ad-details") // A new API endpoint for fetching ad data
+    public AdDto getAdDetails(@RequestParam("adId") Long adId, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Long loggedUserId = (Long) session.getAttribute("userId");
+
+        System.out.println("Received API request for adId: " + adId);
+
+        Ad ad = adRepository.findById(adId)
+                .orElseThrow(() -> new RuntimeException("Ad not found with ID: " + adId));
+
+        AdDto adDto = new AdDto();
+        adDto.setId(ad.getId());
+        adDto.setTitleAd(ad.getTitle());
+        adDto.setDescriptionAd(ad.getDescription());
+        adDto.setCreatorName(ad.getCreator().getUserName());
+        adDto.setCreatorId(ad.getCreator().getId());
+        adDto.setLoggedUserId(loggedUserId);
+        adDto.setPhone(ad.getPhone());
+        adDto.setPhotos(ad.getPhotos().stream().map(Photo::getPhotoPath).collect(Collectors.toList()));
+        adDto.setPrice(ad.getPrice());
+
+        return adDto; // Spring automatically converts AdDto to JSON
+    }
+
+    // You would still need an endpoint to serve the static HTML page itself,
+    // but often this is handled automatically if the HTML is in src/main/webapp
+    // or you could add a simple @GetMapping that returns a RedirectView or similar.
+    // For example, if you access /adPage/html/adPage.html directly, it would just serve the file.
+
+
+    // You might also want to handle cases where adId is missing or invalid
+    // For simplicity, the above method will throw a MissingServletRequestParameterException if adId is not provided.
+    // You could add error handling or make @RequestParam optional with defaultValue or required = false
+
+
 
     // Helper method to get the file extension from a file name
     private String getFileExtension(String fileName) {

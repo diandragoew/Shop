@@ -21,6 +21,7 @@ public class AdDto {
   private   Long loggedUserId;
   private   String phone;
   private   List<String> photos;
+  private   String price;
 
     public String getTitleAd() {
         return titleAd;
