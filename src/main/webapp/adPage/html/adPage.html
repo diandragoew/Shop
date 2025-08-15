@@ -180,13 +180,17 @@ tableAdPage.after(clone);
 
                         var creatorId = adDto.creatorId;
                         var loggedUserId = adDto.loggedUserId;
-                        if (creatorId === loggedUserId) {
-                            var messageForm = document.getElementById('tableAdPage_message').parentNode;
-                            var messageFormTitle = document.getElementById('tableAdPage__message__title');
+                        var messageForm = document.getElementById('tableAdPage_message').parentNode;
+                        var messageFormTitle = document.getElementById('tableAdPage__message__title');
+                        var processAd = document.querySelector('.ProcessAd');
+                        if(!loggedUserId){
+                            messageForm.remove();
+                            messageFormTitle.remove();
+                            processAd.remove();
+                        } else if ( creatorId === loggedUserId) {
                             messageForm.remove();
                             messageFormTitle.remove();
                         } else {
-                            var processAd = document.querySelector('.ProcessAd');
                             processAd.remove();
                         }
 
