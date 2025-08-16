@@ -3,6 +3,7 @@ package shop.controllers;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.core.io.Resource;
@@ -79,6 +80,12 @@ public class AdController {
             user = userOptional.get();
             // You can now access the user object without getting a LazyInitializationException
             ad.setCreator(user);
+
+            if (user.getAds().contains(ad)) {
+                response.setStatus(HttpServletResponse.SC_CONFLICT); // HTTP 409 Conflict
+                return null;
+            }
+
         }
 
         ad = adRepository.save(ad);
@@ -103,7 +110,7 @@ public class AdController {
                 throw new RuntimeException(e);
             }
             String name = adPhotoFile.getName();
-            adPhoto.setPhotoPath("\\adPage\\img"+File.separator+name);
+            adPhoto.setPhotoPath("\\adPage\\img" + File.separator + name);
 //            adPhoto.setPhotoPath(adPhotoFile.getPath());
 
             adPhoto.setAd(ad);
@@ -111,6 +118,90 @@ public class AdController {
             photoRepository.save(adPhoto);
         }
 
+//        adRepository.save(ad);
+
+
+        Resource htmlFile = resourceLoader.getResource("/homePage/html/home.html");
+        return htmlFile;
+    }
+
+    @Transactional
+    @PostMapping("/edit-ad")
+    public Resource editAd(@RequestParam("adId") String adId,
+                           @RequestParam("title") String title,
+                           @RequestParam("description") String description,
+                           @RequestParam("phone") String phone,
+                           @RequestParam("photos") MultipartFile[] photos,
+                           @RequestParam("price") String price,
+                           HttpServletRequest request, HttpServletResponse response) {
+
+        HttpSession session = request.getSession();
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            response.setStatus(401);
+            return null;
+        }
+
+        Ad ad = null;
+
+        User user = new User();
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            user = userOptional.get();
+            ad = user.getAds().stream().filter(a -> a.getId() == Long.parseLong(adId)).findFirst().orElse(null);
+
+            if (ad != null) {
+                ad.setTitle(title);
+                ad.setDescription(description);
+                ad.setPhone(phone);
+                ad.setPrice(price);
+
+                ad = adRepository.save(ad);
+
+            } else {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND); // HTTP 404 Not Found
+                return null;
+            }
+
+        }
+
+
+        boolean hasRealPhotos = Arrays.stream(photos)
+                .anyMatch(photo -> photo != null && !photo.isEmpty());
+
+        if (hasRealPhotos) {
+            photoRepository.deleteAllByAd_Id(ad.getId());
+            ad.getPhotos().clear(); // prevent re-persisting old photos
+            photoRepository.flush(); // force execution before inserts
+
+            // Process the photos
+            for (MultipartFile photo : photos) {
+                Photo adPhoto = new Photo();
+
+                String fileName = photo.getOriginalFilename();
+
+                // Get the file extension
+                String fileExtension = getFileExtension(fileName);
+
+                // Save the photo to a file
+                String workingDir = System.getProperty("user.dir");
+                String imageDir = workingDir + "\\src\\main\\webapp\\adPage\\img";
+                String newFileName = getNewFileName(imageDir, fileExtension);
+                File adPhotoFile = new File(newFileName);
+                try {
+                    photo.transferTo(adPhotoFile);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                String name = adPhotoFile.getName();
+                adPhoto.setPhotoPath("\\adPage\\img" + File.separator + name);
+//            adPhoto.setPhotoPath(adPhotoFile.getPath());
+
+                adPhoto.setAd(ad);
+                adPhoto.setDeployer(user);
+                photoRepository.save(adPhoto);
+            }
+        }
 //        adRepository.save(ad);
 
 
@@ -176,7 +267,6 @@ public class AdController {
     // You might also want to handle cases where adId is missing or invalid
     // For simplicity, the above method will throw a MissingServletRequestParameterException if adId is not provided.
     // You could add error handling or make @RequestParam optional with defaultValue or required = false
-
 
 
     // Helper method to get the file extension from a file name

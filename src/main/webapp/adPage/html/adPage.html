@@ -16,6 +16,7 @@
             <tr>
                 <th class="tableAdPage__title">заглавие</th>
                 <th>описание</th>
+                <th>price</th>
                 <th>снимка</th>
                 <th>потребител</th>
                 <th>телефон</th>
@@ -25,6 +26,7 @@
             <tr>
                 <td id="adTitle"></td>
                 <td id="adDescription"></td>
+                <td id="adPrice"></td>
                 <td>
                     <div id="adPhotos"></div>
                 </td>
@@ -64,41 +66,23 @@
     <template id="editAd__template">
         <div class="editAd">
             <h2 class="form-heading">редактиране на обява</h2>
-            <table class="editAd__table">
-                <form id="editAd__form" method="post" action="/edit-ad" enctype="multipart/form-data">
+            <form id="editAd__form" method="post" action="/edit-ad" enctype="multipart/form-data">
+                <table class="editAd__table">
                     <tr>
-                        <td>
-                            <input type="text" name="title" placeholder="заглавие">
-                        </td>
-                        <td>
-                            <textarea name="description" placeholder="описание"> </textarea>
-                        </td>
-                        <td>
-                            <input type="text" name="price" placeholder="price">
-                        </td>
-                        <td>
-                            <input type="number" name="phone" placeholder="телефон">
-                        </td>
-                        <td>
-                            <input type="file" id="photos" name="photos" multiple accept="image/*">
-                        </td>
+                        <td><input type="text" name="title" required placeholder="заглавие"></td>
+                        <td><textarea name="description" placeholder="описание"></textarea></td>
+                        <td><input type="text" name="price" placeholder="price"></td>
+                        <td><input type="number" name="phone" placeholder="телефон"></td>
+                        <td><input type="file" id="photos" name="photos" multiple accept="image/*"></td>
                     </tr>
                     <tr>
-                        <td class="emptyCell" style='border:none;     background-color: transparent;
-    '>
-                        </td>
-                        <td>
-                            <input type="submit" value="edit">
-                        </td>
-                        <td>
-                            <a id="editAd__cancel" class="form-btn" href="/adPage/html/adPage.html">откажи</a>
-                        </td>
-                        <td class="emptyCell" style='border:none;     background-color: transparent;
-  '>
-                        </td>
+                        <td class="emptyCell"></td>
+                        <td><input type="submit" value="edit"></td>
+                        <td><a id="editAd__cancel" class="form-btn" href="/adPage/html/adPage.html">откажи</a></td>
+                        <td class="emptyCell"></td>
                     </tr>
-                </form>
-            </table>
+                </table>
+            </form>
         </div>
     </template>
 
@@ -107,48 +91,82 @@
     </footer>
 
     <script>
-        document.addEventListener('click', (event) => {
-            var tableProcessAdEdit = document.querySelector('.tableProcessAd__edit');
-            if (event.target === tableProcessAdEdit) {
-                var tableAdPage = document.querySelector('.tableAdPage');
-                var editAdTemplate = document.getElementById('editAd__template');
-                var clone = editAdTemplate.content.cloneNode(true);
-                tableAdPage.after(clone);
+        let adDtoGlobal = null;
 
+        // Place all your functions and event listeners in a single script block
+
+        // This function displays the edit form
+        function displayEditAd(event) {
+            const editButton = event.target.closest('.tableProcessAd__edit');
+
+            if (editButton) {
                 const urlParams = new URLSearchParams(window.location.search);
                 const adId = urlParams.get('adId');
 
-                var editAdCancel = document.getElementById('editAd__cancel');
-                editAdCancel.innerHTML = `<a href="/adPage/html/adPage.html?adId=${adId}">откажи</a>`;
+                if (adId) {
+                    const tableAdPage = document.querySelector('.tableAdPage');
+                    const editAdTemplate = document.getElementById('editAd__template');
 
+                    // Clone the template's content
+                    const clone = editAdTemplate.content.cloneNode(true);
+
+                    // Get the form element *from the clone*
+                    const editForm = clone.querySelector('#editAd__form');
+                    editForm.title.value = adDtoGlobal.titleAd;
+                    editForm.description.value = adDtoGlobal.descriptionAd;
+                    editForm.price.value = adDtoGlobal.price;
+                    editForm.phone.value = adDtoGlobal.phone;
+
+                    // Now, insert the cloned content into the live DOM
+                    tableAdPage.after(clone);
+
+                    const editAdCancel = document.getElementById('editAd__cancel');
+                    editAdCancel.href = `/adPage/html/adPage.html?adId=${adId}`;
+
+                    // Attach the submit listener to the form element you just found
+                    if (editForm) {
+                        editForm.addEventListener("submit", editAd);
+                    }
+
+                    // You can remove the click listener to prevent multiple forms
+                    document.removeEventListener("click", displayEditAd);
+                }
             }
-        });
-    </script>
-    <script>
-        document.addEventListener("submit", function (event) {
-            if (event.target && event.target.matches("form[id='editAd__form']")) {
-                event.preventDefault(); // Prevents the page from reloading
+        }
 
-                let formData = new FormData(event.target);
+        function editAd(event) {
+            event.preventDefault(); // Prevent page reload
 
-                fetch("/edit-ad", {
-                    method: "POST",
-                    body: formData
+            let formData = new FormData(event.currentTarget); // currentTarget is the form
+
+            // Add adId to formData
+            const urlParams = new URLSearchParams(window.location.search);
+            const adId = urlParams.get('adId');
+            if (adId) {
+                formData.append('adId', adId);
+            }
+
+            fetch("/edit-ad", {
+                method: "POST",
+                body: formData
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert("Ad edited successfully!");
+                        window.location.reload();
+                    } else if (response.status === 401) {
+                        alert("The ad was not edited because you are not logged in!");
+                    } else if (response.status === 404) {
+                        alert("The ad was not edited because that ad is not yours!");
+                    } else {
+                        alert("Error editing ad.");
+                    }
                 })
-                    .then(response => {
-                        if (response.ok) {
-                            alert("Ad edited successfully!");
-                        } else if (response.status === 401) {
-                            alert("The add was not edited because you are not logged in !");
-                        } else {
-                            alert("Error editing ad.");
-                        }
-                    })
-                    .catch(error => console.error("Error:", error));
-            }
-        });
-    </script>
-    <script>
+                .catch(error => console.error("Error:", error));
+        }
+
+
+        // This listener fetches initial ad details on page load
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const adId = urlParams.get('adId');
@@ -162,9 +180,12 @@
                         return response.json();
                     })
                     .then(adDto => {
+                        // Store in global variable
+                        adDtoGlobal = adDto;
                         document.getElementById('pageTitle').innerText = adDto.titleAd;
                         document.getElementById('adTitle').innerText = adDto.titleAd;
                         document.getElementById('adDescription').innerText = adDto.descriptionAd;
+                        document.getElementById('adPrice').innerText = adDto.price;
                         document.getElementById('adPhone').innerText = adDto.phone;
 
                         // Creator
@@ -224,7 +245,6 @@
                     })
                     .catch(error => {
                         console.error('Error fetching ad details:', error);
-                        // Display an error message to the user
                         document.getElementById('adTitle').innerText = 'Error loading ad.';
                     });
             } else {
@@ -232,6 +252,9 @@
                 document.getElementById('adTitle').innerText = 'Ad ID is missing.';
             }
         });
+
+        // Attach a single, clean click listener for the edit button
+        document.addEventListener("click", displayEditAd);
     </script>
 </body>
 

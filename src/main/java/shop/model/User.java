@@ -4,16 +4,16 @@ import org.springframework.stereotype.Component;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
 import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
 @Table(name = "users", schema = "shop")
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = "ads")
 @Entity
 @Access(AccessType.FIELD)
-public class User {
+public class User implements Comparable<User> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -33,5 +33,22 @@ public class User {
         this.email = email;
         this.password = password;
         this.phone = phone;
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id != null && id.equals(user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public int compareTo(User o) {
+        return this.id.compareTo(o.id);
     }
 }

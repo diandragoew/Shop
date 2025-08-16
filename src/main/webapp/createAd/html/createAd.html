@@ -69,6 +69,8 @@
                 alert("Ad created successfully!");
             } else if (response.status === 401) {
                 alert("The Ad was not created because you are not logged in !");
+            }else if (response.status === 409) {
+                alert("The Ad was not created because you have an Ad with the same title !");
             } else {
                 alert("Error creating ad.");
             }
