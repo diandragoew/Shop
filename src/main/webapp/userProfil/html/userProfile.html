@@ -195,11 +195,7 @@
                 newRowTableSellsTwo.insertCell(0).appendChild(price);
 
 
-                const editAd = document.createElement("BUTTON");
-                editAd.innerText = "edit ad";
-                editAd.classList.add("edit__ad");
-                editAd.dataset.adId = adId; // hidden attribute as requested
-                newRowTableSellsTwo.insertCell(1).appendChild(editAd);
+                newRowTableSellsTwo.insertCell(1).innerHTML = `<a class="edit__ad" href="/adPage/html/adPage.html?adId=${adId}"><p>${"edit ad"}</p></a>`;
 
                 displayMessagesByAdSells(tableSellsMessages, adId, 2); // show first 2
 
