@@ -180,7 +180,7 @@
 
                 var newRowTableSells = tableSells.insertRow(1);
 
-                newRowTableSells.insertCell(0).innerHTML = sellAdDtos[i].title;
+                newRowTableSells.insertCell(0).innerHTML = `<a href="/adPage/html/adPage.html?adId=${adId}"><p>${sellAdDtos[i].title}</p></a>`;
                 newRowTableSells.insertCell(1).innerHTML = sellAdDtos[i].description;
 
                 var photoPath = sellAdDtos[i].photos.length > 0 ? sellAdDtos[i].photos[0].photoPath : null;
@@ -224,7 +224,7 @@
 
                 var newRowTableBuys = tableBuys.insertRow(1);
 
-                newRowTableBuys.insertCell(0).innerHTML = buyAdDtos[i].title;
+                newRowTableBuys.insertCell(0).innerHTML = `<a href="/adPage/html/adPage.html?adId=${adId}"><p>${buyAdDtos[i].title}</p></a>`;
                 newRowTableBuys.insertCell(1).innerHTML = buyAdDtos[i].description;
 
                 var photoPath = buyAdDtos[i].photos.length > 0 ? buyAdDtos[i].photos[0].photoPath : null;
