@@ -22,6 +22,7 @@ import java.util.*;
 
 import org.springframework.http.HttpStatus; // Import HttpStatus
 import org.springframework.http.ResponseEntity; // Import ResponseEntity
+import shop.service.FavoriteService;
 
 @RestController
 public class UserController {
@@ -34,10 +35,13 @@ public class UserController {
     @Autowired
     private CommunicationRepository communicationRepository;
 
+    @Autowired
+    private FavoriteService favoriteService;
+
     @GetMapping("/users/sign-up")
     public void createUser() throws SQLException {
         System.out.println("createUser++++++++++++++++++++++");
-//        if (!userRepository.eexistsByEmail(createUserDto.getEmail())) {
+        //        if (!userRepository.eexistsByEmail(createUserDto.getEmail())) {
         CreateUserDto newC = new CreateUserDto();
         User newUser = new User();
         newUser.setUserName(newC.getUserName());
@@ -45,8 +49,8 @@ public class UserController {
         newUser.setPassword(newC.getPassword());
         newUser.setPhone(newC.getPhone());
         User nUser = userRepository.save(newUser);
-//    }
-//   userDao.addUser(new CreateUserDto());
+        //    }
+        //   userDao.addUser(new CreateUserDto());
     }
 
     @PostMapping("/login")
@@ -90,7 +94,10 @@ public class UserController {
             response.setStatus(401);
             return null;
         }
-        User user = userRepository.findById(userId).get();
+        //        User user = userRepository.findById(userId).get();
+        // Use the new method to fetch the user with their favorite ads
+        User user = userRepository.findByIdWithFavorites(userId)
+                                  .orElseThrow(() -> new RuntimeException("User not found"));
         ProfileDto profileDto = new ProfileDto();
 
         profileDto.setId(user.getId());
@@ -123,7 +130,8 @@ public class UserController {
     }
 
     @PatchMapping("/edit-password")
-    public void editPassword(@RequestBody EditPasswordDto editPasswordDto, HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+    public void editPassword(@RequestBody EditPasswordDto editPasswordDto, HttpServletRequest request, HttpServletResponse response)
+        throws SQLException, IOException {
         HttpSession session = request.getSession();
         Long userId = (Long) session.getAttribute("userId");
         if (userId == null) {
@@ -155,7 +163,6 @@ public class UserController {
             return;
         }
 
-
         user.setPassword(newPassword);
 
         userRepository.save(user);
@@ -163,10 +170,9 @@ public class UserController {
         response.setStatus(200);
     }
 
-
-
     @PostMapping("/edit-initials")
-    public ResponseEntity<Void> editInitials(@RequestBody EditInitialsDto editInitialsDto, HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+    public ResponseEntity<Void> editInitials(@RequestBody EditInitialsDto editInitialsDto, HttpServletRequest request, HttpServletResponse response)
+        throws SQLException, IOException {
         HttpSession session = request.getSession();
         Long userId = (Long) session.getAttribute("userId");
         if (userId == null) {
@@ -195,7 +201,8 @@ public class UserController {
     }
 
     @PostMapping("/create-user")
-    public void createUser(@RequestBody CreateUserDto createUserDto, HttpServletRequest request, HttpServletResponse response) throws IOException { // Changed SQLException to IOException for response.getWriter()
+    public void createUser(@RequestBody CreateUserDto createUserDto, HttpServletRequest request, HttpServletResponse response)
+        throws IOException { // Changed SQLException to IOException for response.getWriter()
         boolean userNameExists = userRepository.existsByUserName(createUserDto.getUserName());
         boolean emailExists = userRepository.existsByEmail(createUserDto.getEmail());
 
@@ -240,7 +247,6 @@ public class UserController {
         session.invalidate();
         response.setStatus(200);
     }
-
 
     private static void setSellAdDtos(Set<Ad> ads, ProfileDto profileDto) {
         for (Ad ad : ads) {
@@ -288,6 +294,9 @@ public class UserController {
             buyAdDto.setPrice(ad.getPrice());
             List<Photo> photos = ad.getPhotos();
             buyAdDto.setPhotos(photos);
+            buyAdDto.setCreator(ad.getCreator().getId());
+            boolean isInFavorites = user.isItFavorite(ad);
+            buyAdDto.setInFavorites(isInFavorites);
 
             List<Message> messages = communication.getMessages();
             for (Message message : messages) {
@@ -305,4 +314,31 @@ public class UserController {
         }
     }
 
+    @PostMapping("/add-in-favorites")
+    public void addInFavorites(@RequestBody FavoriteRequestDto requestDto, HttpServletRequest request, HttpServletResponse response) {
+        Long userId = requestDto.getUserId();
+        Long adId = requestDto.getAdId();
+        HttpSession session = request.getSession();
+        Long sessionUserId = (Long) session.getAttribute("userId");
+        if (sessionUserId == null || !sessionUserId.equals(userId)) {
+            response.setStatus(401);
+            return;
+        }
+        favoriteService.markfavorite(userId, adId);
+        response.setStatus(200);
+    }
+
+    @PostMapping("/remove-from-favorites")
+    public void removeFromFavorites(@RequestBody FavoriteRequestDto requestDto, HttpServletRequest request, HttpServletResponse response) {
+        Long userId = requestDto.getUserId();
+        Long adId = requestDto.getAdId();
+        HttpSession session = request.getSession();
+        Long sessionUserId = (Long) session.getAttribute("userId");
+        if (sessionUserId == null || !sessionUserId.equals(userId)) {
+            response.setStatus(401);
+            return;
+        }
+        favoriteService.unmarkfavorite(userId, adId);
+        response.setStatus(200);
+    }
 }

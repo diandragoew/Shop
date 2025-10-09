@@ -40,6 +40,23 @@ public class Ad implements Comparable<Ad> {
     @OneToMany(mappedBy = "ad", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Communication> communications;
 
+
+    // Inverse side: users who favorite this ad
+    @ManyToMany(mappedBy = "favoriteAds", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private java.util.Set<User> watchers = new java.util.HashSet<>();
+
+    public void addWatcher(User user) {
+        if (user != null ) {
+            watchers.add(user);
+        }
+    }
+    public void removeWatcher(User user) {
+        if (user != null) {
+            watchers.remove(user);
+        }
+    }
+
     public void addPhoto(Photo photo)    {
         photos.add(photo);
     }
@@ -58,12 +75,12 @@ public class Ad implements Comparable<Ad> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Ad ad = (Ad) o;
-        return Objects.equals(title, ad.title) && Objects.equals(creator, ad.creator);
+        return id != null && id.equals(ad.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, creator);
+        return Objects.hash(id);
     }
 
     public void setTitle(String title) {

@@ -28,6 +28,39 @@ public class User implements Comparable<User> {
     private String phone;
     @OneToMany(mappedBy = "creator", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Ad> ads;
+
+    // Favorites (many-to-many)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "favorite_ads",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "ad_id")
+    )
+    private Set<Ad> favoriteAds = new java.util.HashSet<>();
+
+    // Convenience methods
+    public void addfavorite(Ad ad) {
+        if (ad != null && favoriteAds.add(ad)) {
+            ad.addWatcher(this);
+        }
+    }
+
+    public void removefavorite(Ad ad) {
+        if (ad != null && favoriteAds.remove(ad)) {
+            ad.removeWatcher(this);
+        }
+    }
+
+    public void clearFavorites() {
+        for (Ad ad : new java.util.HashSet<>(favoriteAds)) {
+            removefavorite(ad);
+        }
+    }
+
+    public boolean isItFavorite(Ad ad) {
+       return favoriteAds.contains(ad);
+    }
+
     public User(String userName, String email, String password, String phone) {
         this.userName = userName;
         this.email = email;

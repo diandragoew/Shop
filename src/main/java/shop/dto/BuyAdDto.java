@@ -18,10 +18,12 @@ import java.util.TreeSet;
 public class BuyAdDto implements Comparable<BuyAdDto> {
 
     Long adId;
+    Long creatorId;
     String title;
     String description;
     String price = "";
     List<Photo> photos;
+    boolean isInFavorites;
 
     private Set<MessageDto> messageDtos;
 
@@ -37,5 +39,17 @@ public class BuyAdDto implements Comparable<BuyAdDto> {
         if (price!=null) {
             this.price = price;
         }
+    }
+
+    public void setCreator(Long creatorId) {
+       this.creatorId = creatorId;
+    }
+
+    public boolean isInFavorites() {
+        return isInFavorites;
+    }
+
+    public void setInFavorites(boolean inFavorites) {
+        isInFavorites = inFavorites;
     }
 }

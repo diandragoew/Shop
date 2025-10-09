@@ -144,10 +144,13 @@
         var globalShownMessagesByAdSells = {}; // Track how many messages are shown for sells per ad
         var globalShownMessagesByAdBuys = {}; // Track how many messages are shown for buys per ad
 
+        var loggedUserId = null;
 
         getUrl("/profile", function (data) {
             var user = JSON.parse(data);
-            var id = user.id;
+            var userId = user.id;
+            loggedUserId = userId;
+
             var userName = user.userName;
             console.log(userName);
 
@@ -210,11 +213,12 @@
             const template = document.getElementById("adsBuysTemplate");
 
             for (var i = 0; i < buyAdDtos.length; i++) {
-                let messages = buyAdDtos[i].messageDtos;
-                globalMessagesByAdBuys[buyAdDtos[i].adId] = messages;
+                let buyAdDto = buyAdDtos[i];
 
-                let adId = buyAdDtos[i].adId;
+                let messages = buyAdDto.messageDtos;
+                globalMessagesByAdBuys[buyAdDto.adId] = messages;
 
+                let adId = buyAdDto.adId;
 
                 const newClone = template.content.cloneNode(true);
                 document.getElementById("adsBuysContainer").appendChild(newClone);
@@ -224,19 +228,39 @@
 
                 var newRowTableBuys = tableBuys.insertRow(1);
 
-                newRowTableBuys.insertCell(0).innerHTML = `<a href="/adPage/html/adPage.html?adId=${adId}"><p>${buyAdDtos[i].title}</p></a>`;
-                newRowTableBuys.insertCell(1).innerHTML = buyAdDtos[i].description;
+                newRowTableBuys.insertCell(0).innerHTML = `<a href="/adPage/html/adPage.html?adId=${adId}"><p>${buyAdDto.title}</p></a>`;
+                newRowTableBuys.insertCell(1).innerHTML = buyAdDto.description;
 
-                var photoPath = buyAdDtos[i].photos.length > 0 ? buyAdDtos[i].photos[0].photoPath : null;
+                var photoPath = buyAdDto.photos.length > 0 ? buyAdDto.photos[0].photoPath : null;
                 var photo = "<img src='" + photoPath + "' alt='obqva' width='190' height='190'>"
                 newRowTableBuys.insertCell(2).innerHTML = photo;
 
                 var newRowTableBuysTwo = tableBuys.insertRow(2);
                 const price = document.createElement("p");
-                price.innerText = "Price: " + buyAdDtos[i].price;
+                price.innerText = "Price: " + buyAdDto.price;
                 price.style.textAlign = "left";
 
                 newRowTableBuysTwo.insertCell(0).appendChild(price);
+
+                const favorite = document.createElement("p");
+                favorite.classList.add("favorite-icon");
+                favorite.innerText = buyAdDto.inFavorites ? "❤️" : "🤎"; // Filled heart for favorite, empty for not
+                favorite.style.opacity = buyAdDto.inFavorites ? "1" : "0.45";
+
+                favorite.addEventListener("click", function () {
+                    // Toggle favorite status
+                    if (favorite.innerText === "❤️") {
+                        removeFavorite(adId);
+                        favorite.innerText = "🤎";
+                        favorite.style.opacity = "0.45";
+                    } else {
+                        addFavorite(adId);
+                        favorite.innerText = "❤️";
+                        favorite.style.opacity = "1";
+                    }
+                });
+
+                newRowTableBuysTwo.insertCell(1).appendChild(favorite);
 
                 displayMessagesByAdBuys(tableBuysMessages, adId, 2); // show first 2
 
@@ -560,6 +584,56 @@
                 document.addEventListener("click", outsideClickHandler);
             }, 0);
         }
+
+        function addFavorite(adId) {
+
+            const body = {
+                userId: loggedUserId,
+                adId: adId
+            };
+
+            fetch("/add-in-favorites", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert("Ad with id " + adId + " added to favorites successfully!");
+                    } else {
+                        alert("Error sending message.");
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+        }
+
+
+        function removeFavorite(adId) {
+
+            const body = {
+                userId: loggedUserId,
+                adId: adId
+            };
+
+            fetch("/remove-from-favorites", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert("Ad with id " + adId + " removed from favorites successfully!");
+                    } else {
+                        alert("Error sending message.");
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+        }
+
 
     </script>
 </body>

@@ -74,18 +74,18 @@ public class AdController {
         ad.setDescription(description);
         ad.setPhone(phone);
         ad.setPrice(price);
-        User user = new User();
+        User user;
         Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isPresent()) {
             user = userOptional.get();
-            // You can now access the user object without getting a LazyInitializationException
-            ad.setCreator(user);
-
-            if (user.getAds().contains(ad)) {
+            if (adRepository.existsByTitleAndCreator(title, user)) {
                 response.setStatus(HttpServletResponse.SC_CONFLICT); // HTTP 409 Conflict
                 return null;
             }
-
+            ad.setCreator(user);
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return null;
         }
 
         ad = adRepository.save(ad);
