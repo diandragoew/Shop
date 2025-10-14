@@ -22,6 +22,7 @@ public class AdDto {
   private   String phone;
   private   List<String> photos;
   private   String price;
+  private boolean isInFavorites;
 
     public String getTitleAd() {
         return titleAd;

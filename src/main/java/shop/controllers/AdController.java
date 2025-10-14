@@ -209,16 +209,22 @@ public class AdController {
         return htmlFile;
     }
 
+    @Transactional
     @GetMapping("/ads")
     public List<AdDto> listAllAds(HttpServletRequest request) {
         HttpSession session = request.getSession();
         Long loggedUserId = (Long) session.getAttribute("userId");
+        User user = null;
+        if (loggedUserId !=null) {
+        user = userRepository.findById(loggedUserId).orElse(null);
+        }
 
         List<Ad> ads = adRepository.findAll();
         List<AdDto> adDtos = new ArrayList<>();
         AdDto adDto = new AdDto();
         for (Ad ad : ads) {
             adDto = new AdDto();
+
             adDto.setId(ad.getId());
             adDto.setTitleAd(ad.getTitle());
             adDto.setDescriptionAd(ad.getDescription());
@@ -228,6 +234,10 @@ public class AdController {
             adDto.setPhone(ad.getPhone());
             adDto.setPhotos(ad.getPhotos().stream().map(Photo::getPhotoPath).collect(Collectors.toList()));
             adDto.setPrice(ad.getPrice());
+            if(user != null) {
+                boolean isInFavorites = user.isItFavorite(ad);
+                adDto.setInFavorites(isInFavorites);
+            }
             adDtos.add(adDto);
         }
 

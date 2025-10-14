@@ -316,29 +316,27 @@ public class UserController {
 
     @PostMapping("/add-in-favorites")
     public void addInFavorites(@RequestBody FavoriteRequestDto requestDto, HttpServletRequest request, HttpServletResponse response) {
-        Long userId = requestDto.getUserId();
         Long adId = requestDto.getAdId();
         HttpSession session = request.getSession();
         Long sessionUserId = (Long) session.getAttribute("userId");
-        if (sessionUserId == null || !sessionUserId.equals(userId)) {
+        if (sessionUserId == null ) {
             response.setStatus(401);
             return;
         }
-        favoriteService.markfavorite(userId, adId);
+        favoriteService.markfavorite(sessionUserId, adId);
         response.setStatus(200);
     }
 
     @PostMapping("/remove-from-favorites")
     public void removeFromFavorites(@RequestBody FavoriteRequestDto requestDto, HttpServletRequest request, HttpServletResponse response) {
-        Long userId = requestDto.getUserId();
         Long adId = requestDto.getAdId();
         HttpSession session = request.getSession();
         Long sessionUserId = (Long) session.getAttribute("userId");
-        if (sessionUserId == null || !sessionUserId.equals(userId)) {
+        if (sessionUserId == null ) {
             response.setStatus(401);
             return;
         }
-        favoriteService.unmarkfavorite(userId, adId);
+        favoriteService.unmarkfavorite(sessionUserId, adId);
         response.setStatus(200);
     }
 }

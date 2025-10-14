@@ -42,8 +42,11 @@
             for (var i = 0; i < ads.length; i++) {
                 var newRow = table.insertRow(i + 1);
 
-                var ad = ads[i];
-                newRow.insertCell(0).innerHTML = `<a href="/adPage/html/adPage.html?adId=${ad.id}"><p>${ad.titleAd}</p></a>`;
+                let ad = ads[i];
+                let adId = ad.id;
+
+
+                newRow.insertCell(0).innerHTML = `<a href="/adPage/html/adPage.html?adId=${adId}"><p>${ad.titleAd}</p></a>`;
 
 
                 var photoPath = ad.photos.length > 0 ? ad.photos[0] : null;
@@ -63,8 +66,8 @@
 
                     const favorite = document.createElement("p");
                     favorite.classList.add("favorite-icon");
-                    favorite.innerText = inFavorites() ? "❤️" : "🤎"; // Filled heart for favorite, empty for not
-                    favorite.style.opacity = inFavorites() ? "1" : "0.45";
+                    favorite.innerText = ad.inFavorites ? "❤️" : "🤎"; // Filled heart for favorite, empty for not
+                    favorite.style.opacity = ad.inFavorites ? "1" : "0.45";
 
                     favorite.addEventListener("click", function () {
                         // Toggle favorite status
@@ -84,7 +87,7 @@
                     newRow.insertCell(6).innerHTML = `
                 <form method="POST" action="/createMessage" id='tablePageSelling_message' >
                     <textarea class="tablePageSelling_message--text" name="text" rows="4" cols="20"></textarea>
-                    <input type="hidden" name="adId" value="${ad.id}">
+                    <input type="hidden" name="adId" value="${adId}">
                     <input type="hidden" name="creatorAdId" value="${creatorAdId}">
                     <input class="tablePageSelling_message--send" type="submit">
                 </form>
@@ -120,8 +123,51 @@
         });
 
 
-        function inFavorites() {
-            return 3 / 2 > 0;
+ function addFavorite(adId) {
+
+            const body = {
+                adId: adId
+            };
+
+            fetch("/add-in-favorites", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert("Ad with id " + adId + " added to favorites successfully!");
+                    } else {
+                        alert("Error sending message.");
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+        }
+
+
+        function removeFavorite(adId) {
+
+            const body = {
+                adId: adId
+            };
+
+            fetch("/remove-from-favorites", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert("Ad with id " + adId + " removed from favorites successfully!");
+                    } else {
+                        alert("Error sending message.");
+                    }
+                })
+                .catch(error => console.error("Error:", error));
         }
     </script>
 </body>
