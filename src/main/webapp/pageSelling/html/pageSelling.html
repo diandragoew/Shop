@@ -20,7 +20,8 @@
             <th>снимка</th>
             <th>price</th>
             <th>потребител</th>
-            <th>телефон</th>
+            <th>phone</th>
+            <th>favorite</th>
             <th>съобщение</th>
         </tr>
 
@@ -54,11 +55,33 @@
 
                 newRow.insertCell(3).innerHTML = "<a href='/publicUserProfil/html/publicUserProfil.html'><p>" + ad.creatorName + "</p></a>";
                 newRow.insertCell(4).innerHTML = ad.phone;
+
                 var creatorAdId = ad.creatorId;
                 var loggedUserId = ad.loggedUserId;
 
-                if(loggedUserId !== null && creatorAdId !== loggedUserId){
-                newRow.insertCell(5).innerHTML = `
+                if (loggedUserId !== null && creatorAdId !== loggedUserId) {
+
+                    const favorite = document.createElement("p");
+                    favorite.classList.add("favorite-icon");
+                    favorite.innerText = inFavorites() ? "❤️" : "🤎"; // Filled heart for favorite, empty for not
+                    favorite.style.opacity = inFavorites() ? "1" : "0.45";
+
+                    favorite.addEventListener("click", function () {
+                        // Toggle favorite status
+                        if (favorite.innerText === "❤️") {
+                            removeFavorite(adId);
+                            favorite.innerText = "🤎";
+                            favorite.style.opacity = "0.45";
+                        } else {
+                            addFavorite(adId);
+                            favorite.innerText = "❤️";
+                            favorite.style.opacity = "1";
+                        }
+                    });
+
+                    newRow.insertCell(5).appendChild(favorite);
+
+                    newRow.insertCell(6).innerHTML = `
                 <form method="POST" action="/createMessage" id='tablePageSelling_message' >
                     <textarea class="tablePageSelling_message--text" name="text" rows="4" cols="20"></textarea>
                     <input type="hidden" name="adId" value="${ad.id}">
@@ -66,32 +89,40 @@
                     <input class="tablePageSelling_message--send" type="submit">
                 </form>
                 `;
+                } else {
+                    newRow.insertCell(5);
+                    newRow.insertCell(6);
                 }
 
             }
         });
 
 
-document.addEventListener("submit", function(event) {
-    if (event.target && event.target.matches("form[id='tablePageSelling_message']")) {
-        event.preventDefault(); // Prevents the page from reloading
+        document.addEventListener("submit", function (event) {
+            if (event.target && event.target.matches("form[id='tablePageSelling_message']")) {
+                event.preventDefault(); // Prevents the page from reloading
 
-        let formData = new FormData(event.target);
+                let formData = new FormData(event.target);
 
-        fetch("/createMessage", {
-            method: "POST",
-            body: formData
-        })
-        .then(response => {
-            if (response.ok) {
-                alert("Message sent successfully!");
-            } else {
-                alert("Error sending message.");
+                fetch("/createMessage", {
+                    method: "POST",
+                    body: formData
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            alert("Message sent successfully!");
+                        } else {
+                            alert("Error sending message.");
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
             }
-        })
-        .catch(error => console.error("Error:", error));
-    }
-});
+        });
+
+
+        function inFavorites() {
+            return 3 / 2 > 0;
+        }
     </script>
 </body>
 

@@ -38,3 +38,9 @@ margin: 0px;
      height:100px;
      width:180px;
  }
+
+ .tablePageSelling td .favorite-icon{
+     margin: 0px;
+     font-size: 32px;
+     cursor: pointer;
+  }
