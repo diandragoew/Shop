@@ -41,6 +41,17 @@ color: black;
 color: black;
   font-size: 30px;
 }
+
+.headerSection .headerSection__favorites
+      display: inline-block;
+      text-align: right;
+}
+.headerSection .headerSection__favorites p{
+  display: inline-block;
+  color: black;
+  font-size: 30px;
+}
+
 .headerSection__table,.headerSection__table th, .headerSection__table td {
   border: 5px solid black;
 }

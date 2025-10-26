@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 
 import java.util.Objects;
 import java.util.Set;
+import java.util.HashSet;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -36,7 +38,7 @@ public class User implements Comparable<User> {
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "ad_id")
     )
-    private Set<Ad> favoriteAds = new java.util.HashSet<>();
+    private Set<Ad> favoriteAds = new HashSet<>();
 
     // Convenience methods
     public void addfavorite(Ad ad) {

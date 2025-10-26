@@ -6,22 +6,18 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 //import shop.dao.UserRepository;
 import shop.dao.CommunicationRepository;
 import shop.dao.UserDao;
 import shop.dao.UserRepository;
 import shop.dto.*;
-import shop.exceptions.UnauthorizedException;
 import shop.model.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 
-import org.springframework.http.HttpStatus; // Import HttpStatus
-import org.springframework.http.ResponseEntity; // Import ResponseEntity
 import shop.service.FavoriteService;
 
 @RestController
@@ -107,6 +103,8 @@ public class UserController {
         setSellAdDtos(ads, profileDto);
 
         setBuyAdDtos(user, profileDto);
+
+        setFavoriteAdDtos(user, profileDto);
 
         return profileDto;
     }
@@ -313,6 +311,41 @@ public class UserController {
             profileDto.addBuyAdDto(buyAdDto);
         }
     }
+    private void setFavoriteAdDtos(User user, ProfileDto profileDto) {
+
+        Set<Ad> favorites = user.getFavoriteAds();
+        for (Ad ad : favorites) {
+            FavoriteAdDto favoriteAdDto = new FavoriteAdDto();
+            favoriteAdDto.setAdId(ad.getId());
+            favoriteAdDto.setTitle(ad.getTitle());
+            favoriteAdDto.setDescription(ad.getDescription());
+            favoriteAdDto.setPrice(ad.getPrice());
+            List<Photo> photos = ad.getPhotos();
+            favoriteAdDto.setPhotos(photos);
+            favoriteAdDto.setCreator(ad.getCreator().getId());
+            boolean isInFavorites = user.isItFavorite(ad);
+            favoriteAdDto.setInFavorites(isInFavorites);
+
+            TreeSet<MessageDto> messagesDtos = new TreeSet<>((o1, o2) -> o1.getDate().compareTo(o2.getDate()));
+            List<Communication> communications = ad.getCommunications();
+
+            for (Communication communication : communications) {
+                List<Message> messages = communication.getMessages();
+                for (Message message : messages) {
+                    MessageDto messageDto = new MessageDto();
+                    messageDto.setDate(message.getDate());
+                    messageDto.setSenderName(message.getSender().getUserName());
+                    messageDto.setText(message.getText());
+                    messageDto.setCommunicationId(communication.getId());
+                    messageDto.setAdCreatorId(ad.getCreator().getId());
+                    messageDto.setAdCreatorName(ad.getCreator().getUserName());
+                    messagesDtos.add(messageDto);
+                }
+            }
+            favoriteAdDto.setMessageDtos(messagesDtos);
+            profileDto.addFavoriteAdDto(favoriteAdDto);
+        }
+    }
 
     @PostMapping("/add-in-favorites")
     public void addInFavorites(@RequestBody FavoriteRequestDto requestDto, HttpServletRequest request, HttpServletResponse response) {
@@ -339,4 +372,5 @@ public class UserController {
         favoriteService.unmarkfavorite(sessionUserId, adId);
         response.setStatus(200);
     }
+
 }

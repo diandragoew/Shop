@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>sergiya.bg</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="/favorites/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/headerSection/css/style.css">
+
+</head>
+
+<body>
+
+    <div id="header-placeholder"></div>
+
+    <div class="favorites">
+        <h3>Favorites</h3>
+    </div>
+
+    <div class="adsFavoritesAndMessages" id="adsFavoritesContainer">
+        <template id="adsFavoritesTemplate">
+            <div class="favoriteBlock">
+
+                <table class="table__messages__favorites">
+                    <tr class="table__messages__favorites__header">
+                        <th colspan="4" style="text-align: center;">съобщения</th>
+                    </tr>
+                    <tr class="table__messages__favorites__columns">
+                        <th>messages</th>
+                        <th>sender</th>
+                        <th>date</th>
+                        <th class="table__messages__favorites__header__seller">продавач</th>
+                    </tr>
+                </table>
+
+                <table class="table__favorites">
+                    <tr>
+                        <th>заглавие на обявата</th>
+                        <th>описание на обявата</th>
+                        <th>основна снимка</th>
+                    </tr>
+                </table>
+
+            </div>
+        </template>
+    </div>
+
+    <template id="headerSection__editProfile__template">
+        <td id="cell__about__headerSection__editProfile">
+            <div id="headerSection__editProfile">
+                <a href="/editProfile/html/editProfile.html">
+                    <p>edit profile</p>
+                </a>
+            </div>
+        </td>
+    </template>
+
+    <footer id="footerSection">
+
+    </footer>
+    <script src="/js/api.js"></script>
+    <script src="/js/header.js"></script>
+    <script>
+
+
+        // Call loadHeader with a callback. This callback runs AFTER header HTML is in DOM.
+        loadHeader('/headerSection/html/header.html', 'header-placeholder', function () {
+            getUrl("/isLoggedIn", function (data, error) {
+                if (error) {
+                    console.error("Error checking login status for page-specific logic:", error);
+                    return;
+                }
+
+                const isLoggedIn = data.trim() === "true";
+
+
+                if (isLoggedIn) {
+                    // User is logged in AND is on the userProfile.html page
+                    // Now, perform а specific replacement for THIS page
+                    replaceProfileCellWithEditProfile();
+                }
+            });
+        });
+
+    </script>
+    <script>
+        var globalMessagesByAdFavorites = [];
+        var globalShownMessagesByAdFavorites = {};
+        var loggedUserId = null;
+
+        getUrl("/profile", function (data) {
+            var user = JSON.parse(data);
+            var userId = user.id;
+            loggedUserId = userId;
+
+            var userName = user.userName;
+            console.log(userName);
+
+            var favoriteAdDtos = user.favoriteAdDtos;
+            console.log(favoriteAdDtos);
+
+            fillWithDataAdsFavoritesAndMessages(favoriteAdDtos);
+        });
+
+        function fillWithDataAdsFavoritesAndMessages(favoriteAdDtos) {
+            const template = document.getElementById("adsFavoritesTemplate");
+
+            for (var i = 0; i < favoriteAdDtos.length; i++) {
+                let favoriteAdDto = favoriteAdDtos[i];
+
+                let messages = favoriteAdDto.messageDtos;
+                globalMessagesByAdFavorites[favoriteAdDto.adId] = messages;
+
+                let adId = favoriteAdDto.adId;
+                let creatorId = favoriteAdDto.creatorId;
+
+                const newClone = template.content.cloneNode(true);
+                document.getElementById("adsFavoritesContainer").appendChild(newClone);
+
+                const tableFavorites = document.getElementsByClassName("table__favorites")[i];
+                const tableFavoritesMessages = document.getElementsByClassName("table__messages__favorites")[i];
+
+                var newRowTableFavorites = tableFavorites.insertRow(1);
+
+                newRowTableFavorites.insertCell(0).innerHTML = `<a href="/adPage/html/adPage.html?adId=${adId}"><p>${favoriteAdDto.title}</p></a>`;
+                newRowTableFavorites.insertCell(1).innerHTML = favoriteAdDto.description;
+
+                var photoPath = favoriteAdDto.photos.length > 0 ? favoriteAdDto.photos[0].photoPath : null;
+                var photo = "<img src='" + photoPath + "' alt='obqva' width='190' height='190'>"
+                newRowTableFavorites.insertCell(2).innerHTML = photo;
+
+                var newRowTableFavoritesTwo = tableFavorites.insertRow(2);
+                const price = document.createElement("p");
+                price.innerText = "Price: " + favoriteAdDto.price;
+                price.style.textAlign = "left";
+
+                newRowTableFavoritesTwo.insertCell(0).appendChild(price);
+
+                const favorite = document.createElement("p");
+                favorite.classList.add("favorite-icon");
+                favorite.innerText = favoriteAdDto.inFavorites ? "❤️" : "🤎";
+                favorite.style.opacity = favoriteAdDto.inFavorites ? "1" : "0.45";
+
+                favorite.addEventListener("click", function () {
+                    if (favorite.innerText === "❤️") {
+                        removeFavorite(adId);
+                        favorite.innerText = "🤎";
+                        favorite.style.opacity = "0.45";
+                    } else {
+                        addFavorite(adId);
+                        favorite.innerText = "❤️";
+                        favorite.style.opacity = "1";
+                    }
+                });
+
+                newRowTableFavoritesTwo.insertCell(1).appendChild(favorite);
+
+                displayMessagesByAdFavorites(tableFavoritesMessages, adId, 2, creatorId);
+            }
+        }
+
+
+
+
+
+        document.addEventListener("submit", function (event) {
+            if (event.target && event.target.matches("form[class='messageForm']")) {
+                event.preventDefault(); // Prevents the page from reloading
+
+                let formData = new FormData(event.target);
+
+                fetch("/addMessage", {
+                    method: "POST",
+                    body: formData
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            alert("Message sent successfully!");
+                        } else {
+                            alert("Error sending message.");
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+            }
+        });
+
+        function displayMessagesByAdFavorites(tableFavoritesMessages, adId, count, creatorAdId) {
+
+
+            const messages = globalMessagesByAdFavorites[adId];
+            if (!messages || messages.length === 0) {
+            const headerRowColumns = tableFavoritesMessages.getElementsByClassName("table__messages__favorites__columns")[0];
+headerRowColumns.remove();
+
+                const newRow = tableFavoritesMessages.insertRow(-1);
+                const cell = newRow.insertCell(0);
+                cell.colSpan = 4; // Adjust colspan as needed
+                cell.innerHTML = `
+    <form method="POST" action="/createMessage" class="createFavoriteMessageForm">
+        <textarea class="createFavoriteMessageForm--text" name="text" rows="4" cols="20"></textarea>
+        <input type="hidden" name="adId" value="${adId}">
+        <input type="hidden" name="creatorAdId" value="${creatorAdId}">
+        <input class="createFavoriteMessageForm--send" type="submit" value="Изпращане">
+    </form>
+                `;
+
+            } else {
+            const newTh = document.createElement("th");
+            newTh.style.border = "none";
+
+            const headerRow = tableFavoritesMessages.getElementsByClassName("table__messages__favorites__header")[0];
+            headerRow.insertBefore(newTh, headerRow.firstChild);
+
+            const newColumnTh = document.createElement("th");
+            newColumnTh.style.border = "none";
+            const headerRowColumns = tableFavoritesMessages.getElementsByClassName("table__messages__favorites__columns")[0];
+            headerRowColumns.insertBefore(newColumnTh, headerRowColumns.firstChild);
+
+            const maxSymbols = 10;
+                // Keep only the last message per communicationId (since they're in order)
+                const latestMessagesMap = new Map();
+                messages.forEach(msg => latestMessagesMap.set(msg.communicationId, msg));
+
+                const uniqueLatestMessages = Array.from(latestMessagesMap.values());
+
+                if (!globalShownMessagesByAdFavorites[adId]) globalShownMessagesByAdFavorites[adId] = 0;
+                const start = globalShownMessagesByAdFavorites[adId];
+                const end = Math.min(start + count, uniqueLatestMessages.length);
+
+                for (let j = start; j < end; j++) {
+
+                    const message = uniqueLatestMessages[j];
+                    const communicationId = message.communicationId;
+
+                    const newRowTableFavoritesMessages = tableFavoritesMessages.insertRow(-1);
+
+                    let text = message.text;
+                    text = text.length > maxSymbols ? text.substring(0, maxSymbols) + "..." : text;
+
+                    const more = document.createElement("BUTTON");
+                    more.innerText = "view more";
+                    more.classList.add("viewMoreThisCommunication");
+                    more.dataset.communicationId = communicationId;
+                    more.dataset.adId = adId; // hidden attribute as requested
+                    newRowTableFavoritesMessages.insertCell(0).appendChild(more);
+                    more.addEventListener("click", function () {
+                        displayAllMessagesFavoritesPerCommunicationId(this);
+                    });
+
+
+                    newRowTableFavoritesMessages.insertCell(1).innerHTML = text;
+
+                    newRowTableFavoritesMessages.insertCell(2).innerHTML = message.senderName;
+                    newRowTableFavoritesMessages.insertCell(3).innerHTML = message.date;
+                    newRowTableFavoritesMessages.insertCell(4).innerHTML = message.adCreatorName;
+
+
+
+                    const formRow = tableFavoritesMessages.insertRow(-1);
+                    const invisibleCell = formRow.insertCell(0);
+                    invisibleCell.style.border = "none";
+                    const cell = formRow.insertCell(1);
+                    cell.colSpan = 4;
+                    cell.className = "tablePageFavorite_message--textarea";
+                    cell.innerHTML = `
+<form method="POST" action="/addMessage" class="messageForm">
+    <textarea class="tablePageFavorite_message--text" placeholder="напиши съобщение" name="text"></textarea>
+    <input type="hidden" name="communicationId" value="${communicationId}">
+    <input class="tablePageFavorite_message--send" type="submit" value="Изпращане">
+</form>
+`;
+                }
+
+                globalShownMessagesByAdFavorites[adId] = end;
+            }
+        }
+
+
+        function displayAllMessagesFavoritesPerCommunicationId(viewMore) {
+            const communicationId = viewMore.dataset.communicationId;
+            const adId = viewMore.dataset.adId;
+            const allMessages = globalMessagesByAdFavorites[adId];
+            if (!allMessages) return;
+            const filteredMessages = allMessages.filter(msg => msg.communicationId == communicationId);
+            const template = document.getElementById("adsFavoritesTemplate");
+            const tableMessagesTemplate = template.content.querySelector(".table__messages__favorites");
+            const newClone = tableMessagesTemplate.cloneNode(true);
+            newClone.className = "allMessagesFavorites";
+            const headerSeller = newClone.querySelector(".table__messages__favorites__header__seller");
+            if (headerSeller) {
+                headerSeller.remove();
+            }
+            const messagesTableBody = newClone;
+            filteredMessages.forEach(msg => {
+                const row = messagesTableBody.insertRow(-1);
+                row.insertCell(0).innerText = msg.text;
+                row.insertCell(1).innerText = msg.senderName;
+                row.insertCell(2).innerText = msg.date;
+            });
+            const formRow = messagesTableBody.insertRow(-1);
+            const cell = formRow.insertCell(0);
+            cell.colSpan = 3;
+            cell.className = "tablePageFavorite_message--textarea";
+            cell.innerHTML = `
+<form method="POST" action="/addMessage" class="messageForm">
+    <textarea class="tablePageFavorite_message--text" placeholder="напиши съобщение" name="text"></textarea>
+    <input type="hidden" name="communicationId" value="${communicationId}">
+    <input class="tablePageFavorite_message--send" type="submit" value="Изпращане">
+</form>
+`;
+            viewMore.parentElement.style.position = "relative";
+            viewMore.style.background = "yellow";
+            viewMore.parentElement.appendChild(newClone);
+            setTimeout(() => {
+                function outsideClickHandler(event) {
+                    if (!newClone.contains(event.target) && event.target !== viewMore) {
+                        newClone.remove();
+                        viewMore.style.background = "pink";
+                        document.removeEventListener("click", outsideClickHandler);
+                    }
+                }
+                document.addEventListener("click", outsideClickHandler);
+            }, 0);
+        }
+
+        function addFavorite(adId) {
+
+            const body = {
+                adId: adId
+            };
+
+            fetch("/add-in-favorites", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert("Ad with id " + adId + " added to favorites successfully!");
+                    } else {
+                        alert("Error sending message.");
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+        }
+
+
+        function removeFavorite(adId) {
+
+
+            const body = {
+                adId: adId
+
+            };
+
+            fetch("/remove-from-favorites", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert("Ad with id " + adId + " removed from favorites successfully!");
+                    } else {
+                        alert("Error sending message.");
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+        }
+
+        document.addEventListener("submit", function (event) {
+            if (event.target && event.target.matches("form[class='createFavoriteMessageForm']")) {
+                event.preventDefault(); // Prevents the page from reloading
+
+                let formData = new FormData(event.target);
+
+                fetch("/createMessage", {
+                    method: "POST",
+                    body: formData
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            alert("Message sent successfully!");
+                        } else {
+                            alert("Error sending message.");
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+            }
+        });
+
+    </script>
+</body>
+
+</html>

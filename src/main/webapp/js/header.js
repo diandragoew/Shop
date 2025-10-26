@@ -39,6 +39,7 @@ function updateHeaderTextBasedOnLogin() {
 
         if (isLoggedIn) {
             addCreateAdInHeader();
+            addFavoritesInHeader();
 
             logDiv.className = 'headerSection__log__out';
             loginText.textContent = 'изход';
@@ -89,6 +90,16 @@ function replaceProfileCellWithEditProfile() {
     const newEditProfileCell = clone.querySelector("#cell__about__headerSection__editProfile");
 
     headerMainRow.replaceChild(newEditProfileCell, oldProfileCell);
+
+}
+function addFavoritesInHeader() {
+    const headerTable = document.getElementById("headerSection__table");
+
+    const template = document.getElementById("headerSection__favorites__template");
+    const clone = template.content.cloneNode(true);
+    const createAdCell = clone.querySelector("#cell__about__headerSection__favorites");
+    const targetRow = headerTable.querySelector("#headerMainRow");
+    targetRow.insertBefore(createAdCell, targetRow.firstChild);
 
 }
 function addCreateAdInHeader() {

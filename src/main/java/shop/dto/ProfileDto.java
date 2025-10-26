@@ -1,7 +1,8 @@
 package shop.dto;
 
 import lombok.*;
-//import shop.model.Message;
+
+import java.util.HashSet;
 
 import java.util.*;
 
@@ -9,18 +10,21 @@ import java.util.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
 public class ProfileDto {
    private Long id;
    private String userName;
    private Set<SellAdDto> sellAdDtos = new TreeSet<>();
    private Set<BuyAdDto> buyAdDtos = new TreeSet<>();
+   private Set<FavoriteAdDto> favoriteAdDtos = new HashSet<>();
 
    public void addSellAdDto (SellAdDto sellAdDto) {
       sellAdDtos.add(sellAdDto);
    }
    public void addBuyAdDto (BuyAdDto buyAdDto) {
       buyAdDtos.add(buyAdDto);
+   }
+   public void addFavoriteAdDto(FavoriteAdDto favoriteAdDto) {
+      this.favoriteAdDtos.add(favoriteAdDto);
    }
 
 
