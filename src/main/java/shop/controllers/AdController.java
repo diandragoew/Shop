@@ -36,6 +36,8 @@ public class AdController {
 
     @Autowired
     private AdRepository adRepository;
+    @Autowired
+    private shop.dao.AdDao adDao;
 
     @Autowired
     private UserRepository userRepository;
@@ -266,6 +268,17 @@ public class AdController {
         adDto.setPrice(ad.getPrice());
 
         return adDto; // Spring automatically converts AdDto to JSON
+    }
+
+    @GetMapping("/ad-delete") // A new API endpoint for fetching ad data
+    public void deleteAd(@RequestParam("adId") Long adId, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Long loggedUserId = (Long) session.getAttribute("userId");
+
+        System.out.println("Received API request to delete ad with adId: " + adId);
+
+        adDao.deleteAdByAdIdAndUserId(adId, loggedUserId);
+
     }
 
     // You would still need an endpoint to serve the static HTML page itself,

@@ -8,6 +8,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -54,6 +55,15 @@ public class Ad implements Comparable<Ad> {
     public void removeWatcher(User user) {
         if (user != null) {
             watchers.remove(user);
+        }
+    }
+
+    @PreRemove
+    private void preRemove() {
+        // Ensure join table rows are removed before deleting this Ad
+        // Detach this Ad from all users to clean join table
+        for (User u : new HashSet<>(watchers)) {
+            u.removefavorite(this);
         }
     }
 

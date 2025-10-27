@@ -112,4 +112,47 @@ body {
 #deleteAdLink {
   background: red;
   padding: 10px 0;
+    position: relative;
+  display: inline-block;
 }
+
+
+/* Centered confirmation under the button */
+#deleteConfirmationForm {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: yellow;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  grid-column-gap: 10px;
+  padding: 12px 18px;
+  border: 1px solid #ccc;
+  z-index: 10;
+  min-width: 100px;
+  text-align: center;
+}
+
+#deleteConfirmationForm p {
+  grid-column: 1 / span 2;
+  margin: 0 0 10px 0;
+  font-weight: bold;
+}
+
+#deleteConfirmationForm button {
+  padding: 10px 0;
+  cursor: pointer;
+  border: none;
+  background: #f44336;
+  color: #fff;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+#deleteConfirmationForm #deleteConfirmationForm__no {
+  background: #0b7e20;
+}
+
+

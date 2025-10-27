@@ -31,8 +31,8 @@ public class User implements Comparable<User> {
     @OneToMany(mappedBy = "creator", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Ad> ads;
 
-    // Favorites (many-to-many)
-    @ManyToMany(fetch = FetchType.LAZY)
+    // Owning side of favorites; cascade ONLY persist/merge to avoid deleting Ads
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
         name = "favorite_ads",
         joinColumns = @JoinColumn(name = "user_id"),

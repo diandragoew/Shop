@@ -23,7 +23,7 @@
                 <th id="tableAdPage__message__title">съобщение</th>
 
             </tr>
-            <tr>
+            <tr id = "tableAd__cells">
                 <td id="adTitle"></td>
                 <td id="adDescription"></td>
                 <td id="adPrice"></td>
@@ -83,6 +83,13 @@
                     </tr>
                 </table>
             </form>
+        </div>
+    </template>
+    <template id="deleteConfirmationFormTemplate">
+        <div id="deleteConfirmationForm">
+            <p>искате ли да изтриете обявата ?</p>
+            <button id="deleteConfirmationForm__yes">yes</button>
+            <button id="deleteConfirmationForm__no">no</button>
         </div>
     </template>
 
@@ -175,7 +182,9 @@
                 fetch(`/ad-details?adId=${adId}`)
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error('Network response was not ok');
+                        let tableAdCells = document.getElementById('tableAd__cells');
+                        tableAdCells.style.display = 'none';
+                          console.error("no add");
                         }
                         return response.json();
                     })
@@ -203,8 +212,6 @@
                             img.style.maxWidth = '190px';
                             img.style.maxHeight = '190px';
                             adPhotosDiv.appendChild(img);
-                        } else {
-                            adPhotosDiv.innerHTML = '<img src="/adPage/img/default.jpg" alt="No photo" style="max-width: 190px; max-height: 190px;">';
                         }
 
                         // More Photos List
@@ -255,6 +262,97 @@
 
         // Attach a single, clean click listener for the edit button
         document.addEventListener("click", displayEditAd);
+        deleteConfirmationListener();
+
+        function deleteConfirmationListener() {
+            const deleteButton = document.querySelector('#deleteAdLink');
+            deleteButton.addEventListener('click', function (event) {
+                event.stopPropagation(); // Prevent click from bubbling up
+                displayDeleteConfirmationForm();
+            });
+        }
+         function displayDeleteConfirmationForm() {
+
+            // Avoid duplicates by checking if form is already in the DOM
+            if (document.querySelector("#deleteAdLink #deleteConfirmationForm")) {
+                return;
+            }
+            const template = document.querySelector("#deleteConfirmationFormTemplate");
+            if (!template) {
+                console.error("delete form template not found");
+                return;
+            }
+
+            const clone = template.content.cloneNode(true);
+            const deleteAdForm = clone.querySelector("#deleteConfirmationForm");
+            document.getElementById("deleteAdLink").appendChild(deleteAdForm);
+            removeElement(deleteAdForm);
+            chooseFromDeleteForm(); // Call after appending to DOM
+        }
+
+        function chooseFromDeleteForm() {
+            const form = document.querySelector("#deleteAdLink #deleteConfirmationForm");
+            if (!form) {
+                console.error("Logout form not found in DOM.");
+                return;
+            }
+
+            // Get references to the specific "Yes" and "No" buttons
+            const yesButton = form.querySelector('#deleteConfirmationForm__yes');
+            const noButton = form.querySelector('#deleteConfirmationForm__no');
+
+            // Attach click listener to the "Yes" button
+            if (yesButton) {
+                yesButton.addEventListener('click', function () {
+                    deleteAd(); delete Ad
+                    form.remove(); // Close the form after initiating delete ad
+                    event.stopPropagation(); // Prevent click from bubbling up to delete ad
+                });
+            }
+            // Attach click listener to the "No" button
+            if (noButton) {
+                noButton.addEventListener('click', function () {
+                    console.log("delete ad 'No' button clicked. Closing form."); // For debugging
+                    form.remove(); // Close the form without delete ad
+                    event.stopPropagation(); // Prevent click from bubbling up to delete ad
+                });
+            }
+
+
+        }
+
+        function deleteAd() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const adId = urlParams.get('adId');
+            fetch(`/ad-delete?adId=${adId}`)
+                .then(response => {
+                    // Check the response status FIRST
+                    if (response.status === 200) {
+                        // If 200 OK, proceed to parse JSON
+                        console.log("Ad with id = "+adId+" removed asuccessfully!");
+                        alert("Ad with id = "+adId+" removed asuccessfully!"); // Display success message
+                        window.location.reload();
+
+                    }
+                     return response.json();
+                });
+        }
+
+        function removeElement(element) {
+
+    // Detect outside click
+    setTimeout(() => {  // timeout ensures it doesn't immediately trigger on same click
+        function outsideClickHandler(event) {
+            // Check if the clicked target is NOT the element itself,
+            // AND NOT a descendant of the element.
+            if (!element.contains(event.target)) {
+                element.remove();
+                document.removeEventListener("click", outsideClickHandler);
+            }
+        }
+        document.addEventListener("click", outsideClickHandler);
+    }, 0);
+}
     </script>
 </body>
 
