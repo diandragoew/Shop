@@ -36,7 +36,7 @@
                 <td id="adPhone"></td>
                 <td>
                     <form method="POST" action="/submit-form" id="tableAdPage_message">
-                        <textarea class="tableAdPage_message--text" type="text" rows="4" cols="20"> </textarea>
+                        <textarea class="tableAdPage_message--text" name="text" rows="4" cols="20"></textarea>
                         <input class="tableAdPage_message--send" type="submit">
                     </form>
                 </td>
@@ -353,6 +353,30 @@
         document.addEventListener("click", outsideClickHandler);
     }, 0);
 }
+
+         document.addEventListener("submit", function (event) {
+            if (event.target && event.target.matches("form[id='tableAdPage_message']")) {
+                event.preventDefault(); // Prevents the page from reloading
+                let formData = new FormData(event.target);
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const adId = urlParams.get('adId');
+                formData.append('adId', adId);
+
+                fetch("/createMessage", {
+                    method: "POST",
+                    body: formData
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            alert("Message sent successfully!");
+                        } else {
+                            alert("Error sending message.");
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+            }
+        });
     </script>
 </body>
 
