@@ -111,6 +111,12 @@
     <footer id="footerSection">
 
     </footer>
+
+    <div id="imageModal" class="modal" onclick="this.style.display='none'">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="fullImage">
+    </div>
+
     <script src="/js/api.js"></script>
     <script src="/js/header.js"></script>
     <script>
@@ -187,7 +193,13 @@
                 newRowTableSells.insertCell(1).innerHTML = sellAdDtos[i].description;
 
                 var photoPath = sellAdDtos[i].photos.length > 0 ? sellAdDtos[i].photos[0].photoPath : null;
-                var photo = "<img src='" + photoPath + "' alt='obqva' width='190' height='190'>"
+                          // Fix the backslashes if they are coming from the JSON source
+            if (photoPath) {
+                photoPath = photoPath.replace(/\\/g, '/');
+            }
+var photo = `<img src='${photoPath}' alt='obqva' width='190' height='190'
+              onclick='openFullImage("${photoPath}")'
+              style='cursor: zoom-in;'>`;
                 newRowTableSells.insertCell(2).innerHTML = photo;
 
                 var newRowTableSellsTwo = tableSells.insertRow(2);
@@ -232,7 +244,13 @@
                 newRowTableBuys.insertCell(1).innerHTML = buyAdDto.description;
 
                 var photoPath = buyAdDto.photos.length > 0 ? buyAdDto.photos[0].photoPath : null;
-                var photo = "<img src='" + photoPath + "' alt='obqva' width='190' height='190'>"
+                          // Fix the backslashes if they are coming from the JSON source
+            if (photoPath) {
+                photoPath = photoPath.replace(/\\/g, '/');
+            }
+var photo = `<img src='${photoPath}' alt='obqva' width='190' height='190'
+              onclick='openFullImage("${photoPath}")'
+              style='cursor: zoom-in;'>`;
                 newRowTableBuys.insertCell(2).innerHTML = photo;
 
                 var newRowTableBuysTwo = tableBuys.insertRow(2);
@@ -269,6 +287,14 @@
                     displayMessagesByAdBuys(tableBuysMessages, adId, 2); // load 2 more
                 });
             }
+        }
+
+        function openFullImage(src) {
+            const modal = document.getElementById("imageModal");
+            const modalImg = document.getElementById("fullImage");
+
+            modal.style.display = "block";
+            modalImg.src = src;
         }
 
         function displayMessagesByAdSells(tableSellsMessages, adId, count) {

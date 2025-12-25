@@ -222,6 +222,22 @@ public class AdController {
         }
 
         List<Ad> ads = adRepository.findAll();
+        return getAdDtos(ads, loggedUserId, user);
+    }
+    @Transactional
+    @GetMapping("/publicUserProfil")
+    public List<AdDto> listUserProfileAds(@RequestParam("userId") Long publicProfileUserId,HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Long loggedUserId = (Long) session.getAttribute("userId");
+        User loggedUser = null;
+        if (loggedUserId !=null) {
+            loggedUser = userRepository.findById(loggedUserId).orElse(null);
+        }
+
+        List<Ad> ads = adRepository.findByCreatorId(publicProfileUserId);
+        return getAdDtos(ads, loggedUserId, loggedUser);
+    }
+    private static List<AdDto> getAdDtos(List<Ad> ads, Long loggedUserId, User user) {
         List<AdDto> adDtos = new ArrayList<>();
         AdDto adDto = new AdDto();
         for (Ad ad : ads) {

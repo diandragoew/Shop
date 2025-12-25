@@ -31,10 +31,22 @@
 
     </footer>
 
+    <div id="imageModal" class="modal" onclick="this.style.display='none'">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="fullImage">
+    </div>
 
     <script src="/js/api.js"></script>
     <script>
-        getUrl("/ads", function (data) {
+        // 1. Get the userId from the browser's address bar
+            const urlParams = new URLSearchParams(window.location.search);
+            const publicProfileUserId = urlParams.get('userId');
+
+            // 2. Build the request URL with that ID
+            const requestUrl = `/publicUserProfil?userId=${publicProfileUserId}`;
+
+            // 3. Invoke your backend
+            getUrl(requestUrl, function (data) {
             var ads = JSON.parse(data);
             console.log(ads);
             var table = document.getElementsByClassName("tablePageSelling")[0];
@@ -49,17 +61,26 @@
                 newRow.insertCell(0).innerHTML = `<a href="/adPage/html/adPage.html?adId=${adId}"><p>${ad.titleAd}</p></a>`;
 
 
-                var photoPath = ad.photos.length > 0 ? ad.photos[0] : null;
+            var photoPath = ad.photos.length > 0 ? ad.photos[0] : null;
 
-                var photo = "<img src='" + photoPath + "' alt='obqva' width='300' height='300'></a>"
+            // Fix the backslashes if they are coming from the JSON source
+            if (photoPath) {
+                photoPath = photoPath.replace(/\\/g, '/');
+            }
+
+            // Add the onclick event and a cursor style to show it's clickable
+            var photo = `<img src='${photoPath}' alt='obqva' width='300' height='300'
+             onclick='openFullImage("${photoPath}")'
+             style='cursor: zoom-in;'>`;
                 newRow.insertCell(1).innerHTML = photo;
+
                 var price = ad.price;
                 newRow.insertCell(2).innerHTML = price === null ? "Price: 0" : "Price: " + price;
 
-                newRow.insertCell(3).innerHTML = "<a href='/publicUserProfil/html/publicUserProfil.html'><p>" + ad.creatorName + "</p></a>";
+                var creatorAdId = parseInt(ad.creatorId);
+                newRow.insertCell(3).innerHTML = `<a href='/publicUserProfil/html/publicUserProfil.html?userId=${creatorAdId}'><p>${ad.creatorName}</p></a>`;
                 newRow.insertCell(4).innerHTML = ad.phone;
 
-                var creatorAdId = ad.creatorId;
                 var loggedUserId = ad.loggedUserId;
 
                 if (loggedUserId !== null && creatorAdId !== loggedUserId) {
@@ -100,7 +121,13 @@
 
             }
         });
+        function openFullImage(src) {
+            const modal = document.getElementById("imageModal");
+            const modalImg = document.getElementById("fullImage");
 
+            modal.style.display = "block";
+            modalImg.src = src;
+        }
 
         document.addEventListener("submit", function (event) {
             if (event.target && event.target.matches("form[id='tablePageSelling_message']")) {
@@ -124,7 +151,7 @@
         });
 
 
-        function addFavorite(adId) {
+ function addFavorite(adId) {
 
             const body = {
                 adId: adId
@@ -173,4 +200,3 @@
     </script>
 </body>
 
-</html>

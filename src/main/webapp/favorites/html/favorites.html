@@ -58,6 +58,12 @@
     <footer id="footerSection">
 
     </footer>
+
+    <div id="imageModal" class="modal" onclick="this.style.display='none'">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="fullImage">
+    </div>
+
     <script src="/js/api.js"></script>
     <script src="/js/header.js"></script>
     <script>
@@ -126,7 +132,13 @@
                 newRowTableFavorites.insertCell(1).innerHTML = favoriteAdDto.description;
 
                 var photoPath = favoriteAdDto.photos.length > 0 ? favoriteAdDto.photos[0].photoPath : null;
-                var photo = "<img src='" + photoPath + "' alt='obqva' width='190' height='190'>"
+                                          // Fix the backslashes if they are coming from the JSON source
+            if (photoPath) {
+                photoPath = photoPath.replace(/\\/g, '/');
+            }
+              var photo = `<img src='${photoPath}' alt='obqva' width='190' height='190'
+              onclick='openFullImage("${photoPath}")'
+              style='cursor: zoom-in;'>`;
                 newRowTableFavorites.insertCell(2).innerHTML = photo;
 
                 var newRowTableFavoritesTwo = tableFavorites.insertRow(2);
@@ -160,7 +172,13 @@
         }
 
 
+        function openFullImage(src) {
+            const modal = document.getElementById("imageModal");
+            const modalImg = document.getElementById("fullImage");
 
+            modal.style.display = "block";
+            modalImg.src = src;
+        }
 
 
         document.addEventListener("submit", function (event) {
