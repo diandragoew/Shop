@@ -1,49 +1,101 @@
-body{
-margin: 0px;
+/* --- YOUR ORIGINAL STYLES --- */
+body {
+    margin: 0px;
 }
 
-.headerSection{
-   background-color:blue;
-    margin-top: 0px;
-    margin-bottom: 0px;
-     padding: 10px;
-
-}
-.headerSection a{
-              text-decoration: none;
-}
-.headerSection h1{
-   margin-top: 0px;
-    margin-bottom: 0px;
-
-}
-.selling {
-  display: inline;
+.headerSection {
+    background-color: blue;
+    padding: 10px;
 }
 
-.buying {
-  display: inline;
+.headerSection a {
+    text-decoration: none;
+}
 
+.headerSection h1 {
+    margin: 0px;
 }
-.tablePageSelling,.tablePageSelling th, .tablePageSelling td {
-  border: 1px solid black;
-}
-#tablePageSelling_message input{
-	display: block;
-}
-#tablePageSelling_message .tablePageSelling_message--send{
-	background: green;
-}
-#tablePageSelling_message .tablePageSelling_message--send{
-     height:100px;
-     width:180px;
- }
 
- .tablePageSelling td .favorite-icon{
-     margin: 0px;
-     font-size: 32px;
-     cursor: pointer;
-  }
+.tablePageSelling, .tablePageSelling th, .tablePageSelling td {
+    border: 1px solid black;
+    border-collapse: collapse;
+ /* ---    padding: 8px;--- */
+    text-align: center;
+}
+
+/* Message Section Styling */
+#tablePageSelling_message .tablePageSelling_message--send {
+    background: green;
+    height: 50px;
+    width: 100px;
+    display: block;
+}
+
+.tablePageSelling td .favorite-icon {
+    margin: 0px;
+    font-size: 32px;
+    cursor: pointer;
+}
+
+/* --- PRICE HEADER & ARROWS --- */
+#tablePageSelling__price__header {
+    background-color: blue;
+    display: flex;
+    flex-direction: row; /* Label on left, inputs on right */
+    align-items: center;  /* Vertically centers 'price' next to the group */
+    padding: 10px;
+    color: white;
+    gap: 15px;
+    cursor: pointer;
+}
+/* --- INPUT GROUP STACKING --- */
+.input-group {
+    display: flex;
+    flex-direction: column; /* This stacks 'from' and 'to' one under the other */
+    gap: 5px;               /* Space between the two input boxes */
+}
+
+#tablePageSelling__price__header input {
+    width: 80px;
+    box-sizing: border-box;
+}
+/* Arrow Styling (Neutral ↕ always visible) */
+.tablePageSelling th {
+    cursor: pointer;
+    position: relative;
+    padding-right: 25px; /* Keeps space for arrows */
+}
+
+.tablePageSelling th::after {
+    content: " ↕";
+    position: absolute;
+    right: 5px;
+    color: #888;
+    font-size: 14px;
+}
+
+.tablePageSelling th.sort-asc::after { content: " ↑"; color: black; }
+.tablePageSelling th.sort-desc::after { content: " ↓"; color: black; }
+
+/* Keep price arrow white for the blue background */
+#tablePageSelling__price__header.sort-asc::after,
+#tablePageSelling__price__header.sort-desc::after {
+    color: white;
+    position: static;
+    margin-left: auto;
+}
+
+/* Restrict the width of search inputs in the headers */
+.tablePageSelling th input {
+    width: 120px; /* Adjust this value to make it as narrow as you like */
+    box-sizing: border-box; /* Ensures padding doesn't increase the width */
+    margin-top: 5px;
+}
+
+/* If you want the 'price' inputs to be even narrower since they are stacked */
+#tablePageSelling__price__header input {
+    width: 80px;
+}
 
   .modal {
       display: none;
