@@ -14,17 +14,34 @@
     <h2>
         обяви
     </h2>
-    <table class="tablePageSelling">
-        <tr>
-            <th>заглавие</th>
-            <th>снимка</th>
-            <th>price</th>
-            <th>потребител</th>
-            <th>phone</th>
-            <th id="tablePageSelling__favorite__header">favorite</th>
-            <th id="tablePageSelling__message__header">съобщение</th>
-        </tr>
+    <table class="tablePageSelling" id="sellingTable">
+        <thead>
+            <tr>
+                <th style="text-align: left">
+                    <label style="display: block">title</label>
+                    <input id="search__per__title" placeholder="search per title">
+                </th>
+                <th>photo</th>
+                <th id="tablePageSelling__price__header">
+                    <label id="tablePageSelling__price__label">price</label>
 
+                    <div class="input-group">
+                        <input id="tablePageSelling__price__input__from" placeholder="from">
+                        <input id="tablePageSelling__price__input__to" placeholder="to">
+                    </div>
+                </th>
+                <th class="no-sort">creator</th>
+                <th style="text-align: left">
+                    <label style="display: block">phone</label>
+                    <input placeholder="search per phone">
+                </th>
+                <th>favorite</th>
+                <th class="no-sort">съобщение</th>
+            </tr>
+
+        </thead>
+        <tbody>
+        </tbody>
     </table>
 
     <footer id="footerSection">
@@ -39,52 +56,44 @@
     <script src="/js/api.js"></script>
     <script>
         // 1. Get the userId from the browser's address bar
-            const urlParams = new URLSearchParams(window.location.search);
-            const publicProfileUserId = urlParams.get('userId');
+        const urlParams = new URLSearchParams(window.location.search);
+        const publicProfileUserId = urlParams.get('userId');
 
-            // 2. Build the request URL with that ID
-            const requestUrl = `/publicUserProfil?userId=${publicProfileUserId}`;
+        // 2. Build the request URL with that ID
+        const requestUrl = `/publicUserProfil?userId=${publicProfileUserId}`;
 
-            // 3. Invoke your backend
-            getUrl(requestUrl, function (data) {
+        // 3. Invoke your backend
+        getUrl(requestUrl, function (data) {
             var ads = JSON.parse(data);
             console.log(ads);
-            var table = document.getElementsByClassName("tablePageSelling")[0];
+            var tableBody = document.getElementById("sellingTable").getElementsByTagName('tbody')[0];
+            tableBody.innerHTML = "";
 
             for (var i = 0; i < ads.length; i++) {
-                var newRow = table.insertRow(i + 1);
-
                 let ad = ads[i];
                 let adId = ad.id;
+                let creatorAdId = parseInt(ad.creatorId);
+                var newRow = tableBody.insertRow(i);
 
-
+                // 0: Title
                 newRow.insertCell(0).innerHTML = `<a href="/adPage/html/adPage.html?adId=${adId}"><p>${ad.titleAd}</p></a>`;
 
+                // 1: Photo
+                var photoPath = ad.photos.length > 0 ? ad.photos[0].replace(/\\/g, '/') : '';
+                newRow.insertCell(1).innerHTML = photoPath ?
+                    `<img src='${photoPath}' width='200' height='200' onclick='openFullImage("${photoPath}")' style='cursor: zoom-in;'>` : '';
 
-            var photoPath = ad.photos.length > 0 ? ad.photos[0] : null;
+                // 2: Price
+                newRow.insertCell(2).innerHTML = ad.price === null ? "Price: 0" : "Price: " + ad.price;
 
-            // Fix the backslashes if they are coming from the JSON source
-            if (photoPath) {
-                photoPath = photoPath.replace(/\\/g, '/');
-            }
-
-            // Add the onclick event and a cursor style to show it's clickable
-            var photo = `<img src='${photoPath}' alt='obqva' width='300' height='300'
-             onclick='openFullImage("${photoPath}")'
-             style='cursor: zoom-in;'>`;
-                newRow.insertCell(1).innerHTML = photo;
-
-                var price = ad.price;
-                newRow.insertCell(2).innerHTML = price === null ? "Price: 0" : "Price: " + price;
-
-                var creatorAdId = parseInt(ad.creatorId);
+                // 3: Creator
                 newRow.insertCell(3).innerHTML = `<a href='/publicUserProfil/html/publicUserProfil.html?userId=${creatorAdId}'><p>${ad.creatorName}</p></a>`;
+
+                // 4: Phone
                 newRow.insertCell(4).innerHTML = ad.phone;
 
-                var loggedUserId = ad.loggedUserId;
-
-                if (loggedUserId !== null && creatorAdId !== loggedUserId) {
-
+                // 5 & 6: Favorites & Messages
+                if (ad.loggedUserId !== null && creatorAdId !== ad.loggedUserId) {
                     const favorite = document.createElement("p");
                     favorite.classList.add("favorite-icon");
                     favorite.innerText = ad.inFavorites ? "❤️" : "🤎"; // Filled heart for favorite, empty for not
@@ -106,21 +115,21 @@
                     newRow.insertCell(5).appendChild(favorite);
 
                     newRow.insertCell(6).innerHTML = `
-                <form method="POST" action="/createMessage" id='tablePageSelling_message' >
-                    <textarea class="tablePageSelling_message--text" name="text" rows="4" cols="20"></textarea>
-                    <input type="hidden" name="adId" value="${adId}">
-                    <input type="hidden" name="creatorAdId" value="${creatorAdId}">
-                    <input class="tablePageSelling_message--send" type="submit">
-                </form>
-                `;
+                    <form method="POST" action="/createMessage" id='tablePageSelling_message' >
+                        <textarea class="tablePageSelling_message--text" name="text" rows="4" cols="20"></textarea>
+                        <input type="hidden" name="adId" value="${adId}">
+                        <input type="hidden" name="creatorAdId" value="${creatorAdId}">
+                        <input class="tablePageSelling_message--send" type="submit" value="Изпращане">
+                    </form>`;
                 } else {
-                    document.getElementById("tablePageSelling__favorite__header")?.remove();
-                    document.getElementById("tablePageSelling__message__header")?.remove();
-
+                    newRow.insertCell(5);
+                    newRow.insertCell(6);
                 }
-
             }
+            tableSort("sellingTable");
         });
+
+        // --- ZOOM FUNCTION ---
         function openFullImage(src) {
             const modal = document.getElementById("imageModal");
             const modalImg = document.getElementById("fullImage");
@@ -128,6 +137,81 @@
             modal.style.display = "block";
             modalImg.src = src;
         }
+
+        // Attach listener to run the single method on any header input change
+        document.addEventListener('input', function (event) {
+            // only trigger if the input is inside the selling table header (avoids running unnecessarily)
+            if (event.target && event.target.closest && event.target.closest('#sellingTable thead')) {
+                filterTableByHeaderInputs('sellingTable');
+            }
+        });
+
+        function filterTableByHeaderInputs(tableId) {
+            const table = document.getElementById(tableId);
+            if (!table) return;
+
+            const headerCells = Array.from(table.querySelectorAll('thead th'));
+            const headerInputs = Array.from(table.querySelectorAll('thead th input, thead th textarea, thead th select'));
+
+            // Map column index -> array of inputs in that column
+            const inputsByCol = new Map();
+            headerInputs.forEach(input => {
+                const th = input.closest('th');
+                if (!th) return;
+                const colIndex = headerCells.indexOf(th);
+                if (colIndex < 0) return;
+                if (!inputsByCol.has(colIndex)) inputsByCol.set(colIndex, []);
+                inputsByCol.get(colIndex).push(input);
+            });
+
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+
+            rows.forEach(row => {
+                let visible = true;
+
+                for (const [col, inputs] of inputsByCol.entries()) {
+                    if (!visible) break;
+                    const cell = row.children[col];
+                    const cellText = cell ? (cell.textContent || cell.innerText).trim() : '';
+
+                    // Detect numeric-range case (two inputs in same th which contain "price or from or to" in their ids or are of type number)
+                    const looksLikeRange = inputs.length >= 2 && inputs.some(input => /price|from|to/i.test(input.id || '') || input.type === 'number');
+                    if (looksLikeRange) {
+                        // Use first as min and second as max (if available)
+                        const minVal = parseFloat(inputs[0].value);
+                        const maxVal = parseFloat(inputs[1].value);
+                        const cellNum = parseFloat(cellText.replace(/[^\d.-]/g, ''));
+
+                        const hasMin = !isNaN(minVal);
+                        const hasMax = !isNaN(maxVal);
+                        const isCellNum = !isNaN(cellNum);
+
+                        if (hasMin || hasMax) {
+                            if (!isCellNum) { visible = false; break; }
+                            if (hasMin && cellNum < minVal) { visible = false; break; }
+                            if (hasMax && cellNum > maxVal) { visible = false; break; }
+                            // else this column passes
+                            continue;
+                        }
+                        // if both inputs empty, treat as no filter and continue
+                    }
+
+                    // General text matching: every non-empty input in this column must be contained in cell text
+                    for (const input of inputs) {
+                        const v = (input.value || '').toString().trim().toLowerCase();
+                        if (v === '') continue;
+                        if (!cellText.toLowerCase().includes(v)) {
+                            visible = false;
+                            break;
+                        }
+                    }
+                }
+
+                row.style.display = visible ? '' : 'none';
+            });
+        }
+
 
         document.addEventListener("submit", function (event) {
             if (event.target && event.target.matches("form[id='tablePageSelling_message']")) {
@@ -150,8 +234,7 @@
             }
         });
 
-
- function addFavorite(adId) {
+        function addFavorite(adId) {
 
             const body = {
                 adId: adId
@@ -197,6 +280,46 @@
                 })
                 .catch(error => console.error("Error:", error));
         }
+
+
+
+        // --- TABLE SORT FUNCTION ---
+        const tableSort = (tableId) => {
+            const table = document.getElementById(tableId);
+            const headers = table.querySelectorAll("thead th");
+            const tbody = table.querySelector("tbody");
+            const sortDirections = Array(headers.length).fill("asc");
+
+            const getCellValue = (row, column) => {
+                const cell = row.children[column];
+                if (!cell) return '';
+                const text = cell.innerText || cell.textContent;
+                const num = text.replace(/[^\d.-]/g, '');
+                return (num !== '' && !isNaN(num)) ? parseFloat(num) : text.toLowerCase();
+            };
+
+            headers.forEach((header, index) => {
+                // skip headers marked as non-sortable
+                if (header.classList.contains('no-sort')) return;
+                header.addEventListener("click", (e) => {
+                    //INPUT refers to the text boxes you created in the table headers, like <input placeholder="search per title"> or the price inputs.
+                    if (e.target.tagName === 'INPUT') return;
+                    const direction = sortDirections[index];
+                    const rows = Array.from(tbody.querySelectorAll("tr"));
+                    rows.sort((a, b) => {
+                        const vA = getCellValue(a, index);
+                        const vB = getCellValue(b, index);
+                        const order = direction === "asc" ? 1 : -1;
+                        return (vA > vB ? 1 : vA < vB ? -1 : 0) * order;
+                    });
+                    headers.forEach(h => h.classList.remove("sort-asc", "sort-desc"));
+                    header.classList.add(direction === "asc" ? "sort-asc" : "sort-desc");
+                    rows.forEach(row => tbody.appendChild(row));
+                    sortDirections[index] = direction === "asc" ? "desc" : "asc";
+                });
+            });
+        };
     </script>
 </body>
 
+</html>
