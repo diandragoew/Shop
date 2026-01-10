@@ -286,39 +286,74 @@
         // --- TABLE SORT FUNCTION ---
         const tableSort = (tableId) => {
             const table = document.getElementById(tableId);
-            const headers = table.querySelectorAll("thead th");
+            if (!table) return;
+            const headers = Array.from(table.querySelectorAll("thead th"));
             const tbody = table.querySelector("tbody");
-            const sortDirections = Array(headers.length).fill("asc");
+
+            // mark columns that should be treated as numeric (price header has an id)
+            const numericColumns = new Set();
+            const priceHeader = table.querySelector("#tablePageSelling__price__header");
+            if (priceHeader) numericColumns.add(priceHeader.cellIndex);
+
+            // per-header sort direction
+            const sortDirections = new Map();
+            headers.forEach(h => sortDirections.set(h, "asc"));
 
             const getCellValue = (row, column) => {
                 const cell = row.children[column];
                 if (!cell) return '';
-                const text = cell.innerText || cell.textContent;
-                const num = text.replace(/[^\d.-]/g, '');
-                return (num !== '' && !isNaN(num)) ? parseFloat(num) : text.toLowerCase();
+                const text = (cell.innerText || cell.textContent || '').trim();
+
+                // If this column is explicitly numeric (price), extract number
+                if (numericColumns.has(column)) {
+                    const numStr = text.replace(/[^\d.-]/g, '');
+                    return (numStr !== '' && !isNaN(numStr)) ? parseFloat(numStr) : Number.NEGATIVE_INFINITY;
+                }
+
+                // Otherwise always treat as string (preserve letters + digits together)
+                return text.toLowerCase();
             };
 
-            headers.forEach((header, index) => {
+            headers.forEach((header) => {
                 // skip headers marked as non-sortable
                 if (header.classList.contains('no-sort')) return;
+
                 header.addEventListener("click", (e) => {
-                    //INPUT refers to the text boxes you created in the table headers, like <input placeholder="search per title"> or the price inputs.
-                    if (e.target.tagName === 'INPUT') return;
-                    const direction = sortDirections[index];
+                    // don't trigger sort when clicking header inputs
+                    if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) return;
+
+                    // use the actual column index of this TH (handles colspans correctly)
+                    const colIndex = header.cellIndex;
+                    const direction = sortDirections.get(header) || "asc";
                     const rows = Array.from(tbody.querySelectorAll("tr"));
+
                     rows.sort((a, b) => {
-                        const vA = getCellValue(a, index);
-                        const vB = getCellValue(b, index);
-                        const order = direction === "asc" ? 1 : -1;
-                        return (vA > vB ? 1 : vA < vB ? -1 : 0) * order;
+                        const vA = getCellValue(a, colIndex);
+                        const vB = getCellValue(b, colIndex);
+
+                        let cmp = 0;
+                        // numeric column comparison
+                        if (numericColumns.has(colIndex)) {
+                            cmp = (vA === Number.NEGATIVE_INFINITY ? -Infinity : vA) - (vB === Number.NEGATIVE_INFINITY ? -Infinity : vB);
+                        } else {
+                            cmp = String(vA).localeCompare(String(vB));
+                        }
+                        return cmp * (direction === "asc" ? 1 : -1);
                     });
+
+                    // update header classes
                     headers.forEach(h => h.classList.remove("sort-asc", "sort-desc"));
                     header.classList.add(direction === "asc" ? "sort-asc" : "sort-desc");
+
+                    // append rows in new order
                     rows.forEach(row => tbody.appendChild(row));
-                    sortDirections[index] = direction === "asc" ? "desc" : "asc";
+
+                    // toggle direction for this header
+                    sortDirections.set(header, direction === "asc" ? "desc" : "asc");
                 });
             });
         };
+
     </script>
 </body>
 
