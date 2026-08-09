@@ -330,6 +330,11 @@ public class UserController {
             List<Communication> communications = ad.getCommunications();
 
             for (Communication communication : communications) {
+                // Only the logged-in user's own conversations (same as buys / ad-details buyer view)
+                if (!user.getId().equals(communication.getCreator().getId())) {
+                    continue;
+                }
+
                 List<Message> messages = communication.getMessages();
                 for (Message message : messages) {
                     MessageDto messageDto = new MessageDto();
