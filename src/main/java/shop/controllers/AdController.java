@@ -15,8 +15,11 @@ import shop.dao.AdRepository;
 import shop.dao.PhotoRepository;
 import shop.dao.UserRepository;
 import shop.dto.AdDto;
+import shop.dto.MessageDto;
 import shop.exceptions.UnauthorizedException;
 import shop.model.Ad;
+import shop.model.Communication;
+import shop.model.Message;
 import shop.model.Photo;
 import shop.model.User;
 
@@ -282,8 +285,49 @@ public class AdController {
         adDto.setPhone(ad.getPhone());
         adDto.setPhotos(ad.getPhotos().stream().map(Photo::getPhotoPath).collect(Collectors.toList()));
         adDto.setPrice(ad.getPrice());
+        adDto.setMessageDtos(buildMessageDtos(ad, loggedUserId));
 
         return adDto; // Spring automatically converts AdDto to JSON
+    }
+
+    private TreeSet<MessageDto> buildMessageDtos(Ad ad, Long loggedUserId) {
+        TreeSet<MessageDto> messagesDtos = new TreeSet<>();
+        if (loggedUserId == null) {
+            return messagesDtos;
+        }
+
+        List<Communication> communications = ad.getCommunications();
+        if (communications == null) {
+            return messagesDtos;
+        }
+
+        boolean isOwner = loggedUserId.equals(ad.getCreator().getId());
+
+        for (Communication communication : communications) {
+            if (!isOwner && !loggedUserId.equals(communication.getCreator().getId())) {
+                continue;
+            }
+
+            List<Message> messages = communication.getMessages();
+            if (messages == null) {
+                continue;
+            }
+
+            for (Message message : messages) {
+                MessageDto messageDto = new MessageDto();
+                messageDto.setDate(message.getDate());
+                messageDto.setSenderName(message.getSender().getUserName());
+                messageDto.setText(message.getText());
+                messageDto.setCommunicationId(communication.getId());
+                messageDto.setCommunicationCreatorId(communication.getCreator().getId());
+                messageDto.setCommunicationCreatorName(communication.getCreator().getUserName());
+                messageDto.setAdCreatorId(ad.getCreator().getId());
+                messageDto.setAdCreatorName(ad.getCreator().getUserName());
+                messagesDtos.add(messageDto);
+            }
+        }
+
+        return messagesDtos;
     }
 
     @GetMapping("/ad-delete") // A new API endpoint for fetching ad data

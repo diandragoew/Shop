@@ -23,6 +23,14 @@
   display: inline;
 }
 
+.adPageAndMessages {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  width: fit-content;
+}
+
 .tableAdPage {
   display: inline-block;
   width: 1200px;
@@ -34,6 +42,52 @@
 .tableAdPage th,
 .tableAdPage td {
   border: 2px solid black;
+}
+
+.table__messages__adPage,
+.table__messages__adPage th,
+.table__messages__adPage td,
+.table__messages__adPage table {
+  border: 1px solid black;
+}
+
+.table__messages__adPage {
+  display: inline-block;
+  outline: 2px solid blue;
+  background-color: #d4f7f4;
+  vertical-align: top;
+}
+
+.messageForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.tableAdPage_message--textarea {
+  text-align: center;
+}
+
+.tableAdPage_message--text {
+  box-sizing: border-box;
+  margin-bottom: 5px;
+}
+
+.moreMessages {
+  background-color: purple;
+}
+
+.viewMoreThisCommunication {
+  background: pink;
+}
+
+.allMessagesAdPageOwner {
+  background: yellow;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  z-index: 1;
 }
 
 .listPhotos li {

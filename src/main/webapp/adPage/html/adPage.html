@@ -12,6 +12,7 @@
         <h1><a href="/homePage/html/home.html">Сергия BG</a></h1>
     </header>
     <div class="advertisement">
+        <div class="adPageAndMessages">
         <table class="tableAdPage">
             <tr>
                 <th class="tableAdPage__title">заглавие</th>
@@ -58,6 +59,37 @@
             </tr>
         </table>
 
+        <table class="table__messages__adPage" id="tableMessagesAdPage">
+            <tr class="table__messages__adPage__header">
+                <th colspan="4" style="text-align: center;">съобщения</th>
+            </tr>
+            <tr class="table__messages__adPage__columns">
+                <th class="table__messages__adPage__header__counterpart"></th>
+                <th>date</th>
+                <th>sender</th>
+                <th>messages</th>
+            </tr>
+            <tr class="more-messages-row">
+                <td colspan="4" style="text-align: left;">
+                    <button class="moreMessages">още съобщения...</button>
+                </td>
+            </tr>
+        </table>
+        </div>
+
+        <template id="messagesAdPageTemplate">
+            <table class="table__messages__adPage">
+                <tr class="table__messages__adPage__header">
+                    <th colspan="3" style="text-align: center;">съобщения</th>
+                </tr>
+                <tr class="table__messages__adPage__columns">
+                    <th>date</th>
+                    <th>sender</th>
+                    <th>messages</th>
+                </tr>
+            </table>
+        </template>
+
         <h2 class="morePhotos">още снимки</h2>
         <ol class="listPhotos" id="morePhotosList">
         </ol>
@@ -99,6 +131,9 @@
 
     <script>
         let adDtoGlobal = null;
+        var globalMessagesByAd = [];
+        var globalShownMessagesByAd = {};
+        var isAdOwner = false;
 
         // Place all your functions and event listeners in a single script block
 
@@ -238,15 +273,39 @@
                         var messageForm = document.getElementById('tableAdPage_message').parentNode;
                         var messageFormTitle = document.getElementById('tableAdPage__message__title');
                         var processAd = document.querySelector('.ProcessAd');
+                        var tableMessagesAdPage = document.getElementById('tableMessagesAdPage');
+                        isAdOwner = loggedUserId && creatorId === loggedUserId;
+
+                        globalMessagesByAd[adId] = adDto.messageDtos || [];
+
                         if (!loggedUserId) {
                             messageForm.remove();
                             messageFormTitle.remove();
                             processAd.remove();
-                        } else if (creatorId === loggedUserId) {
-                            messageForm.remove();
-                            messageFormTitle.remove();
+                            tableMessagesAdPage.remove();
+                        } else if (globalMessagesByAd[adId].length > 0) {
+                            if (isAdOwner) {
+                                messageForm.remove();
+                                messageFormTitle.remove();
+                            } else {
+                                processAd.remove();
+                                messageForm.remove();
+                                messageFormTitle.remove();
+                            }
+                            setMessagesCounterpartHeader(tableMessagesAdPage, isAdOwner);
+                            displayMessagesByAd(tableMessagesAdPage, adId, 2);
+                            const moreBtn = tableMessagesAdPage.querySelector(".moreMessages");
+                            moreBtn.addEventListener("click", function () {
+                                displayMessagesByAd(tableMessagesAdPage, adId, 2);
+                            });
                         } else {
-                            processAd.remove();
+                            if (isAdOwner) {
+                                messageForm.remove();
+                                messageFormTitle.remove();
+                            } else {
+                                processAd.remove();
+                            }
+                            tableMessagesAdPage.remove();
                         }
 
                     })
@@ -259,6 +318,132 @@
                 document.getElementById('adTitle').innerText = 'Ad ID is missing.';
             }
         });
+
+        function setMessagesCounterpartHeader(tableMessagesAdPage, isOwner) {
+            const counterpartHeader = tableMessagesAdPage.querySelector(".table__messages__adPage__header__counterpart");
+            if (counterpartHeader) {
+                counterpartHeader.innerText = isOwner ? "купувач" : "продавач";
+            }
+        }
+        function displayMessagesByAd(tableMessagesAdPage, adId, count) {
+            const maxSymbols = 10;
+            const moreMessagesRow = tableMessagesAdPage.querySelector(".more-messages-row");
+            const messages = globalMessagesByAd[adId];
+
+            if (!messages || messages.length === 0) {
+                if (moreMessagesRow) {
+                    moreMessagesRow.style.display = "none";
+                }
+                return;
+            }
+
+            const latestMessagesMap = new Map();
+            messages.forEach(msg => latestMessagesMap.set(msg.communicationId, msg));
+            const uniqueLatestMessages = Array.from(latestMessagesMap.values());
+
+            if (!globalShownMessagesByAd[adId]) globalShownMessagesByAd[adId] = 0;
+            const start = globalShownMessagesByAd[adId];
+            const end = Math.min(start + count, uniqueLatestMessages.length);
+
+            for (let j = start; j < end; j++) {
+                const message = uniqueLatestMessages[j];
+                const communicationId = message.communicationId;
+                const newRow = tableMessagesAdPage.insertRow(-1);
+
+                let text = message.text;
+                text = text.length > maxSymbols ? text.substring(0, maxSymbols) + "..." : text;
+
+                const more = document.createElement("BUTTON");
+                more.innerText = "view more";
+                more.classList.add("viewMoreThisCommunication");
+                more.dataset.communicationId = communicationId;
+                more.dataset.adId = adId;
+                more.addEventListener("click", function () {
+                    displayAllMessagesPerCommunicationId(this);
+                });
+
+                // Same order as купувачи, with продавач for buyers: person | date | sender | messages | view more
+                newRow.insertCell(0).innerHTML = isAdOwner
+                    ? message.communicationCreatorName
+                    : message.adCreatorName;
+                newRow.insertCell(1).innerHTML = message.date;
+                newRow.insertCell(2).innerHTML = message.senderName;
+                newRow.insertCell(3).innerHTML = text;
+                newRow.insertCell(4).appendChild(more);
+
+                const formRow = tableMessagesAdPage.insertRow(-1);
+                const cell = formRow.insertCell(0);
+                cell.colSpan = 4;
+                cell.className = "tableAdPage_message--textarea";
+                cell.innerHTML = `
+<form method="POST" action="/addMessage" class="messageForm">
+    <textarea class="tableAdPage_message--text" placeholder="напиши съобщение" name="text"></textarea>
+    <input type="hidden" name="communicationId" value="${communicationId}">
+    <input class="tableAdPage_message--send" type="submit" value="Изпращане">
+</form>`;
+
+                const spacerRow = tableMessagesAdPage.insertRow(-1);
+                const spacerCell = spacerRow.insertCell(0);
+                spacerCell.colSpan = 5;
+                spacerCell.style.height = "10px";
+                spacerCell.style.border = "none";
+                spacerCell.style.backgroundColor = "transparent";
+            }
+
+            globalShownMessagesByAd[adId] = end;
+
+            if (end < uniqueLatestMessages.length) {
+                tableMessagesAdPage.appendChild(moreMessagesRow);
+            } else if (moreMessagesRow) {
+                moreMessagesRow.style.display = "none";
+            }
+        }
+
+        function displayAllMessagesPerCommunicationId(viewMore) {
+            const communicationId = viewMore.dataset.communicationId;
+            const adId = viewMore.dataset.adId;
+            const allMessages = globalMessagesByAd[adId];
+            if (!allMessages) return;
+
+            const filteredMessages = allMessages.filter(msg => msg.communicationId == communicationId);
+            const template = document.getElementById("messagesAdPageTemplate");
+            const tableMessagesTemplate = template.content.querySelector(".table__messages__adPage");
+            const newClone = tableMessagesTemplate.cloneNode(true);
+            newClone.className = "allMessagesAdPageOwner";
+
+            filteredMessages.forEach(msg => {
+                const row = newClone.insertRow(-1);
+                row.insertCell(0).innerText = msg.date;
+                row.insertCell(1).innerText = msg.senderName;
+                row.insertCell(2).innerText = msg.text;
+            });
+
+            const formRow = newClone.insertRow(-1);
+            const cell = formRow.insertCell(0);
+            cell.colSpan = 3;
+            cell.className = "tableAdPage_message--textarea";
+            cell.innerHTML = `
+<form method="POST" action="/addMessage" class="messageForm">
+    <textarea class="tableAdPage_message--text" placeholder="напиши съобщение" name="text"></textarea>
+    <input type="hidden" name="communicationId" value="${communicationId}">
+    <input class="tableAdPage_message--send" type="submit" value="Изпращане">
+</form>`;
+
+            viewMore.parentElement.style.position = "relative";
+            viewMore.style.background = "yellow";
+            viewMore.parentElement.appendChild(newClone);
+
+            setTimeout(() => {
+                function outsideClickHandler(event) {
+                    if (!newClone.contains(event.target) && event.target !== viewMore) {
+                        newClone.remove();
+                        viewMore.style.background = "pink";
+                        document.removeEventListener("click", outsideClickHandler);
+                    }
+                }
+                document.addEventListener("click", outsideClickHandler);
+            }, 0);
+        }
 
         // Attach a single, clean click listener for the edit button
         document.addEventListener("click", displayEditAd);
@@ -370,6 +555,26 @@
                     .then(response => {
                         if (response.ok) {
                             alert("Message sent successfully!");
+                            window.location.reload();
+                        } else {
+                            alert("Error sending message.");
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+            }
+
+            if (event.target && event.target.matches("form[class='messageForm']")) {
+                event.preventDefault();
+                let formData = new FormData(event.target);
+
+                fetch("/addMessage", {
+                    method: "POST",
+                    body: formData
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            alert("Message sent successfully!");
+                            window.location.reload();
                         } else {
                             alert("Error sending message.");
                         }

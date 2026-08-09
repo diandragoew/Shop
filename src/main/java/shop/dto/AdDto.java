@@ -6,6 +6,7 @@ import lombok.*;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
@@ -23,6 +24,7 @@ public class AdDto {
   private   List<String> photos;
   private   String price;
   private boolean isInFavorites;
+  private Set<MessageDto> messageDtos;
 
     public String getTitleAd() {
         return titleAd;
